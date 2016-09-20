@@ -1,0 +1,44 @@
+﻿[
+  {
+    "Enabled": true,
+    "ClientId": "mvc",
+    "ClientSecrets": [
+      {
+        "Description": null,
+        "Value": "K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=",
+        "Expiration": null,
+        "Type": "SharedSecret"
+      }
+    ],
+    "ClientName": "MVC Hybrid Client",
+    "ClientUri": null,
+    "LogoUri": null,
+    "RequireConsent": false,
+    "AllowRememberConsent": true,
+    "AllowedGrantTypes": [ "hybrid" ],
+    "AllowAccessTokensViaBrowser": false,
+    "RedirectUris": [ "http://localhost:3308/signin-oidc" ],
+    "PostLogoutRedirectUris": [ "http://localhost:3308/" ],
+    "LogoutUri": null,
+    "LogoutSessionRequired": true,
+    "AllowAccessToAllScopes": false,
+    "AllowedScopes": [ "openid", "profile", "api1" ],
+    "IdentityTokenLifetime": 300,
+    "AccessTokenLifetime": 3600,
+    "AuthorizationCodeLifetime": 300,
+    "AbsoluteRefreshTokenLifetime": 2592000,
+    "SlidingRefreshTokenLifetime": 1296000,
+    "RefreshTokenUsage": 1,
+    "UpdateAccessTokenClaimsOnRefresh": false,
+    "RefreshTokenExpiration": 1,
+    "AccessTokenType": 0,
+    "EnableLocalLogin": true,
+    "IdentityProviderRestrictions": [],
+    "IncludeJwtId": false,
+    "Claims": [],
+    "AlwaysSendClientClaims": false,
+    "PrefixClientClaims": true,
+    "AllowedCorsOrigins": [],
+    "AllowPromptNone": false
+  }
+]
