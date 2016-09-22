@@ -1,9 +1,8 @@
-﻿using CompCard.Public.Services;
-using Host.Config;
-using Host.Crypto;
-using Host.Notification.Email;
-using Host.Services;
-using Host.Services.Postgres;
+﻿using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.Notification.Email;
+using ServiceBase.IdentityServer.Services;
+using ServiceBase.IdentityServer.Services.Postgres;
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -20,8 +19,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using ServiceBase.IdentityServer.Notification.SMS;
 
-namespace Host
+namespace ServiceBase.IdentityServer
 {
     public class Startup
     {
@@ -62,8 +62,9 @@ namespace Host
                 options.UserInteractionOptions.ConsentUrl = "/consent";
                 options.UserInteractionOptions.ErrorUrl = "/error";
             })
+            .AddInMemoryStores() // Development version
             .SetSigningCredential(cert);
-
+            
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IClientStore, InMemoryClientStore>();
             services.AddTransient<ICorsPolicyService, InMemoryCorsPolicyService>();

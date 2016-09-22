@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Host.Services
+namespace ServiceBase.IdentityServer.Services
 {
     public class ProfileService : IProfileService
     {

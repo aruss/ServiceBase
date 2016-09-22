@@ -1,4 +1,4 @@
-﻿using Host.Models;
+﻿using ServiceBase.IdentityServer.Models;
 using IdentityModel;
 using IdentityServer4;
 using Microsoft.AspNetCore.Http.Authentication;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Host.Extensions
+namespace ServiceBase.IdentityServer.Extensions
 {
     public static class AuthenticationManagerExtensions
     {

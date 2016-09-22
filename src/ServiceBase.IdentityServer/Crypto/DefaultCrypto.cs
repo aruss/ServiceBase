@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Host.Crypto
+namespace ServiceBase.IdentityServer.Crypto
 {
     public interface ICrypto
     {

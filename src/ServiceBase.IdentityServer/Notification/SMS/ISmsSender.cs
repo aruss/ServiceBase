@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CompCard.Public.Services
+namespace ServiceBase.IdentityServer.Notification.SMS
 {
     public interface ISmsSender
     {

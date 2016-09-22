@@ -1,7 +1,7 @@
-﻿using Host.Config;
-using Host.Extensions;
-using Host.Models;
-using Host.Services;
+﻿using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Extensions;
+using ServiceBase.IdentityServer.Models;
+using ServiceBase.IdentityServer.Services;
 using IdentityModel;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Http.Authentication;
@@ -14,7 +14,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Host.UI.Login
+namespace ServiceBase.IdentityServer.UI.Login
 {
     public class ExternalController : Controller
     {

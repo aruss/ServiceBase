@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Host.Models
+namespace ServiceBase.IdentityServer.Models
 {
     public enum VerificationKeyPurpose
     {

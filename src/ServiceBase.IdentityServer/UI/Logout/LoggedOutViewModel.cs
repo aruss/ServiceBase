@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Host.UI.Logout
+namespace ServiceBase.IdentityServer.UI.Logout
 {
     public class LoggedOutViewModel
     {

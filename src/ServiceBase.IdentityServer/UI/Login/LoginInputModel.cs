@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Host.UI.Login
+namespace ServiceBase.IdentityServer.UI.Login
 {
     public class LoginInputModel
     {

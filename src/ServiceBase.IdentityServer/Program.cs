@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using System;
 
-namespace Host
+namespace ServiceBase.IdentityServer
 {
     public class Program
     {

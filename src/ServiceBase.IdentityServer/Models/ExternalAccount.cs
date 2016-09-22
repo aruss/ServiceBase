@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Host.Models
+namespace ServiceBase.IdentityServer.Models
 {
     public class ExternalAccount
     {

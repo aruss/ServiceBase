@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Razor;
 using System.Collections.Generic;
 
-namespace Host.UI
+namespace ServiceBase.IdentityServer.UI
 {
     public class CustomViewLocationExpander : IViewLocationExpander
     {

@@ -1,7 +1,7 @@
-﻿using Host.Config;
-using Host.Crypto;
-using Host.Extensions;
-using Host.Services;
+﻿using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.Extensions;
+using ServiceBase.IdentityServer.Services;
 using IdentityServer4;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Host.UI.Login
+namespace ServiceBase.IdentityServer.UI.Login
 {
     // https://github.com/IdentityServer/IdentityServer4.Samples/blob/dev/Quickstarts/5_HybridFlowAuthenticationWithApiAccess/src/QuickstartIdentityServer/Controllers/AccountController.cs
     public class LoginController : Controller

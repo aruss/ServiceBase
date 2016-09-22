@@ -4,7 +4,7 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 
-namespace Host.UI.Consent
+namespace ServiceBase.IdentityServer.UI.Consent
 {
     public class ConsentViewModel : ConsentInputModel
     {

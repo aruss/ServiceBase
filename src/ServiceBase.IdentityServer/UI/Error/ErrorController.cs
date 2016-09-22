@@ -3,7 +3,7 @@ using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace Host.UI.Error
+namespace ServiceBase.IdentityServer.UI.Error
 {
     public class ErrorController : Controller
     {

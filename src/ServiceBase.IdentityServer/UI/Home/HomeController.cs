@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Host.UI.Home
+namespace ServiceBase.IdentityServer.UI.Home
 {
     public class HomeController : Controller
     {

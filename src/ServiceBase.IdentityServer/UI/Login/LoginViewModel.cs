@@ -1,4 +1,4 @@
-﻿namespace Host.UI.Login
+﻿namespace ServiceBase.IdentityServer.UI.Login
 {
     public class LoginViewModel : LoginInputModel
     {
@@ -16,6 +16,6 @@
 
         public string ErrorMessage { get; set; }
         public string InfoMessage { get; set; }
-        public string[] LoginHints { get; set; }
+        public string[] LoginHints { get; set; } 
     }
 }

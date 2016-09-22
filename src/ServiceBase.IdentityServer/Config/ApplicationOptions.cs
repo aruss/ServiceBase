@@ -1,4 +1,4 @@
-﻿namespace Host.Config
+﻿namespace ServiceBase.IdentityServer.Config
 {
     public class ApplicationOptions
     {

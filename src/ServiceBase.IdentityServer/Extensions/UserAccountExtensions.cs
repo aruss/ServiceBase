@@ -1,7 +1,7 @@
-﻿using Host.Models;
+﻿using ServiceBase.IdentityServer.Models;
 using System;
 
-namespace Host.Extensions
+namespace ServiceBase.IdentityServer.Extensions
 {
     public static class UserAccountExtensions
     {

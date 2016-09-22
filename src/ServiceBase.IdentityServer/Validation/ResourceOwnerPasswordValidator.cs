@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Host.Validation
+namespace ServiceBase.IdentityServer.Validation
 {
    /* public class ResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator
     {

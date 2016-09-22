@@ -1,9 +1,9 @@
-﻿using Host.Config;
-using Host.Crypto;
-using Host.Extensions;
-using Host.Models;
-using Host.Notification.Email;
-using Host.Services;
+﻿using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.Extensions;
+using ServiceBase.IdentityServer.Models;
+using ServiceBase.IdentityServer.Notification.Email;
+using ServiceBase.IdentityServer.Services;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Host.UI.Login
+namespace ServiceBase.IdentityServer.UI.Login
 {
     public class RecoverController : Controller
     {
@@ -106,15 +106,15 @@ namespace Host.UI.Login
             return View(vm);
         }
 
-        [HttpGet("recover/success", Name = "Success")]
+        [HttpGet("recover/success", Name = "RecoverSuccess")]
         public async Task<IActionResult> Success(string returnUrl, string provider)
         {
             // select propper mail provider and render it as button 
 
-            return View();
+            return  View();
         }
 
-        [HttpGet("recover/confirm/{key}", Name = "Confirm")]
+        [HttpGet("recover/confirm/{key}", Name = "RecoverConfirm")]
         public async Task<IActionResult> Confirm(string key)
         {
             // Load token data from database 
@@ -134,7 +134,7 @@ namespace Host.UI.Login
             return View(vm);
         }
 
-        [HttpGet("recover/cancel/{key}", Name = "Cancel")]
+        [HttpGet("recover/cancel/{key}", Name = "RecoverCancel")]
         public async Task<IActionResult> Cancel(string key)
         {
             // Load token data from database 

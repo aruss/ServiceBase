@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using Host.Models;
+using ServiceBase.IdentityServer.Models;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
 
-namespace Host.Services.Postgres
+namespace ServiceBase.IdentityServer.Services.Postgres
 {
     // TODO: make use of value type  System.Security.Claims.ClaimValueTypes while create UserClaim
     // http://www.npgsql.org/doc/faq.html

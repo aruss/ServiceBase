@@ -1,4 +1,4 @@
-﻿namespace Host.Notification.Email
+﻿namespace ServiceBase.IdentityServer.Notification.Email
 {
     public class EmailMessage
     {

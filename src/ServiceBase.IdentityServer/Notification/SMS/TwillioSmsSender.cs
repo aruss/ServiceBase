@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace CompCard.Public.Services
+namespace ServiceBase.IdentityServer.Notification.SMS
 {
     public class TwillioOptions
     {

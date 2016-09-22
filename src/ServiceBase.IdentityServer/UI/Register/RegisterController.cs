@@ -1,9 +1,9 @@
-﻿using Host.Config;
-using Host.Crypto;
-using Host.Extensions;
-using Host.Models;
-using Host.Notification.Email;
-using Host.Services;
+﻿using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.Extensions;
+using ServiceBase.IdentityServer.Models;
+using ServiceBase.IdentityServer.Notification.Email;
+using ServiceBase.IdentityServer.Services;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Host.UI.Login
+namespace ServiceBase.IdentityServer.UI.Login
 {
     public class RegisterController : Controller
     {
@@ -170,7 +170,7 @@ namespace Host.UI.Login
             return View(new RegisterViewModel(model));
         }
         
-        [HttpGet("register/success", Name = "Success")]
+        [HttpGet("register/success", Name = "RegisterSuccess")]
         public async Task<IActionResult> Success(string returnUrl, string provider)
         {
             // select propper mail provider and render it as button 
@@ -178,7 +178,7 @@ namespace Host.UI.Login
             return View();
         }
 
-        [HttpGet("register/confirm/{key}", Name = "Confirm")]
+        [HttpGet("register/confirm/{key}", Name = "RegisterConfirm")]
         public async Task<IActionResult> Confirm(string key)
         {
             // Load token data from database 
@@ -221,7 +221,7 @@ namespace Host.UI.Login
             return Redirect(Url.Action("login", new { ReturnUrl = returnUrl }));
         }
 
-        [HttpGet("register/cancel/{key}", Name = "Cancel")]
+        [HttpGet("register/cancel/{key}", Name = "RegistersCancel")]
         public async Task<IActionResult> Cancel(string key)
         {
             // Load token data from database 

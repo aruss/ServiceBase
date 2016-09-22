@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Host.Extensions
+namespace ServiceBase.IdentityServer.Extensions
 {
     internal static class StreamExtensions
     {

@@ -1,4 +1,4 @@
-﻿namespace Host.UI.Login
+﻿namespace ServiceBase.IdentityServer.UI.Login
 {
     public class RegisterViewModel : RegisterInputModel
     {

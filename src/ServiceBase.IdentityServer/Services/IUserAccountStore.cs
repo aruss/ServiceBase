@@ -1,8 +1,8 @@
-﻿using Host.Models;
+﻿using ServiceBase.IdentityServer.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace Host.Services
+namespace ServiceBase.IdentityServer.Services
 {
     public interface IUserAccountStore
     {

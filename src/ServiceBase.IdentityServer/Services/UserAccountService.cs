@@ -1,12 +1,12 @@
-﻿using Host.Config;
-using Host.Models;
+﻿using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Host.Services
+namespace ServiceBase.IdentityServer.Services
 {
     public class UserAccountService
     {

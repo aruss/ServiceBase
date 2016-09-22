@@ -1,10 +1,10 @@
-﻿using Host.Models;
+﻿using ServiceBase.IdentityServer.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Host.Notification.Email
+namespace ServiceBase.IdentityServer.Notification.Email
 {
     public interface IEmailFormatter
     {

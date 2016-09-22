@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Host.Models
+namespace ServiceBase.IdentityServer.Models
 {
     public class UserClaim
     {

@@ -1,4 +1,4 @@
-﻿namespace Host.Services.Postgres
+﻿namespace ServiceBase.IdentityServer.Services.Postgres
 {
     public class PostgresOptions
     {

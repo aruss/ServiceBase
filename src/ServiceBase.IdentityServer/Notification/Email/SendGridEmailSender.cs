@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Host.Notification.Email
+namespace ServiceBase.IdentityServer.Notification.Email
 {
     public class SendGridOptions
     {
