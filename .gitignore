@@ -199,3 +199,4 @@ FakesAssemblies/
 *.opt
 
 .DS_STORE
+samples/AspNetCoreWeb/wwwroot/lib/
