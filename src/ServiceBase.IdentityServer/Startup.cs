@@ -180,7 +180,7 @@ namespace ServiceBase.IdentityServer
                 app.UseGoogleAuthentication(new GoogleOptions
                 {
                     AuthenticationScheme = "Google",
-                    SignInScheme = "Temp",
+                    SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme,
                     ClientId = _configuration["Authentication:Google:ClientId"],
                     ClientSecret = _configuration["Authentication:Google:ClientSecret"]
                 });
@@ -191,7 +191,7 @@ namespace ServiceBase.IdentityServer
                 app.UseFacebookAuthentication(new FacebookOptions()
                 {
                     AuthenticationScheme = "Facebook",
-                    SignInScheme = "Temp",
+                    SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme,
                     AppId = _configuration["Authentication:Facebook:AppId"],
                     AppSecret = _configuration["Authentication:Facebook:AppSecret"]
                 });

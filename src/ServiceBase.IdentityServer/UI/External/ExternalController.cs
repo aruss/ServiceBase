@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityServer4;
 
 namespace ServiceBase.IdentityServer.UI.Login
 {
@@ -48,7 +49,8 @@ namespace ServiceBase.IdentityServer.UI.Login
         [HttpGet("external-callback")]
         public async Task<IActionResult> Index(string returnUrl)
         {
-            var tempUser = await HttpContext.Authentication.AuthenticateAsync("Temp");
+            var tempUser = await HttpContext.Authentication.AuthenticateAsync(
+                IdentityServerConstants.ExternalCookieAuthenticationScheme);
             if (tempUser == null)
             {
                 throw new Exception();
@@ -85,7 +87,7 @@ namespace ServiceBase.IdentityServer.UI.Login
             if (userAccount != null)
             {
                 await HttpContext.Authentication.IssueCookie(userAccount, provider, "external");
-                await HttpContext.Authentication.SignOutAsync("Temp");
+                await HttpContext.Authentication.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
 
                 if (returnUrl != null && _interaction.IsValidReturnUrl(returnUrl))
                 {
@@ -119,7 +121,7 @@ namespace ServiceBase.IdentityServer.UI.Login
                     await this._userAccountStore.WriteAsync(userAccount);
 
                     await HttpContext.Authentication.IssueCookie(userAccount, provider, "external");
-                    await HttpContext.Authentication.SignOutAsync("Temp");
+                    await HttpContext.Authentication.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
 
                     if (returnUrl != null && _interaction.IsValidReturnUrl(returnUrl))
                     {
@@ -141,7 +143,7 @@ namespace ServiceBase.IdentityServer.UI.Login
                         await _userAccountStore.AddExternalAccountAsync(userAccount.Id, externalAccount);
 
                         await HttpContext.Authentication.IssueCookie(userAccount, provider, "external");
-                        await HttpContext.Authentication.SignOutAsync("Temp");
+                        await HttpContext.Authentication.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
 
                         if (returnUrl != null && _interaction.IsValidReturnUrl(returnUrl))
                         {
