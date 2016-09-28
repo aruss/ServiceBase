@@ -185,7 +185,7 @@ namespace ServiceBase.IdentityServer
                     ClientSecret = _configuration["Authentication:Google:ClientSecret"]
                 });
             }
-
+            
             if (!String.IsNullOrWhiteSpace(_configuration["Authentication:Facebook:AppId"]))
             {
                 app.UseFacebookAuthentication(new FacebookOptions()
