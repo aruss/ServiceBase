@@ -5,19 +5,22 @@ using System.Collections.Generic;
 
 namespace ServiceBase.IdentityServer.Pipeline
 {
+    // https://msdn.microsoft.com/en-us/library/ff963548.aspx
+
+
     /// <summary>
     /// Models a recipient of notification of events
     /// </summary>
-    public interface IPipeService
+    public interface IPipelineService
     {
         void Execute<TMessage>(TMessage message);
-        IPipeService AddListener<TMessage, TListener>(); 
+        IPipelineService AddListener<TMessage, TListener>(); 
     }
 
     /// <summary>
     /// Default implementation of the event service. Write events raised to the log.
     /// </summary>
-    public class DefaultPipeService : IPipeService
+    public class DefaultPipeService : IPipelineService
     {
         private readonly ILogger _logger;
         private readonly IServiceProvider _provider;
@@ -50,7 +53,7 @@ namespace ServiceBase.IdentityServer.Pipeline
             }            
         }
 
-        public IPipeService AddListener<TMessage, TListener>()
+        public IPipelineService AddListener<TMessage, TListener>()
         {
             GetListenerTypes<TMessage>().Add(typeof(TListener));
 
@@ -106,12 +109,12 @@ namespace ServiceBase.IdentityServer.Pipeline
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IPipeService, DefaultPipeService>();
+            services.AddSingleton<IPipelineService, DefaultPipeService>();
             services.AddTransient<OnUserRegisteredSendEmail>();
             services.AddTransient<OnUserRegisteredSavePrimaryStore>();
         }
 
-        public void Configure(IPipeService eventService)
+        public void Configure(IPipelineService eventService)
         {
             eventService
                 .AddListener<UserRegisteredInfo, OnUserRegisteredSendEmail>()
