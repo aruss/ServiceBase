@@ -13,12 +13,12 @@ namespace ServiceBase.IdentityServer.Postgres
     // TODO: make use of value type  System.Security.Claims.ClaimValueTypes while create UserClaim
     // http://www.npgsql.org/doc/faq.html
 
-    public class PostgresUserAccountStore : IUserAccountStore
+    public class UserAccountStore : IUserAccountStore
     {
         private PostgresOptions options;
-        private ILogger<PostgresUserAccountStore> logger;
+        private ILogger<UserAccountStore> logger;
 
-        public PostgresUserAccountStore(PostgresOptions options, ILogger<PostgresUserAccountStore> logger)
+        public UserAccountStore(PostgresOptions options, ILogger<UserAccountStore> logger)
         {
             this.options = options;
             this.logger = logger;
@@ -47,7 +47,6 @@ namespace ServiceBase.IdentityServer.Postgres
                 dParams.Add("UserId", userId);
 
                 // userid, type, value, coalesce(valuetype, 'http://www.w3.org/2001/XMLSchema#boolean') as valuetype
-
                 using (var reader = con.QueryMultiple(
                     "SELECT * FROM useraccounts WHERE id = @UserId;" +
                     "SELECT * FROM userclaims WHERE userid = @UserId;" +
@@ -137,11 +136,7 @@ namespace ServiceBase.IdentityServer.Postgres
                     userAccount.Id = userAccount.Id == Guid.Empty ? Guid.NewGuid() : userAccount.Id;
                     userAccount.CreatedAt = now;
                     userAccount.UpdatedAt = now;
-
-                    /*var x = typeof(UserAccount).GetProperties(BindingFlags.Public | BindingFlags.Instance).Select(s => s.Name).ToArray();
-                    var foo = String.Join(", ", x).ToLower();
-                    var bar = "@" + String.Join(", @", x);*/
-
+                    
                     con.Execute(
                         "INSERT INTO useraccounts(id, email, isemailverified, emailverifiedat, isloginallowed, lastloginat, lastfailedloginat, failedlogincount, passwordhash, passwordchangedat, verificationkey, verificationpurpose, verificationkeysentat, verificationstorage, createdat, updatedat) VALUES " +
                         "(@Id, @Email, @IsEmailVerified, @EmailVerifiedAt, @IsLoginAllowed, @LastLoginAt, @LastFailedLoginAt, @FailedLoginCount, @PasswordHash, @PasswordChangedAt, @VerificationKey, @VerificationPurpose, @VerificationKeySentAt, @VerificationStorage, @CreatedAt, @UpdatedAt);", userAccount);

@@ -51,6 +51,14 @@ namespace ServiceBase.IdentityServer.Public
 
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Add application configuration 
+
+            services.AddOptions();
+            services.Configure<ApplicationOptions>(_configuration.GetSection("App"));
+            services.AddSingleton<IConfiguration>(_configuration);
+
+            #endregion
+
             #region Add identity server 
 
             var cert = new X509Certificate2(Path.Combine(
@@ -66,7 +74,7 @@ namespace ServiceBase.IdentityServer.Public
             })
             .AddInMemoryStores() // Development version
             .SetSigningCredential(cert);
-            
+
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IClientStore, InMemoryClientStore>();
             services.AddTransient<ICorsPolicyService, InMemoryCorsPolicyService>();
@@ -84,31 +92,7 @@ namespace ServiceBase.IdentityServer.Public
 
             #endregion
 
-            #region Add data layer 
-
-            services.AddSingleton(new PostgresOptions
-            {
-                ConnectionString = _configuration.GetConnectionString("DefaultConnection")
-            });
-
-            services.AddScoped<Npgsql.NpgsqlConnection>((s) =>
-            {
-                var connection = new Npgsql.NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-                connection.Open();
-                return connection;
-            });
-
-            services.AddTransient<IUserAccountStore, PostgresUserAccountStore>();
-
-            #endregion
-
-            #region Add application configuration 
-
-            services.AddOptions();
-            services.Configure<ApplicationOptions>(_configuration.GetSection("App"));
-            services.AddSingleton<IConfiguration>(_configuration);
-
-            #endregion
+            services.AddPostgres(_configuration.GetConnectionString("DefaultConnection"));
 
             #region Add email sender 
 
@@ -121,13 +105,13 @@ namespace ServiceBase.IdentityServer.Public
             // else if MailGun
             // else if SMTP
             // else default sender 
-                        
+
             // services.AddTransient<IEmailFormatter, EmailFormatter>();
 
             #endregion
 
-            #region add sms sender 
-            
+            #region Add sms sender 
+
             if (String.IsNullOrWhiteSpace(_configuration["Twillio"]))
             {
                 services.Configure<TwillioOptions>(_configuration.GetSection("Twillio"));
@@ -188,7 +172,7 @@ namespace ServiceBase.IdentityServer.Public
                     ClientSecret = _configuration["Authentication:Google:ClientSecret"]
                 });
             }
-            
+
             if (!String.IsNullOrWhiteSpace(_configuration["Authentication:Facebook:AppId"]))
             {
                 app.UseFacebookAuthentication(new FacebookOptions()
@@ -200,13 +184,13 @@ namespace ServiceBase.IdentityServer.Public
                 });
             }
 
-            #endregion 
+            #endregion
 
-            
+
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
 
-            
+
             // TODO: make db connection tests
 
 
