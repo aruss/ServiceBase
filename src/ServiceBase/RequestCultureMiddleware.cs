@@ -54,13 +54,13 @@ namespace ServiceBase
             if (requestCulture != null)
             {
                 var culture = new CultureInfo(cultureQuery);
-/*#if !DNXCORE50
-                Thread.CurrentThread.CurrentCulture = culture;
-                Thread.CurrentThread.CurrentUICulture = culture;
-#else*/
+                /*#if !DNXCORE50
+                                Thread.CurrentThread.CurrentCulture = culture;
+                                Thread.CurrentThread.CurrentUICulture = culture;
+                #else*/
                 CultureInfo.CurrentCulture = culture;
                 CultureInfo.CurrentUICulture = culture;
-// #endif
+                // #endif
             }
 
             return this.next(context);

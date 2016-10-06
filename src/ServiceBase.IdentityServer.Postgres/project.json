@@ -1,0 +1,24 @@
+﻿{
+  "title": "ServiceBase.IdentityServer.Postgres",
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "debugType": "portable",
+    "emitEntryPoint": false
+  },
+  "dependencies": {
+    "Npgsql": "3.1.8",
+    "Dapper": "1.50.2",
+    "ServiceBase.IdentityServer": "1.0.0-*"
+  },
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      },
+      "imports": "dnxcore50"
+    }
+  }
+}

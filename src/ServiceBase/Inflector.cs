@@ -9,7 +9,7 @@ namespace ServiceBase
         private static readonly List<Rule> Plurals = new List<Rule>();
         private static readonly List<Rule> Singulars = new List<Rule>();
         private static readonly List<string> Uncountables = new List<string>();
-        
+
         #region Default Rules
 
         static Inflector()

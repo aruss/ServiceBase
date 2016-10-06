@@ -1,12 +1,12 @@
-﻿{
-  "title": "ServiceBase.Smpt",
+{
+  "title": "ServiceBase.Smtp",
   "version": "1.0.0-*",
   "buildOptions": {
     "debugType": "portable",
     "emitEntryPoint": false
   },
   "dependencies": {
-
+    "ServiceBase": "1.0.0-*"
   },
   "frameworks": {
     "netcoreapp1.0": {
@@ -14,8 +14,7 @@
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.0"
-        },
-        "Microsoft.AspNetCore.Server.Kestrel": "1.0.0"
+        }
       },
       "imports": "dnxcore50"
     }

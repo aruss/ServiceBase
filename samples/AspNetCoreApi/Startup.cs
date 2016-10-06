@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Api
+namespace AspNetCoreApi
 {
     public class Startup
     {

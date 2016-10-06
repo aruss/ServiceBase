@@ -1,5 +1,5 @@
 {
-  "userSecretsId": "aspnet-WebApi1-c23d27a4-eb88-4b18-9b77-2a93f3b15119",
+  "userSecretsId": "AspNetCoreApi-c23d27a4-eb88-4b18-9b77-2a93f3b15119",
   "title": "AspNetCoreApi",
   "version": "1.0.0-*",
 
@@ -7,7 +7,7 @@
     "Microsoft.AspNetCore.Mvc.Core": "1.0.1",
     "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.1",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
-    "IdentityServer4.AccessTokenValidation":  "1.0.1-rc1"
+    "IdentityServer4.AccessTokenValidation": "1.0.1-rc1"
   },
 
   "tools": {
