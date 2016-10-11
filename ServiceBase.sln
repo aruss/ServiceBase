@@ -8,10 +8,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5EFD3297-E28B-41EB-82F1-F4B32D745420}"
 	ProjectSection(SolutionItems) = preProject
 		build.cmd = build.cmd
+		build.ps1 = build.ps1
 		build.sh = build.sh
 		global.json = global.json
 		NuGet.Config = NuGet.Config
-		readme.md = readme.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.Twilio", "src\ServiceBase.Twilio\ServiceBase.Twilio.xproj", "{690E4AE1-BBCD-4282-8E5C-82E57098AE45}"
