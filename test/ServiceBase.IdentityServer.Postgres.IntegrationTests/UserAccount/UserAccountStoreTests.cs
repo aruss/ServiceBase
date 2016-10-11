@@ -24,15 +24,15 @@ namespace ServiceBase.IdentityServer.Postgres.IntegrationTests
             this.db.ClearDatabase();
         }
 
-        private PostgresUserAccountStore GetUserStore()
+        private UserAccountStore GetUserStore()
         {
             var options = new PostgresOptions
             {
                 ConnectionString = NpgsqlFixture.ConnectionString
             };
 
-            var logger = new NullLogger<PostgresUserAccountStore>();
-            var userStore = new PostgresUserAccountStore(options, logger);
+            var logger = new NullLogger<UserAccountStore>();
+            var userStore = new UserAccountStore(options, logger);
 
             return userStore;
         }

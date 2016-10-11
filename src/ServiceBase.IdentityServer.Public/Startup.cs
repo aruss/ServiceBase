@@ -185,25 +185,9 @@ namespace ServiceBase.IdentityServer.Public
             }
 
             #endregion
-
-
+            
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
-
-
-            // TODO: make db connection tests
-
-
-            /*if (this.environment.IsDevelopment())
-            {
-                using (var context = (MyContext)app.ApplicationServices.GetService<MyContext>())
-                {
-                    if (env.IsDevelopment())
-                    {
-
-                    }
-                }
-            }*/
         }
     }
 }
