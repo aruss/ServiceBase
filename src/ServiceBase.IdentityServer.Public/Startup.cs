@@ -82,12 +82,12 @@ namespace ServiceBase.IdentityServer.Public
 
             services.AddSingleton(
                 JsonConvert.DeserializeObject<IEnumerable<Client>>(
-                    File.ReadAllText(Path.Combine(_environment.ContentRootPath, "config", "clients.json")))
+                    File.ReadAllText(Path.Combine(_environment.ContentRootPath, "Config", "clients.json")))
             );
 
             services.AddSingleton(
                JsonConvert.DeserializeObject<IEnumerable<Scope>>(
-                   File.ReadAllText(Path.Combine(_environment.ContentRootPath, "config", "scopes.json")))
+                   File.ReadAllText(Path.Combine(_environment.ContentRootPath, "Config", "scopes.json")))
             );
 
             #endregion
@@ -95,6 +95,12 @@ namespace ServiceBase.IdentityServer.Public
             services.AddPostgres(_configuration.GetConnectionString("DefaultConnection"));
 
             #region Add email sender 
+            
+            services.AddTransient<IEmailService, DefaultEmailService>();
+            services.Configure<DefaultEmailServiceOptions>(opt =>
+            {
+                opt.TemplateDirectoryPath = Path.Combine(_environment.ContentRootPath, "EmailTemplates");
+            });
 
             if (String.IsNullOrWhiteSpace(_configuration["SendGrid"]))
             {

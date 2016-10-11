@@ -22,9 +22,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         private readonly ILogger<RegisterController> _logger;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IUserAccountStore _userAccountStore;
-        private readonly IEmailSender _emailSender;
-        private readonly ICrypto _crypto; 
-        private readonly IEmailFormatter _emailFormatter;
+        private readonly ICrypto _crypto;
+        private readonly IEmailService _emailService;
         private readonly IEventService _eventService; 
 
         public RegisterController(
@@ -32,18 +31,16 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             ILogger<RegisterController> logger,
             IIdentityServerInteractionService interaction,
             IUserAccountStore userAccountStore,
-            IEmailSender emailSender,
             ICrypto crypto,
-            IEmailFormatter emailFormatter,
+            IEmailService emailService,
             IEventService eventService)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
             _interaction = interaction;
             _userAccountStore = userAccountStore;
-            _emailSender = emailSender;
+            _emailService = emailService;
             _crypto = crypto;
-            _emailFormatter = emailFormatter;
             _eventService = eventService; 
         }
 
@@ -111,13 +108,10 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                         model.ReturnUrl,
                         now); 
 
-                    var dictionary = new Dictionary<string, object>
+                    await _emailService.SendEmailAsync("AccountCreatedEvent", userAccount.Email, new
                     {
-                        { "Email", userAccount.Email },
-                        { "Token", userAccount.VerificationKey },
-                    };
-                    var mailMessage = await _emailFormatter.FormatAsync("AccountCreatedEvent", dictionary);
-                    await _emailSender.SendEmailAsync(mailMessage);
+                        Token = userAccount.VerificationKey 
+                    }); 
 
                     #endregion 
                     

@@ -21,26 +21,23 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         private readonly ILogger<ExternalController> _logger;
         private readonly IUserAccountStore _userAccountStore;
         private readonly IIdentityServerInteractionService _interaction;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailService _emailService;
         private readonly ICrypto _crypto;
-        private readonly IEmailFormatter _emailFormatter;
 
         public RecoverController(
             IOptions<ApplicationOptions> applicationOptions,
             ILogger<ExternalController> logger,
             IUserAccountStore userAccountStore,
             IIdentityServerInteractionService interaction,
-            IEmailSender emailSender,
-            ICrypto crypto,
-            IEmailFormatter emailFormatter)
+            IEmailService emailService,
+            ICrypto crypto)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
             _userAccountStore = userAccountStore;
             _interaction = interaction;
-            _emailSender = emailSender;
+            _emailService = emailService;
             _crypto = crypto;
-            _emailFormatter = emailFormatter;
         }
 
         [HttpGet("recover", Name = "Recover")]
@@ -81,14 +78,12 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                     // account.VerificationStorage = WebUtility.HtmlDecode(model.ReturnUrl);
                     userAccount.VerificationStorage = model.ReturnUrl;
 
-                    var dictionary = new Dictionary<string, object>
-                    {
-                        { "Email", userAccount.Email },
-                        { "Token", userAccount.VerificationKey },
-                    };
-                    var mailMessage = await _emailFormatter.FormatAsync("AccountRecoverEvent", dictionary);
-                    await _emailSender.SendEmailAsync(mailMessage);
 
+                    await _emailService.SendEmailAsync("AccountRecoverEvent", userAccount.Email, new
+                    {
+                        Token = userAccount.VerificationKey
+                    }); 
+                    
                     // Redirect to success page by preserving the email provider name 
                     return Redirect(Url.Action("Success", "Recover", new
                     {
