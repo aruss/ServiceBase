@@ -15,8 +15,10 @@ module.exports = function (server, config) {
             // https://leastprivilege.com/2015/11/25/reference-tokens-and-introspection/  
             return callback(null, true);
         },
-        verifyOptions: { algorithms: ['RS256'] }
+        verifyOptions: {
+            algorithms: ['RS256']
+        }
     });
 
     server.auth.default('jwt');
-}; 
+};

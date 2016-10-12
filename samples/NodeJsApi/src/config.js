@@ -8,4 +8,4 @@ config.environment = argv.env || process.env.NODE_ENV || 'development';
 config.isDevelopment = config.environment === 'development';
 config.version = require('../package').version;
 
-module.exports = config; 
+module.exports = config;

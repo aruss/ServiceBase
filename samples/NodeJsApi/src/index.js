@@ -11,11 +11,12 @@ const server = new Hapi.Server({
 
 server.connection({
     port: config.connection.port,
-    routes: { cors: true }
+    routes: {
+        cors: true
+    }
 });
 
-const plugins = [
-    {
+const plugins = [{
         register: require('./elastic'),
         options: config.elastic
     },
@@ -25,7 +26,7 @@ const plugins = [
 
 server.register(plugins, (err) => {
 
-    require('./auth')(server, config); 
+    require('./auth')(server, config);
 
     server.start((err) => {
 
@@ -35,4 +36,4 @@ server.register(plugins, (err) => {
 
         console.log(`search server running at: ${server.info.uri}`);
     });
-}); 
+});

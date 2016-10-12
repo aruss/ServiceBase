@@ -19,38 +19,38 @@ exports.register = function (server, options, next) {
         },
         handler: (request, reply) => {
 
-            console.log('search called'); 
-            
-            const client = server.plugins.elastic.client; 
+            const client = server.plugins.elastic.client;
 
             const term = request.query.q;
             const take = request.query.t; // take/size
             const skip = request.query.s; // skip/from
 
             var query = {
-                "and": [
-                    {
-                        "terms": { "title": [term] }
+                "and": [{
+                    "terms": {
+                        "title": [term]
                     }
-                ]
+                }]
             };
 
             client.search({
-                index: 'compcard_cards',
-                type: 'card',
+                index: 'products',
+                type: 'product',
                 body: {
                     from: skip,
                     size: take,
                     "query": query,
                     "aggregations": {
-                        "all_cards": {
+                        "all_products": {
                             "global": {},
                             "aggregations": {
                                 "countries": {
                                     "filter": query,
                                     "aggregations": {
                                         "filtered_countries": {
-                                            "terms": { "field": "country" }
+                                            "terms": {
+                                                "field": "country"
+                                            }
                                         }
                                     }
                                 },
@@ -58,7 +58,9 @@ exports.register = function (server, options, next) {
                                     "filter": query,
                                     "aggregations": {
                                         "filtered_categories": {
-                                            "terms": { "field": "category" }
+                                            "terms": {
+                                                "field": "category"
+                                            }
                                         }
                                     }
                                 }
