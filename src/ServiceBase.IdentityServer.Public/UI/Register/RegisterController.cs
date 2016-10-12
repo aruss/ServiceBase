@@ -7,14 +7,12 @@ using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Models;
 using ServiceBase.IdentityServer.Services;
+using ServiceBase.Notification.Email;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ServiceBase.IdentityServer.Events;
-using ServiceBase.Notification.Email;
 
-namespace ServiceBase.IdentityServer.Public.UI.Login
+namespace ServiceBase.IdentityServer.Public.UI.Register
 {
     public class RegisterController : Controller
     {
@@ -24,7 +22,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         private readonly IUserAccountStore _userAccountStore;
         private readonly ICrypto _crypto;
         private readonly IEmailService _emailService;
-        private readonly IEventService _eventService; 
+        private readonly IEventService _eventService;
 
         public RegisterController(
             IOptions<ApplicationOptions> applicationOptions,
@@ -41,7 +39,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             _userAccountStore = userAccountStore;
             _emailService = emailService;
             _crypto = crypto;
-            _eventService = eventService; 
+            _eventService = eventService;
         }
 
         [HttpGet("register", Name = "Register")]
@@ -62,17 +60,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             return View(vm);
         }
 
-        static readonly string[] UglyBase64 = { "+", "/", "=" };
-        protected virtual string StripUglyBase64(string s)
-        {
-            if (s == null) return s;
-            foreach (var ugly in UglyBase64)
-            {
-                s = s.Replace(ugly, String.Empty);
-            }
-            return s;
-        }
-
         [HttpPost("register")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(RegisterInputModel model)
@@ -87,7 +74,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                 // If user dont exists create a new one 
                 if (userAccount == null)
                 {
-                    var now = DateTime.UtcNow; 
+                    var now = DateTime.UtcNow;
 
                     // Create new user instance 
                     userAccount = new UserAccount
@@ -99,22 +86,22 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                         IsEmailVerified = false,
                         IsLoginAllowed = _applicationOptions.LoginAfterAccountCreation
                     };
-                    
+
                     #region Send email verification message 
 
                     userAccount.SetVerification(
-                        StripUglyBase64(_crypto.Hash(_crypto.GenerateSalt())),
+                        _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
                         VerificationKeyPurpose.ConfirmAccount,
                         model.ReturnUrl,
-                        now); 
+                        now);
 
                     await _emailService.SendEmailAsync("AccountCreatedEvent", userAccount.Email, new
                     {
-                        Token = userAccount.VerificationKey 
-                    }); 
+                        Token = userAccount.VerificationKey
+                    });
 
-                    #endregion 
-                    
+                    #endregion
+
                     // Save user to data store 
                     userAccount = await _userAccountStore.WriteAsync(userAccount);
 
@@ -179,7 +166,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
 
             return View(new RegisterViewModel(model));
         }
-        
+
         [HttpGet("register/success", Name = "RegisterSuccess")]
         public async Task<IActionResult> Success(string returnUrl, string provider)
         {
@@ -203,16 +190,16 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             {
                 // ERROR
             }
-            
+
             // TODO: check if user exists
             // TODO: check if token expired 
-            
+
             var returnUrl = userAccount.VerificationStorage;
 
-            userAccount.IsLoginAllowed = true; 
+            userAccount.IsLoginAllowed = true;
             userAccount.IsEmailVerified = true;
             userAccount.EmailVerifiedAt = DateTime.UtcNow;
-            userAccount.ClearVerification(); 
+            userAccount.ClearVerification();
 
             // Update user account 
             userAccount = await _userAccountStore.UpdateAsync(userAccount);
@@ -246,7 +233,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             {
                 // ERROR
             }
-            
+
             if (userAccount.LastLoginAt != null)
             {
                 // ERROR

@@ -95,8 +95,9 @@ namespace ServiceBase.IdentityServer.Public
             services.AddPostgres(_configuration.GetConnectionString("DefaultConnection"));
 
             #region Add email sender 
-            
-            services.AddTransient<IEmailService, DefaultEmailService>();
+
+            services.AddTransient<IEmailService, DebugEmailService>();
+            /*services.AddTransient<IEmailService, DefaultEmailService>();
             services.Configure<DefaultEmailServiceOptions>(opt =>
             {
                 opt.TemplateDirectoryPath = Path.Combine(_environment.ContentRootPath, "EmailTemplates");
@@ -106,7 +107,7 @@ namespace ServiceBase.IdentityServer.Public
             {
                 services.Configure<SendGridOptions>(_configuration.GetSection("SendGrid"));
                 services.AddTransient<IEmailSender, SendGridEmailSender>();
-            }
+            }*/
             // else if o360
             // else if MailGun
             // else if SMTP
