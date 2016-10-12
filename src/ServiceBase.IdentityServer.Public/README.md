@@ -1,9 +1,5 @@
-﻿Secure Token Service with features like registration, password reset and external social media plattform logins. 
+#IdentityBase public UI#
 
-The whole thing is based on Thinktectures IdentityServer4 samples
+IdentityServer as out-of-the-box solution. 
 
-
-:no_entry_sign::rocket::microscope:
-
-
-%APPDATA%\microsoft\UserSecrets\
+The whole thing is using [IdentityServer 4](https://github.com/IdentityServer/IdentityServer4) winwo [MembershipReboot](https://github.com/brockallen/BrockAllen.MembershipReboot) project.
