@@ -16,7 +16,9 @@
     "Microsoft.Extensions.Configuration.Json": "1.0.0",
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
     "Microsoft.Extensions.Logging.Console": "1.0.0",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0"
+    "Microsoft.Extensions.Logging.Debug": "1.0.0",
+    "ServiceBase": "1.0.0-*",
+    "ServiceBase.SendGrid": "1.0.0-*"
   },
   "frameworks": {
     "netcoreapp1.0": {

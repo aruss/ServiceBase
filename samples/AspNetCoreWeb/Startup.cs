@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ServiceBase.Notification.Email;
+using ServiceBase.SendGrid;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace AspNetCoreWeb
 {
     public class Startup
     {
-        private readonly IHostingEnvironment environment;
-        private readonly IConfigurationRoot configuration;
-        
+        private readonly IHostingEnvironment _environment;
+        private readonly IConfigurationRoot _configuration;
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -27,8 +29,8 @@ namespace AspNetCoreWeb
 
             builder.AddEnvironmentVariables();
 
-            this.configuration = builder.Build();
-            this.environment = env;
+            _configuration = builder.Build();
+            _environment = env;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -39,6 +41,19 @@ namespace AspNetCoreWeb
                 {
                     razor.ViewLocationExpanders.Add(new UI.CustomViewLocationExpander());
                 });
+
+            services.AddTransient<IEmailService, DefaultEmailService>();
+            services.Configure<DefaultEmailServiceOptions>(opt =>
+            {
+                opt.TemplateDirectoryPath = "./foo/bar";
+            });
+
+            services.Configure<SendGridOptions>(opt =>
+            {
+                opt.Key = "foo";
+                opt.User = "bar";
+            });
+            services.AddTransient<IEmailSender, SendGridEmailSender>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
