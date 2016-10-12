@@ -170,9 +170,13 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         [HttpGet("register/success", Name = "RegisterSuccess")]
         public async Task<IActionResult> Success(string returnUrl, string provider)
         {
-            // select propper mail provider and render it as button 
+            // TODO: Select propper mail provider and render it as button 
 
-            return View();
+            return View(new SuccessViewModel
+            {
+                ReturnUrl = returnUrl,
+                Provider = provider
+            });
         }
 
         [HttpGet("register/confirm/{key}", Name = "RegisterConfirm")]
