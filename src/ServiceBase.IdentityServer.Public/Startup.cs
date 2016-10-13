@@ -48,7 +48,7 @@ namespace ServiceBase.IdentityServer.Public
             _configuration = builder.Build();
             _environment = env;
         }
-
+        
         public void ConfigureServices(IServiceCollection services)
         {
             #region Add application configuration 

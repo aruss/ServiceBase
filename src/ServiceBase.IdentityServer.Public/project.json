@@ -50,6 +50,8 @@
   "publishOptions": {
     "include": [
       "wwwroot",
+      "UI/**/Views",
+      "Config/*.json",
       "web.config"
     ]
   },

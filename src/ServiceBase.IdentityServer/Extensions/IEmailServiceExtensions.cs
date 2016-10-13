@@ -8,7 +8,7 @@ namespace ServiceBase.IdentityServer.Extensions
     {
         public async static Task SendAccountCreatedEmailAsync(this IEmailService emailService, UserAccount userAccount)
         {
-            await emailService.SendEmailAsync("AccountCreatedEvent", userAccount.Email, new
+            await emailService.SendEmailAsync("AccountCreated", userAccount.Email, new
             {
                 Token = userAccount.VerificationKey
             });

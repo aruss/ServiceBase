@@ -95,9 +95,10 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                         model.ReturnUrl,
                         now);
 
-                    await _emailService.SendEmailAsync("AccountCreatedEvent", userAccount.Email, new
+                    await _emailService.SendEmailAsync("AccountCreated", userAccount.Email, new
                     {
-                        Token = userAccount.VerificationKey
+                        ConfirmUrl = Url.Action("RegisterConfirm", new { Key = userAccount.VerificationKey }),
+                        CancelUrl = Url.Action("RegistersCancel", new { Key = userAccount.VerificationKey })
                     });
 
                     #endregion
@@ -106,7 +107,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                     userAccount = await _userAccountStore.WriteAsync(userAccount);
 
                     // Emit event 
-                    // _eventService.RaiseSuccessfulUserRegisteredEventAsync()
+                    // _eventService.RaiseAccountCreatedEventAsync()
 
                     if (_applicationOptions.LoginAfterAccountCreation)
                     {
