@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ServiceBase.Extensions;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
