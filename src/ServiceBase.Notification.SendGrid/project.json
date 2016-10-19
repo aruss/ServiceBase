@@ -1,13 +1,12 @@
 {
-  "title": "ServiceBase.Twillio",
+  "title": "ServiceBase.Notification.SendGrid",
   "version": "1.0.0-*",
   "buildOptions": {
     "debugType": "portable",
     "emitEntryPoint": false
   },
   "dependencies": {
-    "ServiceBase": "1.0.0-*",
-    "Microsoft.Extensions.Options.ConfigurationExtensions":  "1.0.0"
+    "ServiceBase": "1.0.0-*"
   },
   "frameworks": {
     "netcoreapp1.0": {

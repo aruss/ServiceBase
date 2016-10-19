@@ -18,7 +18,7 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "ServiceBase": "1.0.0-*",
-    "ServiceBase.SendGrid": "1.0.0-*"
+    "ServiceBase.Notification.SendGrid": "1.0.0-*"
   },
   "frameworks": {
     "netcoreapp1.0": {

@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.SendGrid
+﻿namespace ServiceBase.Notification.SendGrid
 {
     public class SendGridOptions
     {

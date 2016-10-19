@@ -22,9 +22,9 @@
     "ServiceBase": "1.0.0-*",
     "ServiceBase.IdentityServer": "1.0.0-*",
     "ServiceBase.IdentityServer.Postgres": "1.0.0-*",
-    "ServiceBase.SendGrid": "1.0.0-*",
-    "ServiceBase.Smtp": "1.0.0-*",
-    "ServiceBase.Twilio": "1.0.0-*"
+    "ServiceBase.Notification.SendGrid": "1.0.0-*",
+    "ServiceBase.Notification.Smtp": "1.0.0-*",
+    "ServiceBase.Notification.Twilio": "1.0.0-*"
   },
   "frameworks": {
     "netcoreapp1.0": {

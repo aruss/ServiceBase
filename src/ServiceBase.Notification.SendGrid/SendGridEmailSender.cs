@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using ServiceBase.Notification.Email;
 using System.Threading.Tasks;
 
-namespace ServiceBase.SendGrid
+namespace ServiceBase.Notification.SendGrid
 {
     public class SendGridEmailSender : IEmailSender
     {

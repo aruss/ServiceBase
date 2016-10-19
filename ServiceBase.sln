@@ -15,11 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.Twilio", "src\ServiceBase.Twilio\ServiceBase.Twilio.xproj", "{690E4AE1-BBCD-4282-8E5C-82E57098AE45}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.Notification.Twilio", "src\ServiceBase.Notification.Twilio\ServiceBase.Notification.Twilio.xproj", "{690E4AE1-BBCD-4282-8E5C-82E57098AE45}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase", "src\ServiceBase\ServiceBase.xproj", "{E91353C0-D4CE-43C1-B917-39F98ECA3CD9}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.Smtp", "src\ServiceBase.Smtp\ServiceBase.Smtp.xproj", "{A7E92ED6-6F3B-4F1A-A13A-0A605BA352A9}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.Notification.Smtp", "src\ServiceBase.Notification.Smtp\ServiceBase.Notification.Smtp.xproj", "{A7E92ED6-6F3B-4F1A-A13A-0A605BA352A9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{D4686FA7-9CA0-49D3-BF46-1FE7D68DB0D9}"
 EndProject
@@ -41,7 +41,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.IdentityServer.
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.IdentityServer", "src\ServiceBase.IdentityServer\ServiceBase.IdentityServer.xproj", "{784B3C88-30FA-415D-B99E-584063064508}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.SendGrid", "src\ServiceBase.SendGrid\ServiceBase.SendGrid.xproj", "{4B6C74E2-CC1B-48B7-8C2E-CD59F8920A9C}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.Notification.SendGrid", "src\ServiceBase.Notification.SendGrid\ServiceBase.Notification.SendGrid.xproj", "{4B6C74E2-CC1B-48B7-8C2E-CD59F8920A9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
