@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using ServiceBase.Notification.Email;
 using System.Threading.Tasks;
 
-namespace ServiceBase.Smtp
+namespace ServiceBase.Notification.Smtp
 {
     public class SmtpEmailSender : IEmailSender
     {

@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.Twilio
+﻿namespace ServiceBase.Notification.Twilio
 {
     public class TwillioOptions
     {

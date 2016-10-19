@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using ServiceBase.Notification.SMS;
 using System.Threading.Tasks;
 
-namespace ServiceBase.Twilio
+namespace ServiceBase.Notification.Twilio
 {
     public class TwillioSmsSender : ISmsSender
     {

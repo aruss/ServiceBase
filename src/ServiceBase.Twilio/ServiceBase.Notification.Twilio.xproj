@@ -6,8 +6,8 @@
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>4b6c74e2-cc1b-48b7-8c2e-cd59f8920a9c</ProjectGuid>
-    <RootNamespace>ServiceBase.SendGrid</RootNamespace>
+    <ProjectGuid>690e4ae1-bbcd-4282-8e5c-82e57098ae45</ProjectGuid>
+    <RootNamespace>ServiceBase.Notification.Twilio</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>

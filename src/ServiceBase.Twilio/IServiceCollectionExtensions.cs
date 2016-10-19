@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ServiceBase.Notification.SMS;
 
-namespace ServiceBase.Twilio
+namespace ServiceBase.Notification.Twilio
 {
     public static class IServiceCollectionExtensions
     {
