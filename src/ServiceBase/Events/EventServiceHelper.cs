@@ -9,10 +9,10 @@ namespace ServiceBase.Events
 {
     public class EventServiceHelper
     {
-        private readonly EventsOptions _options;
+        private readonly EventOptions _options;
         private readonly IHttpContextAccessor _context;
 
-        public EventServiceHelper(EventsOptions options, IHttpContextAccessor context)
+        public EventServiceHelper(EventOptions options, IHttpContextAccessor context)
         {
             _options = options;
             _context = context;
