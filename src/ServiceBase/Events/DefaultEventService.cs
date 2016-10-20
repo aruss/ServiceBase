@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 
@@ -19,10 +21,13 @@ namespace ServiceBase.Events
         /// </summary>
         private readonly ILogger _logger;
 
-        public DefaultEventService(ILogger<DefaultEventService> logger, EventServiceHelper helper)
+        private readonly EventOptions _options;
+
+        public DefaultEventService(ILogger<DefaultEventService> logger, IOptions<EventOptions> options, IHttpContextAccessor context)
         {
             _logger = logger;
-            _helper = helper;
+            _options = options.Value;
+            _helper = new EventServiceHelper(_options, context);
         }
 
         /// <summary>
