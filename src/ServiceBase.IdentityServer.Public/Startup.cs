@@ -16,7 +16,6 @@ using ServiceBase.IdentityServer.Postgres;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
 using ServiceBase.Notification.SMS;
-using ServiceBase.Notification.SendGrid;
 using ServiceBase.Notification.Twilio;
 using System;
 using System.Collections.Generic;
