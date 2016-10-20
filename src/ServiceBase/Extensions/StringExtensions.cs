@@ -17,7 +17,7 @@ namespace ServiceBase.Extensions
         private static readonly string[] Booleans = new string[] { "true", "yes", "on", "1" };
 
         [DebuggerStepThrough]
-        public static bool AsBool(this string value, bool defaultValue = false)
+        public static bool ToBoolean(this string value, bool defaultValue = false)
         {
             if (String.IsNullOrWhiteSpace(value))
             {
