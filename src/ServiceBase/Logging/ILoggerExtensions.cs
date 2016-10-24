@@ -8,5 +8,10 @@ namespace Microsoft.Extensions.Logging
         {
             logger.LogInformation(LogSerializer.Serialize(obj));
         }
+
+        public static void LogError(this ILogger logger, object obj)
+        {
+            logger.LogError(LogSerializer.Serialize(obj));
+        }
     }
 }

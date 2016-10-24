@@ -12,6 +12,8 @@ namespace ServiceBase
      *      // Client will try 3 times to make a POST request until a success code is returned
      *      await client.PostAsync("http://domain.com/foo", content);
      * }
+     * 
+     * FYI: http://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
      */
 
     public class RetryHttpClientHandler : DelegatingHandler

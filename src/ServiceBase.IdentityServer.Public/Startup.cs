@@ -58,7 +58,7 @@ namespace ServiceBase.IdentityServer.Public
 
             #endregion
 
-            #region Add identity server 
+            #region Add IdentityServer 
 
             var cert = new X509Certificate2(Path.Combine(
                 _environment.ContentRootPath, "idsvr3test.pfx"), "idsrv3test");
@@ -91,9 +91,16 @@ namespace ServiceBase.IdentityServer.Public
 
             #endregion
 
-            services.AddPostgres(_configuration.GetConnectionString("DefaultConnection"));
+            #region Add Data Layer 
 
-            #region Add email sender 
+            services.AddPostgresStores(config =>
+            {
+                config.ConnectionString = _configuration.GetConnectionString("DefaultConnection");
+            });
+
+            #endregion
+
+            #region Add Email Sender 
 
             services.AddTransient<IEmailService, DebugEmailService>();
             /*services.AddTransient<IEmailService, DefaultEmailService>();
@@ -116,7 +123,7 @@ namespace ServiceBase.IdentityServer.Public
 
             #endregion
 
-            #region Add sms sender 
+            #region Add SMS Sender 
 
             if (String.IsNullOrWhiteSpace(_configuration["Twillio"]))
             {

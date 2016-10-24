@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using ServiceBase.IdentityServer.Models;
@@ -15,13 +16,13 @@ namespace ServiceBase.IdentityServer.Postgres
 
     public class UserAccountStore : IUserAccountStore
     {
-        private PostgresOptions options;
-        private ILogger<UserAccountStore> logger;
+        private PostgresOptions _options;
+        private ILogger<UserAccountStore> _logger;
 
         public UserAccountStore(PostgresOptions options, ILogger<UserAccountStore> logger)
         {
-            this.options = options;
-            this.logger = logger;
+            _options = options;
+            _logger = logger;
         }
 
         private UserAccount ReadUserAccount(GridReader reader)
@@ -39,7 +40,7 @@ namespace ServiceBase.IdentityServer.Postgres
 
         public async Task<UserAccount> LoadByIdAsync(Guid userId)
         {
-            using (var con = new NpgsqlConnection(options.ConnectionString))
+            using (var con = new NpgsqlConnection(_options.ConnectionString))
             {
                 con.Open();
 
@@ -61,7 +62,7 @@ namespace ServiceBase.IdentityServer.Postgres
         {
             if (String.IsNullOrWhiteSpace(email)) throw new ArgumentNullException("email");
 
-            using (var con = new NpgsqlConnection(options.ConnectionString))
+            using (var con = new NpgsqlConnection(_options.ConnectionString))
             {
                 con.Open();
 
@@ -83,7 +84,7 @@ namespace ServiceBase.IdentityServer.Postgres
             if (String.IsNullOrWhiteSpace(provider)) throw new ArgumentNullException("provider");
             if (String.IsNullOrWhiteSpace(subject)) throw new ArgumentNullException("subject");
 
-            using (var con = new NpgsqlConnection(options.ConnectionString))
+            using (var con = new NpgsqlConnection(_options.ConnectionString))
             {
                 con.Open();
 
@@ -105,7 +106,7 @@ namespace ServiceBase.IdentityServer.Postgres
         {
             if (String.IsNullOrWhiteSpace(email)) throw new ArgumentNullException(nameof(email));
 
-            using (var con = new NpgsqlConnection(options.ConnectionString))
+            using (var con = new NpgsqlConnection(_options.ConnectionString))
             {
                 con.Open();
 
@@ -126,7 +127,7 @@ namespace ServiceBase.IdentityServer.Postgres
         {
             if (userAccount == null) throw new ArgumentNullException(nameof(userAccount));
 
-            using (var con = new NpgsqlConnection(options.ConnectionString))
+            using (var con = new NpgsqlConnection(_options.ConnectionString))
             {
                 con.Open();
 
@@ -136,7 +137,7 @@ namespace ServiceBase.IdentityServer.Postgres
                     userAccount.Id = userAccount.Id == Guid.Empty ? Guid.NewGuid() : userAccount.Id;
                     userAccount.CreatedAt = now;
                     userAccount.UpdatedAt = now;
-                    
+
                     con.Execute(
                         "INSERT INTO useraccounts(id, email, isemailverified, emailverifiedat, isloginallowed, lastloginat, lastfailedloginat, failedlogincount, passwordhash, passwordchangedat, verificationkey, verificationpurpose, verificationkeysentat, verificationstorage, createdat, updatedat) VALUES " +
                         "(@Id, @Email, @IsEmailVerified, @EmailVerifiedAt, @IsLoginAllowed, @LastLoginAt, @LastFailedLoginAt, @FailedLoginCount, @PasswordHash, @PasswordChangedAt, @VerificationKey, @VerificationPurpose, @VerificationKeySentAt, @VerificationStorage, @CreatedAt, @UpdatedAt);", userAccount);
@@ -179,7 +180,7 @@ namespace ServiceBase.IdentityServer.Postgres
             if (userAccount == null) throw new ArgumentNullException(nameof(userAccount));
 
             // throw new NotImplementedException(); 
-            using (var con = new NpgsqlConnection(options.ConnectionString))
+            using (var con = new NpgsqlConnection(_options.ConnectionString))
             {
                 con.Open();
 
@@ -206,7 +207,7 @@ namespace ServiceBase.IdentityServer.Postgres
         {
             if (String.IsNullOrWhiteSpace(key)) throw new ArgumentNullException(nameof(key));
 
-            using (var con = new NpgsqlConnection(options.ConnectionString))
+            using (var con = new NpgsqlConnection(_options.ConnectionString))
             {
                 con.Open();
 
@@ -232,14 +233,14 @@ namespace ServiceBase.IdentityServer.Postgres
         {
             if (externalAccount == null) throw new ArgumentNullException(nameof(externalAccount));
 
-            using (var con = new NpgsqlConnection(options.ConnectionString))
+            using (var con = new NpgsqlConnection(_options.ConnectionString))
             {
                 con.Open();
 
                 using (var scope = con.BeginTransaction())
                 {
                     var now = DateTime.UtcNow;
-                    
+
                     externalAccount.UserId = userAccoutId;
                     externalAccount.CreatedAt = now;
 
@@ -251,7 +252,7 @@ namespace ServiceBase.IdentityServer.Postgres
                 }
             }
 
-            return externalAccount; 
+            return externalAccount;
         }
 
         public Task DeleteExternalAccountAsync(ExternalAccount externalAccount)
