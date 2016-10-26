@@ -8,7 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Collections.Specialized;
-using Microsoft.AspNetCore.Http; 
+using Microsoft.AspNetCore.Http;
+using System.Security.Cryptography;
 
 namespace ServiceBase.Extensions
 {
@@ -220,8 +221,9 @@ namespace ServiceBase.Extensions
             return new NameValueCollection();
         }
 
+        [DebuggerStepThrough]
         public static string GetOrigin(this string url)
-        {
+        { 
             if (url != null && (url.StartsWith("http://") || url.StartsWith("https://")))
             {
                 var idx = url.IndexOf("//", StringComparison.Ordinal);
@@ -237,6 +239,30 @@ namespace ServiceBase.Extensions
             }
 
             return null;
+        }
+
+        [DebuggerStepThrough]
+        public static string ToMd5(this string input)
+        {
+            using (var md5Hash = MD5.Create())
+            {
+                // Convert the input string to a byte array and compute the hash.
+                byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+                // Create a new Stringbuilder to collect the bytes
+                // and create a string.
+                var sBuilder = new StringBuilder();
+
+                // Loop through each byte of the hashed data 
+                // and format each one as a hexadecimal string.
+                for (int i = 0; i < data.Length; i++)
+                {
+                    sBuilder.Append(data[i].ToString("x2"));
+                }
+
+                // Return the hexadecimal string.
+                return sBuilder.ToString();
+            }
         }
     }
 }
