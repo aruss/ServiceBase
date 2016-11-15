@@ -2,9 +2,7 @@
   "userSecretsId": "ServiceBase.IdentityServer.Public-c23d27a4-eb88-4b18-9b77-2a93f3b15119",
   "title": "ServiceBase.IdentityServer.Public",
   "version": "1.0.0-*",
-  "tools": {
-    "Microsoft.AspNetCore.Server.IISIntegration.Tools": "1.0.0-preview2-final"
-  },
+
   "dependencies": {
     "IdentityServer4": "1.0.0-rc1-update2",
     "Microsoft.AspNetCore.Authentication.Facebook": "1.0.0",
@@ -27,6 +25,12 @@
     "ServiceBase.Notification.Smtp": "1.0.0-*",
     "ServiceBase.Notification.Twilio": "1.0.0-*"
   },
+
+  "tools": {
+    "Microsoft.AspNetCore.Server.IISIntegration.Tools": "1.0.0-preview2-final",
+    "Microsoft.DotNet.Watcher.Tools": "1.0.0-preview2-final"
+  },
+
   "frameworks": {
     "netcoreapp1.0": {
       "dependencies": {

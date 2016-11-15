@@ -26,11 +26,14 @@ namespace ServiceBase.IdentityServer.Public
 {
     public class Startup
     {
+        private readonly ILogger _logger;
         private readonly IHostingEnvironment _environment;
         private readonly IConfigurationRoot _configuration;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            _logger = loggerFactory.CreateLogger<Startup>();
+
             var builder = new ConfigurationBuilder()
                .SetBasePath(env.ContentRootPath)
                .AddJsonFile(Path.Combine("Config", "config.json"), optional: false, reloadOnChange: true)
@@ -47,7 +50,7 @@ namespace ServiceBase.IdentityServer.Public
             _configuration = builder.Build();
             _environment = env;
         }
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
             #region Add application configuration 
@@ -172,11 +175,13 @@ namespace ServiceBase.IdentityServer.Public
                 AutomaticAuthenticate = false,
                 AutomaticChallenge = false
             });
-
+            
             #region Use third party authentication 
 
             if (!String.IsNullOrWhiteSpace(_configuration["Authentication:Google:ClientId"]))
             {
+                _logger.LogInformation("Registering Google authentication scheme");
+
                 app.UseGoogleAuthentication(new GoogleOptions
                 {
                     AuthenticationScheme = "Google",
@@ -186,8 +191,11 @@ namespace ServiceBase.IdentityServer.Public
                 });
             }
 
+
             if (!String.IsNullOrWhiteSpace(_configuration["Authentication:Facebook:AppId"]))
             {
+                _logger.LogInformation("Registering Facebook authentication scheme");
+
                 app.UseFacebookAuthentication(new FacebookOptions()
                 {
                     AuthenticationScheme = "Facebook",
@@ -197,8 +205,9 @@ namespace ServiceBase.IdentityServer.Public
                 });
             }
 
+
             #endregion
-            
+
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
         }
