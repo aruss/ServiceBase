@@ -1,19 +1,22 @@
 ﻿using IdentityServer4;
+using IdentityServer4.Configuration;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Services.InMemory;
 using IdentityServer4.Stores;
 using IdentityServer4.Stores.InMemory;
+using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using ServiceBase.Config;
 using ServiceBase.IdentityServer.Config;
 using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.EntityFramework;
 using ServiceBase.IdentityServer.Postgres;
-using ServiceBase.IdentityServer.EntityFramework; 
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
 using ServiceBase.Notification.SMS;
@@ -31,25 +34,13 @@ namespace ServiceBase.IdentityServer.Public
         private readonly IHostingEnvironment _environment;
         private readonly IConfigurationRoot _configuration;
 
-        public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public Startup(
+            IHostingEnvironment environment,
+            ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<Startup>();
-
-            var builder = new ConfigurationBuilder()
-               .SetBasePath(env.ContentRootPath)
-               .AddJsonFile(Path.Combine("Config", "config.json"), optional: false, reloadOnChange: true)
-               .AddJsonFile(Path.Combine("Config", $"config.{env.EnvironmentName}.json"), optional: true, reloadOnChange: true);
-
-            if (env.IsDevelopment())
-            {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
-            }
-
-            builder.AddEnvironmentVariables();
-
-            _configuration = builder.Build();
-            _environment = env;
+            _configuration = ConfigurationSetup.Configure(environment);
+            _environment = environment;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -67,42 +58,51 @@ namespace ServiceBase.IdentityServer.Public
             var cert = new X509Certificate2(Path.Combine(
                 _environment.ContentRootPath, "idsvr3test.pfx"), "idsrv3test");
 
+            var clients = JsonConvert.DeserializeObject<IEnumerable<Client>>(
+                    File.ReadAllText(Path.Combine(_environment.ContentRootPath, "Config", "clients.json")));
+
+            var scopes = JsonConvert.DeserializeObject<IEnumerable<Scope>>(
+                   File.ReadAllText(Path.Combine(_environment.ContentRootPath, "Config", "scopes.json"))); 
+
             var builder = services.AddIdentityServer((options) =>
             {
-                //options.RequireSsl = false;                
+                //options.RequireSsl = false;     
+                options.EventsOptions = new EventsOptions
+                {
+                    RaiseErrorEvents = true,
+                    RaiseFailureEvents = true,
+                    RaiseInformationEvents = true,
+                    RaiseSuccessEvents = true
+                };
                 options.UserInteractionOptions.LoginUrl = "/login";
                 options.UserInteractionOptions.LogoutUrl = "/logout";
                 options.UserInteractionOptions.ConsentUrl = "/consent";
                 options.UserInteractionOptions.ErrorUrl = "/error";
+                options.AuthenticationOptions.FederatedSignOutPaths.Add("/signout-oidc");
             })
-            .AddInMemoryStores() // Development version
-            .SetSigningCredential(cert);
+            .AddInMemoryClients(clients)
+                .AddInMemoryScopes(scopes)
+                .AddTemporarySigningCredential()
+                //AddExtensionGrantValidator<Extensions.ExtensionGrantValidator>()
+                .AddSecretParser<ClientAssertionSecretParser>()
+                .AddSecretValidator<PrivateKeyJwtSecretValidator>()
+                .AddSigningCredential(cert);
 
             services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<IClientStore, InMemoryClientStore>();
             services.AddTransient<ICorsPolicyService, InMemoryCorsPolicyService>();
             services.AddTransient<IScopeStore, InMemoryScopeStore>();
 
-            services.AddSingleton(
-                JsonConvert.DeserializeObject<IEnumerable<Client>>(
-                    File.ReadAllText(Path.Combine(_environment.ContentRootPath, "Config", "clients.json")))
-            );
-
-            services.AddSingleton(
-               JsonConvert.DeserializeObject<IEnumerable<Scope>>(
-                   File.ReadAllText(Path.Combine(_environment.ContentRootPath, "Config", "scopes.json")))
-            );
-
             #endregion
 
             #region Add Data Layer 
-
+            
             if (String.IsNullOrWhiteSpace(_configuration["Postgres"]))
             {
                 services.AddPostgresStores(_configuration.GetSection("Postgres"));
             }
             else if (String.IsNullOrWhiteSpace(_configuration["Mssql"]))
-            { 
+            {
                 services.AddEntityFrameworkStores(_configuration.GetSection("Mssql"));
             }
 

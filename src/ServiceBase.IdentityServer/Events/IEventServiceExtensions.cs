@@ -9,7 +9,7 @@ namespace ServiceBase.IdentityServer.Events
         public static async Task RaiseSuccessfulUserRegisteredEventAsync(this IEventService events,
             string userName, string subjectId)
         {
-            var evt = new Event<LocalLoginDetails>(
+            /*var evt = new Event<LocalLoginDetails>(
                 EventConstants.Categories.Authentication,
                 "Resource Owner Flow Login Success",
                 EventTypes.Success,
@@ -20,7 +20,7 @@ namespace ServiceBase.IdentityServer.Events
                     LoginUserName = userName
                 });
 
-            await events.RaiseAsync(evt);
+            await events.RaiseAsync(evt);*/
         }
     }
 }
