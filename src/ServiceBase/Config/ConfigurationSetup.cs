@@ -6,14 +6,14 @@ namespace ServiceBase.Config
 {
     public static class ConfigurationSetup
     {
-        public static IConfigurationRoot Configure(IHostingEnvironment hostEnv)
+        public static IConfigurationRoot Configure(IHostingEnvironment environment)
         {
             var builder = new ConfigurationBuilder()
-               .SetBasePath(hostEnv.ContentRootPath)
+               .SetBasePath(environment.ContentRootPath)
                .AddJsonFile(Path.Combine("Config", "config.json"), optional: false, reloadOnChange: true)
-               .AddJsonFile(Path.Combine("Config", $"config.{hostEnv.EnvironmentName}.json"), optional: true, reloadOnChange: true);
+               .AddJsonFile(Path.Combine("Config", $"config.{environment.EnvironmentName}.json"), optional: true, reloadOnChange: true);
 
-            if (hostEnv.IsDevelopment())
+            if (environment.IsDevelopment())
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
                 builder.AddUserSecrets();
