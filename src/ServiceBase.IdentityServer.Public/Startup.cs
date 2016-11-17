@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using ServiceBase.IdentityServer.Config;
 using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.Postgres;
+using ServiceBase.IdentityServer.EntityFramework; 
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
 using ServiceBase.Notification.SMS;
@@ -96,10 +97,14 @@ namespace ServiceBase.IdentityServer.Public
 
             #region Add Data Layer 
 
-            services.AddPostgresStores(config =>
+            if (String.IsNullOrWhiteSpace(_configuration["Postgres"]))
             {
-                config.ConnectionString = _configuration.GetConnectionString("DefaultConnection");
-            });
+                services.AddPostgresStores(_configuration.GetSection("Postgres"));
+            }
+            else if (String.IsNullOrWhiteSpace(_configuration["Mssql"]))
+            { 
+                services.AddEntityFrameworkStores(_configuration.GetSection("Mssql"));
+            }
 
             #endregion
 
@@ -146,7 +151,11 @@ namespace ServiceBase.IdentityServer.Public
                 });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            IStoreInitializer storeInitializer)
         {
             /*Func<string, LogLevel, bool> filter = (scope, level) =>
                 scope.StartsWith("IdentityServer") ||
@@ -175,7 +184,7 @@ namespace ServiceBase.IdentityServer.Public
                 AutomaticAuthenticate = false,
                 AutomaticChallenge = false
             });
-            
+
             #region Use third party authentication 
 
             if (!String.IsNullOrWhiteSpace(_configuration["Authentication:Google:ClientId"]))
@@ -210,6 +219,8 @@ namespace ServiceBase.IdentityServer.Public
 
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
+
+            storeInitializer.Initialize();
         }
     }
 }

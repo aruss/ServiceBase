@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using ServiceBase.IdentityServer.Services;
 using System;
 
@@ -8,12 +9,20 @@ namespace ServiceBase.IdentityServer.Postgres
     {
         public static void AddPostgresStores(this IServiceCollection services, Action<PostgresOptions> configure)
         {
-            var options = new PostgresOptions();
+            services.Configure<PostgresOptions>(configure);
+            ConfigureServices(services); 
+        }
 
-            configure(options);
+        public static void AddPostgresStores(this IServiceCollection services, IConfigurationSection section)
+        {
+            services.Configure<PostgresOptions>(section);
+            ConfigureServices(services);
+        }
 
-            services.AddSingleton(options);
+        internal static void ConfigureServices(IServiceCollection services)
+        {
             services.AddTransient<IUserAccountStore, UserAccountStore>();
+            services.AddTransient<IStoreInitializer, StoreInitializer>();
 
             /*services.AddScoped<Npgsql.NpgsqlConnection>((s) =>
             {

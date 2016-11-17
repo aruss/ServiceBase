@@ -1,18 +1,13 @@
 ﻿{
-  "title": "ServiceBase.IdentityServer.Postgres",
+  "title": "ServiceBase.IdentityServer.EntityFramework",
   "version": "1.0.0-*",
   "buildOptions": {
     "debugType": "portable",
-    "emitEntryPoint": false,
-    "resource": [
-      "CreateTables.sql",
-      "ExampleData.sql"
-    ]
+    "emitEntryPoint": false
   },
   "dependencies": {
-    "Npgsql": "3.1.8",
-    "Dapper": "1.50.2",
-    "ServiceBase.IdentityServer": "1.0.0-*"
+    "ServiceBase.IdentityServer": "1.0.0-*",
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.1.0"
   },
   "frameworks": {
     "netcoreapp1.0": {

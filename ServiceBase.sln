@@ -43,6 +43,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.IdentityServer"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.Notification.SendGrid", "src\ServiceBase.Notification.SendGrid\ServiceBase.Notification.SendGrid.xproj", "{4B6C74E2-CC1B-48B7-8C2E-CD59F8920A9C}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBase.IdentityServer.EntityFramework", "src\ServiceBase.IdentityServer.EntityFramework\ServiceBase.IdentityServer.EntityFramework.xproj", "{BD86BD6C-9D60-4E17-BFCC-F85035E0B685}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,10 @@ Global
 		{4B6C74E2-CC1B-48B7-8C2E-CD59F8920A9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B6C74E2-CC1B-48B7-8C2E-CD59F8920A9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B6C74E2-CC1B-48B7-8C2E-CD59F8920A9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD86BD6C-9D60-4E17-BFCC-F85035E0B685}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD86BD6C-9D60-4E17-BFCC-F85035E0B685}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD86BD6C-9D60-4E17-BFCC-F85035E0B685}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD86BD6C-9D60-4E17-BFCC-F85035E0B685}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -114,5 +120,6 @@ Global
 		{CFDC94F0-B320-495A-AB21-22B0011075DE} = {723206AB-DF2F-45BF-9D69-44EAE91688B6}
 		{784B3C88-30FA-415D-B99E-584063064508} = {723206AB-DF2F-45BF-9D69-44EAE91688B6}
 		{4B6C74E2-CC1B-48B7-8C2E-CD59F8920A9C} = {723206AB-DF2F-45BF-9D69-44EAE91688B6}
+		{BD86BD6C-9D60-4E17-BFCC-F85035E0B685} = {723206AB-DF2F-45BF-9D69-44EAE91688B6}
 	EndGlobalSection
 EndGlobal

@@ -1,6 +1,9 @@
 ﻿{
-  "ConnectionStrings": {
-    "DefaultConnection": "User ID=postgres;Password=root;Host=localhost;Port=5432;Database=identitysrv;Pooling=true;"
+  "Postgres": {
+    "ConnectionString": "User ID=postgres;Password=root;Host=localhost;Port=5432;Database=identitysrv;Pooling=true;",
+    "CreateTablesAlways": false,
+    "CreateTablesIfNecessary": true,
+    "SeedExampleData":  true
   },
   "Logging": {
     "IncludeScopes": false,

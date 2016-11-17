@@ -23,7 +23,8 @@
     "ServiceBase.IdentityServer.Postgres": "1.0.0-*",
     "ServiceBase.Notification.SendGrid": "1.0.0-*",
     "ServiceBase.Notification.Smtp": "1.0.0-*",
-    "ServiceBase.Notification.Twilio": "1.0.0-*"
+    "ServiceBase.Notification.Twilio": "1.0.0-*",
+    "ServiceBase.IdentityServer.EntityFramework": "1.0.0-*"
   },
 
   "tools": {
