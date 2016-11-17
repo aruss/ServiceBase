@@ -1,4 +1,5 @@
-﻿using ServiceBase.IdentityServer.Models;
+﻿using Microsoft.Extensions.Options;
+using ServiceBase.IdentityServer.Models;
 using ServiceBase.Xunit;
 using System;
 using System.Linq;
@@ -7,6 +8,8 @@ using Xunit;
 
 namespace ServiceBase.IdentityServer.Postgres.IntegrationTests
 {
+    
+
     [Collection("NpgsqlFixture")]
     public class UserAccountStoreTests : IDisposable
     {
@@ -26,10 +29,10 @@ namespace ServiceBase.IdentityServer.Postgres.IntegrationTests
 
         private UserAccountStore GetUserStore()
         {
-            var options = new PostgresOptions
+            var options = Options.Create(new PostgresOptions
             {
                 ConnectionString = NpgsqlFixture.ConnectionString
-            };
+            }); 
 
             var logger = new NullLogger<UserAccountStore>();
             var userStore = new UserAccountStore(options, logger);
