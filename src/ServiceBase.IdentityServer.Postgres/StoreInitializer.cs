@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using ServiceBase.IdentityServer.Services;
 using System.IO;
@@ -15,9 +16,12 @@ namespace ServiceBase.IdentityServer.Postgres
         private ILogger<StoreInitializer> _logger;
         private IHostingEnvironment _env;
 
-        public StoreInitializer(PostgresOptions options, ILogger<StoreInitializer> logger, IHostingEnvironment env)
+        public StoreInitializer(
+            IOptions<PostgresOptions> options, 
+            ILogger<StoreInitializer> logger, 
+            IHostingEnvironment env)
         {
-            _options = options;
+            _options = options.Value;
             _logger = logger;
             _env = env;
         }

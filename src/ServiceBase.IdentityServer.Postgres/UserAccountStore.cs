@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using ServiceBase.IdentityServer.Models;
 using ServiceBase.IdentityServer.Services;
@@ -19,9 +20,11 @@ namespace ServiceBase.IdentityServer.Postgres
         private PostgresOptions _options;
         private ILogger<UserAccountStore> _logger;
 
-        public UserAccountStore(PostgresOptions options, ILogger<UserAccountStore> logger)
+        public UserAccountStore(
+            IOptions<PostgresOptions> options,
+            ILogger<UserAccountStore> logger)
         {
-            _options = options;
+            _options = options.Value;
             _logger = logger;
         }
 
