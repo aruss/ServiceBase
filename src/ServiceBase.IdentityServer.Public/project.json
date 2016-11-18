@@ -20,7 +20,6 @@
     "Newtonsoft.Json": "9.0.1",
     "ServiceBase": "1.0.0-*",
     "ServiceBase.IdentityServer": "1.0.0-*",
-    "ServiceBase.IdentityServer.Postgres": "1.0.0-*",
     "ServiceBase.Notification.SendGrid": "1.0.0-*",
     "ServiceBase.Notification.Smtp": "1.0.0-*",
     "ServiceBase.Notification.Twilio": "1.0.0-*",

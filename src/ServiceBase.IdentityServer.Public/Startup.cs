@@ -16,7 +16,6 @@ using ServiceBase.Config;
 using ServiceBase.IdentityServer.Config;
 using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.EntityFramework;
-using ServiceBase.IdentityServer.Postgres;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
 using ServiceBase.Notification.SMS;
