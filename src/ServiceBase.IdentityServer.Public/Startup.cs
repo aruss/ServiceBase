@@ -57,12 +57,6 @@ namespace ServiceBase.IdentityServer.Public
             var cert = new X509Certificate2(Path.Combine(
                 _environment.ContentRootPath, "idsvr3test.pfx"), "idsrv3test");
 
-            var clients = JsonConvert.DeserializeObject<IEnumerable<Client>>(
-                    File.ReadAllText(Path.Combine(_environment.ContentRootPath, "Config", "clients.json")));
-
-            var scopes = JsonConvert.DeserializeObject<IEnumerable<Scope>>(
-                   File.ReadAllText(Path.Combine(_environment.ContentRootPath, "Config", "scopes.json"))); 
-
             var builder = services.AddIdentityServer((options) =>
             {
                 //options.RequireSsl = false;     
@@ -79,31 +73,26 @@ namespace ServiceBase.IdentityServer.Public
                 options.UserInteractionOptions.ErrorUrl = "/error";
                 options.AuthenticationOptions.FederatedSignOutPaths.Add("/signout-oidc");
             })
-            .AddInMemoryClients(clients)
-                .AddInMemoryScopes(scopes)
                 .AddTemporarySigningCredential()
                 //AddExtensionGrantValidator<Extensions.ExtensionGrantValidator>()
                 .AddSecretParser<ClientAssertionSecretParser>()
                 .AddSecretValidator<PrivateKeyJwtSecretValidator>()
                 .AddSigningCredential(cert);
-
-            services.AddTransient<IProfileService, ProfileService>();
-            services.AddTransient<IClientStore, InMemoryClientStore>();
-            services.AddTransient<ICorsPolicyService, InMemoryCorsPolicyService>();
-            services.AddTransient<IScopeStore, InMemoryScopeStore>();
-
+            
             #endregion
 
             #region Add Data Layer 
-            
-            if (String.IsNullOrWhiteSpace(_configuration["Postgres"]))
+
+            services.AddEntityFrameworkStores(opt =>
+            {
+                opt.ConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;database=Test.IdentityServer4.EntityFramework;trusted_connection=yes;";
+                opt.SeedExampleData = true; 
+            }); 
+
+            /*if (String.IsNullOrWhiteSpace(_configuration["Postgres"]))
             {
                 services.AddPostgresStores(_configuration.GetSection("Postgres"));
-            }
-            else if (String.IsNullOrWhiteSpace(_configuration["Mssql"]))
-            {
-                services.AddEntityFrameworkStores(_configuration.GetSection("Mssql"));
-            }
+            }*/           
 
             #endregion
 
@@ -153,8 +142,7 @@ namespace ServiceBase.IdentityServer.Public
         public void Configure(
             IApplicationBuilder app,
             IHostingEnvironment env,
-            ILoggerFactory loggerFactory,
-            IStoreInitializer storeInitializer)
+            ILoggerFactory loggerFactory)
         {
             /*Func<string, LogLevel, bool> filter = (scope, level) =>
                 scope.StartsWith("IdentityServer") ||
@@ -219,7 +207,11 @@ namespace ServiceBase.IdentityServer.Public
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
 
-            storeInitializer.Initialize();
+            // Initialize database 
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                serviceScope.ServiceProvider.GetService<IStoreInitializer>().InitializeStores(); 
+            }
         }
     }
 }
