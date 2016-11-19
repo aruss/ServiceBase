@@ -281,6 +281,39 @@ namespace ServiceBase.IdentityServer.EntityFramework.Configuration
                         "api1", "api2"
                     },
                 },
+
+
+                ///////////////////////////////////////////
+                // MVC client for identity base samples
+                //////////////////////////////////////////
+                new Client
+                {
+                    ClientId = "mvc",
+                    ClientName = "MVC Hybrid Client",
+                    ClientUri = "http://localhost:3308",
+
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    AllowAccessTokensViaBrowser = false,
+
+                    RedirectUris = { "http://localhost:3308/signin-oidc" },
+                    LogoutUri = "http://localhost:3308/signout-oidc",
+                    PostLogoutRedirectUris = { "http://localhost:3308/" },
+
+                    AllowedScopes =
+                    {
+                        StandardScopes.OpenId.Name,
+                        StandardScopes.Profile.Name,
+                        StandardScopes.Email.Name,
+                        StandardScopes.Roles.Name,
+                        StandardScopes.OfflineAccess.Name,
+                        "api1", "api2",
+                    },
+                },
             };
         }
     }

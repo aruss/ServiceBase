@@ -1,6 +1,4 @@
-﻿using IdentityServer4.EntityFramework.Options;
-
-namespace ServiceBase.IdentityServer.EntityFramework.Options
+﻿namespace ServiceBase.IdentityServer.EntityFramework.Options
 {
     public class EntityFrameworkOptions
     {
@@ -11,15 +9,5 @@ namespace ServiceBase.IdentityServer.EntityFramework.Options
         public bool SeedExampleData { get; set; } = true;
 
         public string TablePrefix { get; set; }
-
-    }
-
-    public class DefaultStoreOptions
-    {
-        public string DefaultSchema { get; set; } = null;
-
-        public TableConfiguration UserAccount { get; set; } = new TableConfiguration("UserAccounts");
-        public TableConfiguration ExternalAccount { get; set; } = new TableConfiguration("ExternalAccounts");
-        public TableConfiguration UserClaim { get; set; } = new TableConfiguration("UserClaims");
     }
 }

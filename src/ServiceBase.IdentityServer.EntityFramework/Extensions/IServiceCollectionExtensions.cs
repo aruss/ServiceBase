@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceBase.IdentityServer.EntityFramework.DbContexts;
+using ServiceBase.IdentityServer.EntityFramework.Extensions;
 using ServiceBase.IdentityServer.EntityFramework.Options;
 using ServiceBase.IdentityServer.Services;
 using System;
@@ -50,8 +51,9 @@ namespace ServiceBase.IdentityServer.EntityFramework
             services.AddTransient<IClientStore, ClientStore>();
             services.AddTransient<IScopeStore, ScopeStore>();
             services.AddTransient<ICorsPolicyService, CorsPolicyService>();
+
             var configStoreOptions = new ConfigurationStoreOptions();
-            //storeOptionsAction?.Invoke(configStoreOptions);
+            //configStoreOptions.SetPrefix(options.TablePrefix); 
             services.AddSingleton(configStoreOptions);
 
             // AddOperationalStore
@@ -60,9 +62,12 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
             services.AddScoped<IPersistedGrantDbContext, PersistedGrantDbContext>();
             services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
+
             var operationStoreOptions = new OperationalStoreOptions();
-            //storeOptionsAction?.Invoke(operationStoreOptions);
+            //operationStoreOptions.SetPrefix(options.TablePrefix); 
             services.AddSingleton(operationStoreOptions);
+
+            // TODO: take care of token cleanup
             /*var tokenCleanupOptions = new TokenCleanupOptions();
             tokenCleanUpOptions?.Invoke(tokenCleanupOptions);
             builder.Services.AddSingleton(tokenCleanupOptions);
@@ -75,8 +80,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             services.AddTransient<IUserAccountStore, UserAccountStore>();
             services.AddTransient<IStoreInitializer, StoreInitializer>();
 
-            var defaultStoreOptions = new DefaultStoreOptions();
-            //storeOptionsAction?.Invoke(operationStoreOptions);
+            var defaultStoreOptions = new DefaultStoreOptions();            
             services.AddSingleton(defaultStoreOptions);
         }
     }
