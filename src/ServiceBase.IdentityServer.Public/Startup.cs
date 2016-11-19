@@ -78,21 +78,19 @@ namespace ServiceBase.IdentityServer.Public
                 .AddSecretParser<ClientAssertionSecretParser>()
                 .AddSecretValidator<PrivateKeyJwtSecretValidator>()
                 .AddSigningCredential(cert);
-            
+
             #endregion
 
             #region Add Data Layer 
 
-            services.AddEntityFrameworkStores(opt =>
+            if (String.IsNullOrWhiteSpace(_configuration["Postgres"]))
             {
-                opt.ConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;database=Test.IdentityServer4.EntityFramework;trusted_connection=yes;";
-                opt.SeedExampleData = true; 
-            }); 
-
+                services.AddEntityFrameworkStores(_configuration.GetSection("EntityFramework"));
+            }
             /*if (String.IsNullOrWhiteSpace(_configuration["Postgres"]))
             {
                 services.AddPostgresStores(_configuration.GetSection("Postgres"));
-            }*/           
+            }*/
 
             #endregion
 

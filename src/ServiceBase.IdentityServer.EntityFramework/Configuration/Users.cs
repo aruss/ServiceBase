@@ -1,64 +1,66 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using IdentityModel;
+﻿using IdentityModel;
 using IdentityServer4;
-using IdentityServer4.Services.InMemory;
+using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.Models;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Linq; 
 
 namespace ServiceBase.IdentityServer.EntityFramework.Configuration
 {
     static class UserAccounts
     {
-        public static List<UserAccount> Get()
+        public static List<UserAccount> Get(ICrypto crypto, ApplicationOptions options)
         {
+            var now = DateTime.Now; 
+
             var users = new List<UserAccount>
             {
-            };
-
-            return users;
-        }
-    }
-
-
-    static class Users
-    {
-        public static List<InMemoryUser> Get()
-        {
-            var users = new List<InMemoryUser>
-            {
-                new InMemoryUser{Subject = "818727", Username = "alice", Password = "alice",
-                    Claims = new Claim[]
+                new UserAccount
+                {
+                    Id = Guid.Parse("0c2954d2-4c73-44e3-b0f2-c00403e4adef"),
+                    Email = "alicesmith@email.com",
+                    PasswordHash  = crypto.HashPassword("testpass", options.PasswordHashingIterationCount),
+                    CreatedAt = now, 
+                    UpdatedAt = now,
+                    Claims = new List<UserClaim>
                     {
-                        new Claim(JwtClaimTypes.Name, "Alice Smith"),
-                        new Claim(JwtClaimTypes.GivenName, "Alice"),
-                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                        new Claim(JwtClaimTypes.Email, "AliceSmith@email.com"),
-                        new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                        new Claim(JwtClaimTypes.Role, "Admin"),
-                        new Claim(JwtClaimTypes.Role, "Geek"),
-                        new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
-                        new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServerConstants.ClaimValueTypes.Json)
+                        new UserClaim(JwtClaimTypes.Name, "Alice Smith"),
+                        new UserClaim(JwtClaimTypes.GivenName, "Alice"),
+                        new UserClaim(JwtClaimTypes.FamilyName, "Smith"),
+                        new UserClaim(JwtClaimTypes.Email, "AliceSmith@email.com"),
+                        new UserClaim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                        new UserClaim(JwtClaimTypes.Role, "Admin"),
+                        new UserClaim(JwtClaimTypes.Role, "Geek"),
+                        new UserClaim(JwtClaimTypes.WebSite, "http://alice.com"),
+                        new UserClaim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServerConstants.ClaimValueTypes.Json)
                     }
                 },
-                new InMemoryUser{Subject = "88421113", Username = "bob", Password = "bob",
-                    Claims = new Claim[]
+                new UserAccount
+                {
+                    Id = Guid.Parse("28575826-68a0-4a1d-9428-674a2eb5db95"),
+                    Email = "bobsmith@email.com",
+                    PasswordHash  = crypto.HashPassword("testpass", options.PasswordHashingIterationCount),
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    Claims = new List<UserClaim>
                     {
-                        new Claim(JwtClaimTypes.Name, "Bob Smith"),
-                        new Claim(JwtClaimTypes.GivenName, "Bob"),
-                        new Claim(JwtClaimTypes.FamilyName, "Smith"),
-                        new Claim(JwtClaimTypes.Email, "BobSmith@email.com"),
-                        new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                        new Claim(JwtClaimTypes.Role, "Developer"),
-                        new Claim(JwtClaimTypes.Role, "Geek"),
-                        new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
-                        new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServerConstants.ClaimValueTypes.Json)
+                        new UserClaim(JwtClaimTypes.Name, "Bob Smith"),
+                        new UserClaim(JwtClaimTypes.GivenName, "Bob"),
+                        new UserClaim(JwtClaimTypes.FamilyName, "Smith"),
+                        new UserClaim(JwtClaimTypes.Email, "BobSmith@email.com"),
+                        new UserClaim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                        new UserClaim(JwtClaimTypes.Role, "Developer"),
+                        new UserClaim(JwtClaimTypes.Role, "Geek"),
+                        new UserClaim(JwtClaimTypes.WebSite, "http://bob.com"),
+                        new UserClaim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServerConstants.ClaimValueTypes.Json)
                     }
-                },
+                }
             };
+
+            users.ForEach(c => c.Claims.ToList().ForEach(s => s.UserId = c.Id)); 
 
             return users;
         }

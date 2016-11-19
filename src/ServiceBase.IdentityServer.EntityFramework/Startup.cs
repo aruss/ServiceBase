@@ -3,7 +3,7 @@
 namespace ServiceBase.IdentityServer.EntityFramework
 {
     // Only for `dotnet ef migrations` command
-    public class Startup
+    /*public class Startup
     {
         public void ConfigureServices(IServiceCollection services)
         {
@@ -14,5 +14,5 @@ namespace ServiceBase.IdentityServer.EntityFramework
                 opt.SeedExampleData = false;
             });
         }
-    }
+    }*/
 }

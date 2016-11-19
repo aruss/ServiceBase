@@ -10,12 +10,12 @@ namespace ServiceBase.IdentityServer.EntityFramework.Options
         public bool CreateTablesIfNecessary { get; set; } = true;
         public bool SeedExampleData { get; set; } = true;
 
+        public string TablePrefix { get; set; }
+
     }
 
     public class DefaultStoreOptions
     {
-
-
         public string DefaultSchema { get; set; } = null;
 
         public TableConfiguration UserAccount { get; set; } = new TableConfiguration("UserAccounts");

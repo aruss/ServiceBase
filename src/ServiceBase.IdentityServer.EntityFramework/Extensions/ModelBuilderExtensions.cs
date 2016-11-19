@@ -73,6 +73,8 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
                 userClaim.HasKey(x => new { x.UserId, x.Type, x.Value });
                 
                 userClaim.Property(x => x.ValueType).HasMaxLength(2000);
+
+                userClaim.HasIndex(x => new { x.UserId, x.Type, x.Value });
             });
         }
     }
