@@ -22,5 +22,15 @@ namespace ServiceBase.IdentityServer.EntityFramework.Mappers
         {
             return userAccount == null ? null : Mapper.Map<UserAccount>(userAccount);
         }
+
+        public static Models.ExternalAccount ToModel(this ExternalAccount userAccount)
+        {
+            return userAccount == null ? null : Mapper.Map<Models.ExternalAccount>(userAccount);
+        }
+
+        public static ExternalAccount ToEntity(this Models.ExternalAccount userAccount)
+        {
+            return userAccount == null ? null : Mapper.Map<ExternalAccount>(userAccount);
+        }
     }
 }

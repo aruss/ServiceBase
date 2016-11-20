@@ -26,11 +26,22 @@ namespace ServiceBase.IdentityServer.EntityFramework
             _context = context;
             _logger = logger;
         }
-
-
+        
         public Task<ExternalAccount> AddExternalAccountAsync(Guid userAccoutId, ExternalAccount externalAccount)
         {
-            throw new NotImplementedException();
+            if (userAccoutId == Guid.Empty) throw new ArgumentException(nameof(userAccoutId));
+            if (externalAccount == null) throw new ArgumentNullException(nameof(externalAccount));
+
+            var now = DateTime.UtcNow;
+            var entity = externalAccount.ToEntity();
+            entity.UserId = userAccoutId;
+            entity.CreatedAt = now;
+            var entry = _context.ExternalAccounts.Add(entity);
+
+            _context.SaveChanges();
+
+            var model = entry.Entity.ToModel();
+            return Task.FromResult(model);
         }
 
         public Task DeleteByIdAsync(Guid id)
@@ -54,7 +65,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
             _logger.LogDebug("{email} found in database: {userAccountFound}", email, model != null);
 
-            return Task.FromResult(model); 
+            return Task.FromResult(model);
         }
 
         public Task<UserAccount> LoadByEmailWithExternalAsync(string email)
@@ -62,7 +73,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             var userAccount = _context.UserAccounts
                 .Include(x => x.Accounts)
                 .Include(x => x.Claims)
-                .FirstOrDefault(x => 
+                .FirstOrDefault(x =>
                     x.Email.Equals(email, StringComparison.OrdinalIgnoreCase) ||
                     x.Accounts.Any(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase)));
 
@@ -91,22 +102,83 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
         public Task<UserAccount> LoadByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var userAccount = _context.UserAccounts
+               .Include(x => x.Accounts)
+               .Include(x => x.Claims)
+               .FirstOrDefault(x => x.Id == id);
+
+            var model = userAccount?.ToModel();
+
+            _logger.LogDebug("{id} found in database: {userAccountFound}", id, model != null);
+
+            return Task.FromResult(model);
         }
 
         public Task<UserAccount> LoadByVerificationKeyAsync(string key)
         {
-            throw new NotImplementedException();
+            var userAccount = _context.UserAccounts
+                .Include(x => x.Accounts)
+                .Include(x => x.Claims)
+                .FirstOrDefault(x => x.VerificationKey == key);
+
+            var model = userAccount?.ToModel();
+
+            _logger.LogDebug("{key} found in database: {userAccountFound}", key, model != null);
+
+            return Task.FromResult(model);
         }
 
         public Task<UserAccount> UpdateAsync(UserAccount userAccount)
         {
-            throw new NotImplementedException();
+            if (userAccount == null) throw new ArgumentNullException(nameof(userAccount));
+
+            var entity = userAccount.ToEntity();
+
+            var now = DateTime.UtcNow;
+            entity.UpdatedAt = now;
+
+            var entry = _context.UserAccounts.Update(entity);
+
+            _context.SaveChanges();
+
+            var model = entry.Entity.ToModel();
+            return Task.FromResult(model);
         }
 
         public Task<UserAccount> WriteAsync(UserAccount userAccount)
         {
-            throw new NotImplementedException();
+            if (userAccount == null) throw new ArgumentNullException(nameof(userAccount));
+
+            var entity = userAccount.ToEntity();
+          
+            var now = DateTime.UtcNow;
+            entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
+            entity.CreatedAt = now;
+            entity.UpdatedAt = now;
+
+            if (entity.Accounts != null)
+            {
+                foreach (var account in entity.Accounts)
+                {
+                    account.UserId = entity.Id;
+                    account.CreatedAt = now;
+                }
+            }
+
+            if (entity.Claims != null)
+            {
+                foreach (var claim in entity.Claims)
+                {
+                    claim.UserId = entity.Id;
+                }
+            }
+
+            var entry = _context.UserAccounts.Add(entity);
+
+            _context.SaveChanges();
+
+            var model = entry.Entity.ToModel();
+            return Task.FromResult(model);
         }
     }
 }

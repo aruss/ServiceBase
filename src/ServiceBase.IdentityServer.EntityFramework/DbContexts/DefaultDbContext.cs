@@ -19,6 +19,8 @@ namespace ServiceBase.IdentityServer.EntityFramework.DbContexts
         }
 
         public DbSet<UserAccount> UserAccounts { get; set; }
+        public DbSet<ExternalAccount> ExternalAccounts { get; set; }
+        public DbSet<UserClaim> UserClaims { get; set; }
 
         public Task<int> SaveChangesAsync()
         {
