@@ -297,8 +297,11 @@ namespace ServiceBase.IdentityServer.EntityFramework.Configuration
                         new Secret("secret".Sha256())
                     },
 
+                    PrefixClientClaims = true,
                     AllowedGrantTypes = GrantTypes.Hybrid,
                     AllowAccessTokensViaBrowser = false,
+
+                    RequireConsent = false,
 
                     RedirectUris = { "http://localhost:3308/signin-oidc" },
                     LogoutUri = "http://localhost:3308/signout-oidc",
