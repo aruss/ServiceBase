@@ -14,7 +14,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Configuration
     {
         public static List<UserAccount> Get(ICrypto crypto, ApplicationOptions options)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             var users = new List<UserAccount>
             {

@@ -23,6 +23,11 @@ namespace ServiceBase.IdentityServer.EntityFramework.Mappers
             return userAccount == null ? null : Mapper.Map<UserAccount>(userAccount);
         }
 
+        public static void UpdateEntity(this Models.UserAccount token, UserAccount target)
+        {
+            Mapper.Map(token, target);
+        }
+
         public static Models.ExternalAccount ToModel(this ExternalAccount userAccount)
         {
             return userAccount == null ? null : Mapper.Map<Models.ExternalAccount>(userAccount);
@@ -31,6 +36,11 @@ namespace ServiceBase.IdentityServer.EntityFramework.Mappers
         public static ExternalAccount ToEntity(this Models.ExternalAccount userAccount)
         {
             return userAccount == null ? null : Mapper.Map<ExternalAccount>(userAccount);
+        }
+
+        public static void UpdateEntity(this Models.ExternalAccount token, ExternalAccount target)
+        {
+            Mapper.Map(token, target);
         }
     }
 }

@@ -11,14 +11,7 @@ namespace ServiceBase.IdentityServer.Services
         /// </summary>
         /// <param name="userAccount"></param>
         /// <returns></returns>
-        Task<UserAccount> WriteAsync(UserAccount userAccount); 
-
-        /// <summary>
-        /// Updates the user accounts, ignores references
-        /// </summary>
-        /// <param name="userAccount"></param>
-        /// <returns></returns>
-        Task<UserAccount> UpdateAsync(UserAccount userAccount); 
+        Task WriteAsync(UserAccount userAccount); 
 
         /// <summary>
         /// Looks for the user by local email
@@ -60,8 +53,8 @@ namespace ServiceBase.IdentityServer.Services
 
         Task DeleteByIdAsync(Guid id);
 
-        Task<ExternalAccount> AddExternalAccountAsync(Guid userAccoutId, ExternalAccount externalAccount);
+        Task WriteExternalAccountAsync(ExternalAccount externalAccount);
 
-        Task DeleteExternalAccountAsync(ExternalAccount externalAccount);
+        Task DeleteExternalAccountAsync(Guid id);
     }
 }

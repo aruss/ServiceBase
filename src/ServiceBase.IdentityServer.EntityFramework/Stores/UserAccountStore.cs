@@ -1,5 +1,6 @@
 ﻿using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using ServiceBase.IdentityServer.EntityFramework.DbContexts;
 using ServiceBase.IdentityServer.EntityFramework.Mappers;
@@ -26,22 +27,45 @@ namespace ServiceBase.IdentityServer.EntityFramework
             _context = context;
             _logger = logger;
         }
-        
-        public Task<ExternalAccount> AddExternalAccountAsync(Guid userAccoutId, ExternalAccount externalAccount)
+
+        public Task WriteExternalAccountAsync(ExternalAccount externalAccount)
         {
-            if (userAccoutId == Guid.Empty) throw new ArgumentException(nameof(userAccoutId));
-            if (externalAccount == null) throw new ArgumentNullException(nameof(externalAccount));
+            var userAccountId = externalAccount.UserAccount != null ? externalAccount.UserAccount.Id : externalAccount.UserAccountId;
+            var existingUserAccount = _context.UserAccounts.SingleOrDefault(x => x.Id == userAccountId);
 
-            var now = DateTime.UtcNow;
-            var entity = externalAccount.ToEntity();
-            entity.UserId = userAccoutId;
-            entity.CreatedAt = now;
-            var entry = _context.ExternalAccounts.Add(entity);
+            if (existingUserAccount == null)
+            {
+                _logger.LogError("{existingUserAccountId} not found in database", userAccountId);
+                return Task.FromResult(0);
+            }
 
-            _context.SaveChanges();
+            var existingExternalAccount = _context.ExternalAccounts.SingleOrDefault(x =>
+                x.Provider == externalAccount.Provider && x.Subject == externalAccount.Subject);
 
-            var model = entry.Entity.ToModel();
-            return Task.FromResult(model);
+            if (existingExternalAccount == null)
+            {
+                _logger.LogDebug("{0} {1} not found in database", existingExternalAccount.Provider, existingExternalAccount.Subject);
+
+                var persistedExternalAccount = externalAccount.ToEntity();
+                _context.ExternalAccounts.Add(persistedExternalAccount);
+            }
+            else
+            {
+                _logger.LogDebug("{0} {1} found in database", existingExternalAccount.Provider, existingExternalAccount.Subject);
+
+                externalAccount.UpdateEntity(existingExternalAccount);
+            }
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Exception storing external account");
+            }
+
+            return Task.FromResult(0);
         }
 
         public Task DeleteByIdAsync(Guid id)
@@ -49,7 +73,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             throw new NotImplementedException();
         }
 
-        public Task DeleteExternalAccountAsync(ExternalAccount externalAccount)
+        public Task DeleteExternalAccountAsync(Guid id)
         {
             throw new NotImplementedException();
         }
@@ -128,57 +152,35 @@ namespace ServiceBase.IdentityServer.EntityFramework
             return Task.FromResult(model);
         }
 
-        public Task<UserAccount> UpdateAsync(UserAccount userAccount)
+        public Task WriteAsync(UserAccount userAccount)
         {
             if (userAccount == null) throw new ArgumentNullException(nameof(userAccount));
 
-            var entity = userAccount.ToEntity();
-
-            var now = DateTime.UtcNow;
-            entity.UpdatedAt = now;
-
-            var entry = _context.UserAccounts.Update(entity);
-
-            _context.SaveChanges();
-
-            var model = entry.Entity.ToModel();
-            return Task.FromResult(model);
-        }
-
-        public Task<UserAccount> WriteAsync(UserAccount userAccount)
-        {
-            if (userAccount == null) throw new ArgumentNullException(nameof(userAccount));
-
-            var entity = userAccount.ToEntity();
-          
-            var now = DateTime.UtcNow;
-            entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
-            entity.CreatedAt = now;
-            entity.UpdatedAt = now;
-
-            if (entity.Accounts != null)
+            var existing = _context.UserAccounts.SingleOrDefault(x => x.Id == userAccount.Id);
+            if (existing == null)
             {
-                foreach (var account in entity.Accounts)
-                {
-                    account.UserId = entity.Id;
-                    account.CreatedAt = now;
-                }
+                _logger.LogDebug("{userAccountId} not found in database", userAccount.Id);
+
+                var entity = userAccount.ToEntity();
+                _context.UserAccounts.Add(entity);
+            }
+            else
+            {
+                _logger.LogDebug("{userAccountId} found in database", userAccount.Id);
+
+                userAccount.UpdateEntity(existing);
             }
 
-            if (entity.Claims != null)
+            try
             {
-                foreach (var claim in entity.Claims)
-                {
-                    claim.UserId = entity.Id;
-                }
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Exception storing user account");
             }
 
-            var entry = _context.UserAccounts.Add(entity);
-
-            _context.SaveChanges();
-
-            var model = entry.Entity.ToModel();
-            return Task.FromResult(model);
+            return Task.FromResult(0);
         }
     }
 }

@@ -132,14 +132,18 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                     if (_applicationOptions.MergeAccountsAutomatically)
                     {
                         // join the accounts 
+                        var now = DateTime.UtcNow;
                         var externalAccount = new ExternalAccount
                         {
+                            UserAccountId = userAccount.Id,
                             Email = email,
                             Provider = provider,
-                            Subject = subject
+                            Subject = subject,
+                            CreatedAt = now,
+                            LastLoginAt = now
                         };
 
-                        await _userAccountStore.AddExternalAccountAsync(userAccount.Id, externalAccount);
+                        await _userAccountStore.WriteExternalAccountAsync(externalAccount);
                         await HttpContext.Authentication.IssueCookie(userAccount, provider, "external");
                         await HttpContext.Authentication.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
 

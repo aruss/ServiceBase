@@ -81,10 +81,12 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                     {
                         Email = model.Email,
                         PasswordHash = _crypto.HashPassword(model.Password, _applicationOptions.PasswordHashingIterationCount),
-                        PasswordChangedAt = now,
                         FailedLoginCount = 0,
                         IsEmailVerified = false,
-                        IsLoginAllowed = _applicationOptions.LoginAfterAccountCreation
+                        IsLoginAllowed = _applicationOptions.LoginAfterAccountCreation,
+                        PasswordChangedAt = now,
+                        CreatedAt = now,
+                        UpdatedAt = now
                     };
 
                     #region Send email verification message 
@@ -98,13 +100,13 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                     await _emailService.SendEmailAsync("AccountCreated", userAccount.Email, new
                     {
                         ConfirmUrl = Url.Action("RegisterConfirm", new { Key = userAccount.VerificationKey }),
-                        CancelUrl = Url.Action("RegistersCancel", new { Key = userAccount.VerificationKey })
+                        CancelUrl = Url.Action("RegisterCancel", new { Key = userAccount.VerificationKey })
                     });
 
                     #endregion
 
-                    // Save user to data store 
-                    userAccount = await _userAccountStore.WriteAsync(userAccount);
+                    // Save user to data store                     
+                    await _userAccountStore.WriteAsync(userAccount);
 
                     // Emit event 
                     // _eventService.RaiseAccountCreatedEventAsync()
@@ -201,13 +203,15 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
 
             var returnUrl = userAccount.VerificationStorage;
 
+            var now = DateTime.UtcNow; 
             userAccount.IsLoginAllowed = true;
             userAccount.IsEmailVerified = true;
-            userAccount.EmailVerifiedAt = DateTime.UtcNow;
+            userAccount.EmailVerifiedAt = now;
+            userAccount.UpdatedAt = now; 
             userAccount.ClearVerification();
 
             // Update user account 
-            userAccount = await _userAccountStore.UpdateAsync(userAccount);
+            await _userAccountStore.WriteAsync(userAccount);
 
             // TODO: settings for auto signin after confirmation 
             if (_applicationOptions.LoginAfterAccountConfirmation)
@@ -223,7 +227,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             return Redirect(Url.Action("login", new { ReturnUrl = returnUrl }));
         }
 
-        [HttpGet("register/cancel/{key}", Name = "RegistersCancel")]
+        [HttpGet("register/cancel/{key}", Name = "RegisterCancel")]
         public async Task<IActionResult> Cancel(string key)
         {
             // Load token data from database 
