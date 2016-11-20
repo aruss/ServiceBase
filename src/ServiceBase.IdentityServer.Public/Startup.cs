@@ -75,10 +75,11 @@ namespace ServiceBase.IdentityServer.Public
             })
                 .AddTemporarySigningCredential()
                 //AddExtensionGrantValidator<Extensions.ExtensionGrantValidator>()
+                .AddProfileService<ProfileService>()
                 .AddSecretParser<ClientAssertionSecretParser>()
                 .AddSecretValidator<PrivateKeyJwtSecretValidator>()
                 .AddSigningCredential(cert);
-
+            
             #endregion
 
             #region Add Data Layer 
