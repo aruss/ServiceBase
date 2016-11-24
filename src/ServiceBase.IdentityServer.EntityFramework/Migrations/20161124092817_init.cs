@@ -43,8 +43,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Email = table.Column<string>(maxLength: 250, nullable: true),
                     LastLoginAt = table.Column<DateTime>(nullable: true),
-                    UserAccountId = table.Column<Guid>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false)
+                    UserAccountId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -61,15 +60,14 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
                 name: "UserClaims",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(nullable: false),
+                    UserAccountId = table.Column<Guid>(nullable: false),
                     Type = table.Column<string>(nullable: false),
                     Value = table.Column<string>(nullable: false),
-                    UserAccountId = table.Column<Guid>(nullable: false),
                     ValueType = table.Column<string>(maxLength: 2000, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserClaims", x => new { x.UserId, x.Type, x.Value });
+                    table.PrimaryKey("PK_UserClaims", x => new { x.UserAccountId, x.Type, x.Value });
                     table.ForeignKey(
                         name: "FK_UserClaims_UserAccounts_UserAccountId",
                         column: x => x.UserAccountId,
@@ -95,9 +93,9 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
                 column: "UserAccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserClaims_UserId_Type_Value",
+                name: "IX_UserClaims_UserAccountId_Type_Value",
                 table: "UserClaims",
-                columns: new[] { "UserId", "Type", "Value" });
+                columns: new[] { "UserAccountId", "Type", "Value" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

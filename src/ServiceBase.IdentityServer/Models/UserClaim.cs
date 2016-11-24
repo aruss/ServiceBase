@@ -11,9 +11,11 @@ namespace ServiceBase.IdentityServer.Models
             this.ValueType = valueType;
         }
 
-        public Guid UserId { get; set; }
+        public Guid UserAccountId { get; set; }
         public string Type { get; set; }
         public string Value { get; set; }
         public string ValueType { get; set; }
+
+        public UserAccount UserAccount { get; set; }
     }
 }

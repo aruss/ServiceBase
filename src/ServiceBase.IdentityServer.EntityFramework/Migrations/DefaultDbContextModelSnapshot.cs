@@ -29,10 +29,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
 
                     b.Property<DateTime?>("LastLoginAt");
 
-                    b.Property<Guid?>("UserAccountId")
-                        .IsRequired();
-
-                    b.Property<Guid>("UserId");
+                    b.Property<Guid>("UserAccountId");
 
                     b.HasKey("Provider", "Subject");
 
@@ -91,23 +88,20 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
 
             modelBuilder.Entity("ServiceBase.IdentityServer.EntityFramework.Entities.UserClaim", b =>
                 {
-                    b.Property<Guid>("UserId");
+                    b.Property<Guid>("UserAccountId");
 
                     b.Property<string>("Type");
 
                     b.Property<string>("Value");
 
-                    b.Property<Guid?>("UserAccountId")
-                        .IsRequired();
-
                     b.Property<string>("ValueType")
                         .HasAnnotation("MaxLength", 2000);
 
-                    b.HasKey("UserId", "Type", "Value");
+                    b.HasKey("UserAccountId", "Type", "Value");
 
                     b.HasIndex("UserAccountId");
 
-                    b.HasIndex("UserId", "Type", "Value");
+                    b.HasIndex("UserAccountId", "Type", "Value");
 
                     b.ToTable("UserClaims");
                 });

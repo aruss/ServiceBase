@@ -66,7 +66,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
 
             if (subjectClaim == null)
             {
-                throw new Exception("Unknown userid");
+                throw new Exception("Unknown user account ID");
             }
 
             var loginContext = await _interaction.GetAuthorizationContextAsync(returnUrl);
@@ -131,7 +131,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                 {
                     if (_applicationOptions.MergeAccountsAutomatically)
                     {
-                        // join the accounts 
+                        // join the accounts
                         var now = DateTime.UtcNow;
                         var externalAccount = new ExternalAccount
                         {
@@ -154,7 +154,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                     }
                     else
                     {
-                        // Ask user of he wants to join accounts or create new user 
+                        // Ask user of he wants to join accounts or create new user
                         throw new NotImplementedException();
                     }
                 }
