@@ -93,6 +93,11 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
                 name: "IX_UserClaims_UserAccountId",
                 table: "UserClaims",
                 column: "UserAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserClaims_UserId_Type_Value",
+                table: "UserClaims",
+                columns: new[] { "UserId", "Type", "Value" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

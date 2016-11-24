@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace ServiceBase.IdentityServer.EntityFramework.Entities
 {
-
     public class UserAccount
     {
         public Guid Id { get; set; }

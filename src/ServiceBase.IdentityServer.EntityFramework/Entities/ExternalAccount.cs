@@ -4,7 +4,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Entities
 {
     public class ExternalAccount
     {
-        public Guid UserId { get; set; }
+        public Guid UserAccountId { get; set; }
         public string Provider { get; set; }
         public string Subject { get; set; }
         public string Email { get; set; }

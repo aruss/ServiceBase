@@ -8,7 +8,7 @@ using ServiceBase.IdentityServer.EntityFramework.DbContexts;
 namespace ServiceBase.IdentityServer.EntityFramework.Migrations
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20161118224117_init")]
+    [Migration("20161120183309_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,6 +107,8 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
                     b.HasKey("UserId", "Type", "Value");
 
                     b.HasIndex("UserAccountId");
+
+                    b.HasIndex("UserId", "Type", "Value");
 
                     b.ToTable("UserClaims");
                 });

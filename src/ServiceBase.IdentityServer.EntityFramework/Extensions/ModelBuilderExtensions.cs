@@ -70,11 +70,11 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
             modelBuilder.Entity<UserClaim>(userClaim =>
             {
                 userClaim.ToTable(storeOptions.UserClaim);
-                userClaim.HasKey(x => new { x.UserId, x.Type, x.Value });
+                userClaim.HasKey(x => new { x.UserAccountId, x.Type, x.Value });
                 
                 userClaim.Property(x => x.ValueType).HasMaxLength(2000);
 
-                userClaim.HasIndex(x => new { x.UserId, x.Type, x.Value });
+                userClaim.HasIndex(x => new { x.UserAccountId, x.Type, x.Value });
             });
         }
     }

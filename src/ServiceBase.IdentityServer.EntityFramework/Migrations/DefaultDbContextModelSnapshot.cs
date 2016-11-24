@@ -107,6 +107,8 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
 
                     b.HasIndex("UserAccountId");
 
+                    b.HasIndex("UserId", "Type", "Value");
+
                     b.ToTable("UserClaims");
                 });
 

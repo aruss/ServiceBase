@@ -79,21 +79,11 @@ namespace ServiceBase.IdentityServer.Public
                 .AddSecretParser<ClientAssertionSecretParser>()
                 .AddSecretValidator<PrivateKeyJwtSecretValidator>()
                 .AddSigningCredential(cert);
-            
-            #endregion
-
-            #region Add Data Layer 
-
-            if (String.IsNullOrWhiteSpace(_configuration["Postgres"]))
-            {
-                services.AddEntityFrameworkStores(_configuration.GetSection("EntityFramework"));
-            }
-            /*if (String.IsNullOrWhiteSpace(_configuration["Postgres"]))
-            {
-                services.AddPostgresStores(_configuration.GetSection("Postgres"));
-            }*/
 
             #endregion
+
+            // Add Data Layer 
+            services.AddEntityFrameworkStores(_configuration.GetSection("EntityFramework"));
 
             #region Add Email Sender 
 
@@ -209,7 +199,7 @@ namespace ServiceBase.IdentityServer.Public
             // Initialize database 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
-                serviceScope.ServiceProvider.GetService<IStoreInitializer>().InitializeStores(); 
+                serviceScope.ServiceProvider.GetService<IStoreInitializer>().InitializeStores();
             }
         }
     }
