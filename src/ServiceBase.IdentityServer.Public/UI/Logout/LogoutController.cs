@@ -19,8 +19,12 @@ namespace ServiceBase.IdentityServer.Public.UI.Logout
         [HttpGet("logout", Name = "Logout")]
         public IActionResult Index(string logoutId)
         {
-            ViewData["logoutId"] = logoutId;
-            return View();
+            var vm = new LogoutViewModel
+            {
+                LogoutId = logoutId
+            };
+
+            return View(vm);
         }
 
         [HttpPost("logout")]
@@ -28,7 +32,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Logout
         public async Task<IActionResult> Submit(string logoutId)
         {
             await HttpContext.Authentication.SignOutAsync(IdentityServerConstants.DefaultCookieAuthenticationScheme);
-            
+
             // set this so UI rendering sees an anonymous user
             HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
 
