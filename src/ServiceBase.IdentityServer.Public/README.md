@@ -1,4 +1,4 @@
-#IdentityBase public UI#
+# ServiceBase.IdentityServer.Public
 
 IdentityServer as out-of-the-box solution. 
 
