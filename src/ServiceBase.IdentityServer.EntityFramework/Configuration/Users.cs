@@ -64,7 +64,13 @@ namespace ServiceBase.IdentityServer.EntityFramework.Configuration
                 }
             };
 
-            users.ForEach(c => c.Claims.ToList().ForEach(s => s.UserId = c.Id));
+            foreach (var user in users)
+            {
+                foreach (var claim in user.Claims)
+                {
+                    claim.UserAccountId = user.Id;
+                }
+            }
 
             return users;
         }
