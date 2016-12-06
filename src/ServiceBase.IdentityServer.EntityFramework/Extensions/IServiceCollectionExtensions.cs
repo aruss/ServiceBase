@@ -53,7 +53,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             services.AddTransient<ICorsPolicyService, CorsPolicyService>();
 
             var configStoreOptions = new ConfigurationStoreOptions();
-            //configStoreOptions.SetPrefix(options.TablePrefix); 
+            //configStoreOptions.SetPrefix(options.TablePrefix);
             services.AddSingleton(configStoreOptions);
 
             // AddOperationalStore
@@ -64,7 +64,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
             var operationStoreOptions = new OperationalStoreOptions();
-            //operationStoreOptions.SetPrefix(options.TablePrefix); 
+            //operationStoreOptions.SetPrefix(options.TablePrefix);
             services.AddSingleton(operationStoreOptions);
 
             // TODO: take care of token cleanup
@@ -80,7 +80,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             services.AddTransient<IUserAccountStore, UserAccountStore>();
             services.AddTransient<IStoreInitializer, StoreInitializer>();
 
-            var defaultStoreOptions = new DefaultStoreOptions();            
+            var defaultStoreOptions = new DefaultStoreOptions();
             services.AddSingleton(defaultStoreOptions);
         }
     }
