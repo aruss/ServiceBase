@@ -71,12 +71,12 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 // Check if user with same email exists
                 var userAccount = await _userAccountStore.LoadByEmailWithExternalAsync(email);
 
-                // If user dont exists create a new one 
+                // If user dont exists create a new one
                 if (userAccount == null)
                 {
                     var now = DateTime.UtcNow;
 
-                    // Create new user instance 
+                    // Create new user instance
                     userAccount = new UserAccount
                     {
                         Email = model.Email,
@@ -89,7 +89,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                         UpdatedAt = now
                     };
 
-                    #region Send email verification message 
+                    #region Send email verification message
 
                     userAccount.SetVerification(
                         _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
@@ -105,10 +105,10 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
 
                     #endregion
 
-                    // Save user to data store                     
+                    // Save user to data store
                     await _userAccountStore.WriteAsync(userAccount);
 
-                    // Emit event 
+                    // Emit event
                     // _eventService.RaiseAccountCreatedEventAsync()
 
                     if (_applicationOptions.LoginAfterAccountCreation)
@@ -122,7 +122,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                     }
                     else
                     {
-                        // Redirect to success page by preserving the email provider name 
+                        // Redirect to success page by preserving the email provider name
                         return Redirect(Url.Action("Success", "Register", new
                         {
                             returnUrl = model.ReturnUrl,
@@ -143,7 +143,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 }
                 else
                 {
-                    // If user has a password then its a local account 
+                    // If user has a password then its a local account
                     if (!userAccount.HasPassword())
                     {
                         ModelState.AddModelError("", "User already exists");
@@ -158,13 +158,13 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                     vm.HintExternalAccounts = userAccount.Accounts.Select(s => s.Provider).ToArray();
                     return View(vm);
                 }
-                // As if user wants to use other account instead 
+                // As if user wants to use other account instead
 
-                // if yes, cancel registration and redirect to login 
-                // if no ask if he wants to merge accounts 
+                // if yes, cancel registration and redirect to login
+                // if no ask if he wants to merge accounts
 
                 // if yes, link account
-                // if no create user 
+                // if no create user
             }
 
             return View(new RegisterViewModel(model));
@@ -173,7 +173,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         [HttpGet("register/success", Name = "RegisterSuccess")]
         public async Task<IActionResult> Success(string returnUrl, string provider)
         {
-            // TODO: Select propper mail provider and render it as button 
+            // TODO: Select propper mail provider and render it as button
 
             return View(new SuccessViewModel
             {
@@ -185,7 +185,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         [HttpGet("register/confirm/{key}", Name = "RegisterConfirm")]
         public async Task<IActionResult> Confirm(string key)
         {
-            // Load token data from database 
+            // Load token data from database
             var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
 
             if (userAccount == null)
@@ -199,21 +199,21 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             }
 
             // TODO: check if user exists
-            // TODO: check if token expired 
+            // TODO: check if token expired
 
             var returnUrl = userAccount.VerificationStorage;
 
-            var now = DateTime.UtcNow; 
+            var now = DateTime.UtcNow;
             userAccount.IsLoginAllowed = true;
             userAccount.IsEmailVerified = true;
             userAccount.EmailVerifiedAt = now;
-            userAccount.UpdatedAt = now; 
+            userAccount.UpdatedAt = now;
             userAccount.ClearVerification();
 
-            // Update user account 
+            // Update user account
             await _userAccountStore.WriteAsync(userAccount);
 
-            // TODO: settings for auto signin after confirmation 
+            // TODO: settings for auto signin after confirmation
             if (_applicationOptions.LoginAfterAccountConfirmation)
             {
                 await HttpContext.Authentication.IssueCookie(userAccount, "idsvr", "password");
@@ -230,7 +230,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         [HttpGet("register/cancel/{key}", Name = "RegisterCancel")]
         public async Task<IActionResult> Cancel(string key)
         {
-            // Load token data from database 
+            // Load token data from database
             var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
 
             if (userAccount == null)

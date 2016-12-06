@@ -16,9 +16,6 @@ namespace ServiceBase.IdentityServer.Models
     {
         public Guid Id { get; set; }
 
-        [StringLength(50)]
-        public string Tenant { get; set; }
-
         // Maximum length of a valid email address is 254 characters.
         // See Dominic Sayers answer at SO: http://stackoverflow.com/a/574698/99240
         [EmailAddress]
@@ -26,12 +23,12 @@ namespace ServiceBase.IdentityServer.Models
         public string Email { get; set; }
         public bool IsEmailVerified { get; set; }
         public DateTime? EmailVerifiedAt { get; set; }
-        
+
         public bool IsLoginAllowed { get; set; }
         public virtual DateTime? LastLoginAt { get; set; }
         public virtual DateTime? LastFailedLoginAt { get; set; }
         public virtual int FailedLoginCount { get;set; }
-        
+
         [StringLength(200)]
         public string PasswordHash { get; set; }
         public DateTime? PasswordChangedAt { get; set; }

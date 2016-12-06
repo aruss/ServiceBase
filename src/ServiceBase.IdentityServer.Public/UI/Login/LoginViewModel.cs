@@ -1,4 +1,6 @@
-﻿namespace ServiceBase.IdentityServer.Public.UI.Login
+﻿using System.Collections.Generic;
+
+namespace ServiceBase.IdentityServer.Public.UI.Login
 {
     public class LoginViewModel : LoginInputModel
     {
@@ -16,6 +18,14 @@
 
         public string ErrorMessage { get; set; }
         public string InfoMessage { get; set; }
-        public string[] LoginHints { get; set; } 
+        public bool EnableLocalLogin { get; set; }
+        public IEnumerable<ExternalProvider> ExternalProviders { get; set; }
+        public IEnumerable<string> LoginHints { get; set; }
+    }
+
+    public class ExternalProvider
+    {
+        public string DisplayName { get; set; }
+        public string AuthenticationScheme { get; set; }
     }
 }
