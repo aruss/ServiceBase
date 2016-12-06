@@ -1,13 +1,11 @@
 ﻿/*
  * Copyright (c) Brock Allen.  All rights reserved.
  * see license.txt
+ *
+ * Code borrowed from: https://github.com/brockallen/BrockAllen.MembershipReboot/tree/master/src/BrockAllen.MembershipReboot/Crypto
  */
 
-// Original Version Copyright:
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
-// Original License: http://www.apache.org/licenses/LICENSE-2.0
-
-using System;
+ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -23,7 +21,7 @@ namespace ServiceBase.IdentityServer.Crypto
         string GenerateSalt();
         string Hash(string value);
     }
-    
+
     public class DefaultCrypto : ICrypto
     {
         public const char PasswordHashingIterationCountSeparator = '.';
@@ -59,7 +57,7 @@ namespace ServiceBase.IdentityServer.Crypto
             }
         }
 
-        // from OWASP : https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet
+        // From OWASP : https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet
         public const int StartYear = 2016;
         public const int StartCount = 1000;
         public int GetIterationsFromYear(int year)
@@ -69,7 +67,7 @@ namespace ServiceBase.IdentityServer.Crypto
                 var diff = (year - StartYear) / 2;
                 var mul = (int)Math.Pow(2, diff);
                 int count = StartCount * mul;
-                // if we go negative, then we wrapped (expected in year ~2044). 
+                // if we go negative, then we wrapped (expected in year ~2044).
                 // Int32.Max is best we can do at this point
                 if (count < 0) count = Int32.MaxValue;
                 return count;
@@ -177,7 +175,7 @@ namespace ServiceBase.IdentityServer.Crypto
             }
             return areSame;
         }
-        
+
         public string GenerateSalt()
         {
             var buf = new byte[SaltSize];
