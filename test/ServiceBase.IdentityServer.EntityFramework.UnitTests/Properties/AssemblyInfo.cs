@@ -7,10 +7,8 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ServiceBase.IdentityServer.Postgres")]
+[assembly: AssemblyProduct("IdentityServer.UnitTests")]
 [assembly: AssemblyTrademark("")]
-
-[assembly: InternalsVisibleTo("ServiceBase.IdentityServer.EntityFramework.UnitTests")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -18,4 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("a09ca51a-e0c3-4b3f-b115-33ddf909f227")]
+[assembly: Guid("c3ac36bb-a09a-4301-95af-02837ba34247")]
