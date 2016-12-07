@@ -2,7 +2,7 @@
   "title": "ServiceBase.IdentityServer",
   "version": "1.0.0-*",
   "buildOptions": {
-    "debugType": "portable",
+    //"debugType": "portable",
     "emitEntryPoint": false
   },
   "dependencies": {
