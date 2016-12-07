@@ -1,17 +1,11 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Configuration;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Services.InMemory;
-using IdentityServer4.Stores;
-using IdentityServer4.Stores.InMemory;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using ServiceBase.Config;
 using ServiceBase.IdentityServer.Config;
 using ServiceBase.IdentityServer.Crypto;
@@ -21,7 +15,6 @@ using ServiceBase.Notification.Email;
 using ServiceBase.Notification.SMS;
 using ServiceBase.Notification.Twilio;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 
@@ -44,7 +37,7 @@ namespace ServiceBase.IdentityServer.Public
 
         public void ConfigureServices(IServiceCollection services)
         {
-            #region Add application configuration 
+            #region Add application configuration
 
             services.AddOptions();
             services.Configure<ApplicationOptions>(_configuration.GetSection("App"));
@@ -52,14 +45,14 @@ namespace ServiceBase.IdentityServer.Public
 
             #endregion
 
-            #region Add IdentityServer 
+            #region Add IdentityServer
 
             var cert = new X509Certificate2(Path.Combine(
                 _environment.ContentRootPath, "idsvr3test.pfx"), "idsrv3test");
 
             var builder = services.AddIdentityServer((options) =>
             {
-                //options.RequireSsl = false;     
+                //options.RequireSsl = false;
                 options.EventsOptions = new EventsOptions
                 {
                     RaiseErrorEvents = true,
@@ -82,10 +75,10 @@ namespace ServiceBase.IdentityServer.Public
 
             #endregion
 
-            // Add Data Layer 
+            // Add Data Layer
             services.AddEntityFrameworkStores(_configuration.GetSection("EntityFramework"));
 
-            #region Add Email Sender 
+            #region Add Email Sender
 
             services.AddTransient<IEmailService, DebugEmailService>();
             /*services.AddTransient<IEmailService, DefaultEmailService>();
@@ -102,13 +95,13 @@ namespace ServiceBase.IdentityServer.Public
             // else if o360
             // else if MailGun
             // else if SMTP
-            // else default sender 
+            // else default sender
 
             // services.AddTransient<IEmailFormatter, EmailFormatter>();
 
             #endregion
 
-            #region Add SMS Sender 
+            #region Add SMS Sender
 
             if (String.IsNullOrWhiteSpace(_configuration["Twillio"]))
             {
@@ -116,7 +109,7 @@ namespace ServiceBase.IdentityServer.Public
                 services.AddTransient<ISmsSender, TwillioSmsSender>();
             }
 
-            #endregion 
+            #endregion
 
             services.AddTransient<ICrypto, DefaultCrypto>();
 
@@ -161,7 +154,7 @@ namespace ServiceBase.IdentityServer.Public
                 AutomaticChallenge = false
             });
 
-            #region Use third party authentication 
+            #region Use third party authentication
 
             if (!String.IsNullOrWhiteSpace(_configuration["Authentication:Google:ClientId"]))
             {
@@ -196,7 +189,7 @@ namespace ServiceBase.IdentityServer.Public
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
 
-            // Initialize database 
+            // Initialize database
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 serviceScope.ServiceProvider.GetService<IStoreInitializer>().InitializeStores();

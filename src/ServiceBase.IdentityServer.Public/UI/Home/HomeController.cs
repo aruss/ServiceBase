@@ -15,8 +15,10 @@ namespace ServiceBase.IdentityServer.Public.UI.Home
         }
 
         [Route("/")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            // TODO: redirect to default RP since index page does not provide any value
+
             return View();
         }
 

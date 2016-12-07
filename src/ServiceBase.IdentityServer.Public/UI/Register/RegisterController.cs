@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Services;
+﻿using IdentityServer4;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -99,8 +100,11 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
 
                     await _emailService.SendEmailAsync("AccountCreated", userAccount.Email, new
                     {
-                        ConfirmUrl = Url.Action("RegisterConfirm", new { Key = userAccount.VerificationKey }),
-                        CancelUrl = Url.Action("RegisterCancel", new { Key = userAccount.VerificationKey })
+                        // TODO: Url.Action seems to ignore HttpGetAttributes template property
+                        /*ConfirmUrl = Url.Action("RegisterConfirm", new { Key = userAccount.VerificationKey }),
+                        CancelUrl = Url.Action("RegisterCancel", new { Key = userAccount.VerificationKey })*/
+                        ConfirmUrl = String.Format("register/confirm/{0}", userAccount.VerificationKey),
+                        CancelUrl = String.Format("register/cancel/{0}", userAccount.VerificationKey)
                     });
 
                     #endregion
@@ -113,7 +117,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
 
                     if (_applicationOptions.LoginAfterAccountCreation)
                     {
-                        await HttpContext.Authentication.IssueCookie(userAccount, "idsvr", "password");
+                        await HttpContext.Authentication.IssueCookie(userAccount,
+                            IdentityServerConstants.LocalIdentityProvider, "password");
 
                         if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
                         {
@@ -175,11 +180,11 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         {
             // TODO: Select propper mail provider and render it as button
 
-            return View(new SuccessViewModel
+            return await Task.FromResult(View(new SuccessViewModel
             {
                 ReturnUrl = returnUrl,
                 Provider = provider
-            });
+            }));
         }
 
         [HttpGet("register/confirm/{key}", Name = "RegisterConfirm")]
@@ -216,7 +221,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             // TODO: settings for auto signin after confirmation
             if (_applicationOptions.LoginAfterAccountConfirmation)
             {
-                await HttpContext.Authentication.IssueCookie(userAccount, "idsvr", "password");
+                await HttpContext.Authentication.IssueCookie(userAccount,
+                    IdentityServerConstants.LocalIdentityProvider, "password");
 
                 if (returnUrl != null && _interaction.IsValidReturnUrl(returnUrl))
                 {

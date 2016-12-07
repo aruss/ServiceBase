@@ -4,11 +4,6 @@
     {
         // Local account options
 
-        /// <summary>
-        /// If enbaled users may login and register with local account by using email and password
-        /// </summary>
-        public bool LocalAccountEnabled { get; set; } = true;
-
         public int PasswordHashingIterationCount { get; set; } = 0;
         public int AccountLockoutFailedLoginAttempts { get; set; } = 5;
         public int AccountLockoutDuration { get; set; } = 600; // 10 minutes

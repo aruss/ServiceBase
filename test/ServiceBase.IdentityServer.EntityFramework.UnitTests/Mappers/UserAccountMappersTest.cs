@@ -1,18 +1,14 @@
-﻿using ServiceBase.IdentityServer.EntityFramework.Mappers;
-using Models = ServiceBase.IdentityServer.Models;
-using System;
+﻿using ServiceBase.IdentityServer.EntityFramework.Entities;
+using ServiceBase.IdentityServer.EntityFramework.Mappers;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
-using ServiceBase.IdentityServer.EntityFramework.Entities;
 
 namespace ServiceBase.IdentityServer.EntityFramework.UnitTests.Mappers
 {
     public class UserAccountMappersTest
     {
         [Fact]
-        public void ClientAutomapperConfigurationIsValid()
+        public void UserAccountModelToEntityConfigurationIsValid()
         {
             var model = new Models.UserAccount();
 
@@ -33,7 +29,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.UnitTests.Mappers
         }
 
         [Fact]
-        public void ClientAutomapperConfigurationIsValid2()
+        public void UserAccountEntityToModelConfigurationIsValid()
         {
             var model = new UserAccount();
 

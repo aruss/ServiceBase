@@ -14,6 +14,7 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Http.Authentication;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Http;
 
 namespace ServiceBase.IdentityServer.Public.UI.Login
 {
@@ -52,7 +53,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
             if (context?.IdP != null)
             {
-                // if IdP is passed, then bypass showing the login screen
+                // If IdP is passed, then bypass showing the login screen
                 return ExternalLogin(context.IdP, returnUrl);
             }
 
@@ -60,7 +61,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
 
             if (vm.EnableLocalLogin == false && vm.ExternalProviders.Count() == 1)
             {
-                // only one option for logging in
+                // Only one option for logging in, so redirect to it automatically
                 return ExternalLogin(vm.ExternalProviders.First().AuthenticationScheme, returnUrl);
             }
 
@@ -94,7 +95,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                                 if (_crypto.VerifyPasswordHash(userAccount.PasswordHash, model.Password,
                                     _applicationOptions.PasswordHashingIterationCount))
                                 {
-                                    await HttpContext.Authentication.IssueCookie(userAccount, "idsvr", "password");
+                                    await this.HttpContext.Authentication.IssueCookie(userAccount,
+                                         IdentityServerConstants.LocalIdentityProvider, "password");
 
                                     if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
                                     {
@@ -146,7 +148,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             return View(vm);
         }
 
-        async Task<LoginViewModel> BuildLoginViewModelAsync(string returnUrl, AuthorizationRequest context)
+        private async Task<LoginViewModel> BuildLoginViewModelAsync(string returnUrl, AuthorizationRequest context)
         {
             var providers = HttpContext.Authentication.GetAuthenticationSchemes()
                 .Where(x => x.DisplayName != null)

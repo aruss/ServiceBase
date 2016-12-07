@@ -32,7 +32,6 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Registration
             mockCrypto.Setup(c => c.GenerateSalt()).Returns("salt");
             mockCrypto.Setup(c => c.Hash("salt")).Returns("hash");
 
-
             var mockEmailService = new Mock<IEmailService>();
             var mockEventService = new Mock<IEventService>();
 
@@ -57,8 +56,6 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Registration
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<RegisterViewModel>(viewResult.ViewData.Model);
-
-            // do stuff
 
         }
     }
