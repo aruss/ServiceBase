@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Http.Authentication;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Http;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ServiceBase.IdentityServer.Public.UI.Login
 {
@@ -51,21 +53,56 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         public async Task<IActionResult> Login(string returnUrl)
         {
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+
+            // TODO: ClientId may be null
+            var client = await _clientStore.FindEnabledClientByIdAsync(context.ClientId);
+            var providers = this.GetEnabledProviders(client);
+
             if (context?.IdP != null)
             {
-                // If IdP is passed, then bypass showing the login screen
-                return ExternalLogin(context.IdP, returnUrl);
+                // If IdP is passed, then bypass showing the login screen only if client is allowed to signin with provided idp
+                if (providers.Any(c => c.AuthenticationScheme.Equals(context.IdP, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return this.ExternalLogin(context.IdP, returnUrl);
+                }
             }
 
-            var vm = await BuildLoginViewModelAsync(returnUrl, context);
+            var vm = new LoginViewModel
+            {
+                ReturnUrl = returnUrl,
+                ExternalProviders = providers,
+                EnableLocalLogin = client.EnableLocalLogin,
+                Email = context.LoginHint
+            };
 
             if (vm.EnableLocalLogin == false && vm.ExternalProviders.Count() == 1)
             {
                 // Only one option for logging in, so redirect to it automatically
-                return ExternalLogin(vm.ExternalProviders.First().AuthenticationScheme, returnUrl);
+                return this.ExternalLogin(vm.ExternalProviders.First().AuthenticationScheme, returnUrl);
             }
 
             return View(vm);
+        }
+
+        private IEnumerable<ExternalProvider> GetEnabledProviders(Client client)
+        {
+            var providers = HttpContext.Authentication.GetAuthenticationSchemes()
+                  .Where(x => x.DisplayName != null)
+                  .Select(x => new ExternalProvider
+                  {
+                      DisplayName = x.DisplayName,
+                      AuthenticationScheme = x.AuthenticationScheme
+                  });
+
+            if (client != null)
+            {
+                if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Any())
+                {
+                    providers = providers.Where(provider => client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme));
+                }
+            }
+
+            return providers;
         }
 
         /// <summary>
@@ -146,49 +183,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             }
 
             return View(vm);
-        }
-
-        private async Task<LoginViewModel> BuildLoginViewModelAsync(string returnUrl, AuthorizationRequest context)
-        {
-            var providers = HttpContext.Authentication.GetAuthenticationSchemes()
-                .Where(x => x.DisplayName != null)
-                .Select(x => new ExternalProvider
-                {
-                    DisplayName = x.DisplayName,
-                    AuthenticationScheme = x.AuthenticationScheme
-                });
-
-            var allowLocal = true;
-            if (context?.ClientId != null)
-            {
-                var client = await _clientStore.FindEnabledClientByIdAsync(context.ClientId);
-                if (client != null)
-                {
-                    allowLocal = client.EnableLocalLogin;
-
-                    if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Any())
-                    {
-                        providers = providers.Where(provider => client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme));
-                    }
-                }
-            }
-
-            return new LoginViewModel
-            {
-                EnableLocalLogin = allowLocal,
-                ReturnUrl = returnUrl,
-                Email = context?.LoginHint,
-                ExternalProviders = providers.ToArray()
-            };
-        }
-
-        async Task<LoginViewModel> BuildLoginViewModelAsync(LoginInputModel model)
-        {
-            var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
-            var vm = await BuildLoginViewModelAsync(model.ReturnUrl, context);
-            vm.Email = model.Email;
-            vm.RememberLogin = model.RememberLogin;
-            return vm;
         }
 
         /// <summary>

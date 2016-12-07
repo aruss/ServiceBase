@@ -20,7 +20,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
     public class LoggingControllerTests
     {
         [Fact]
-        public async Task Foo()
+        public async Task CallIndexPage()
         {
             // Arrange
             var contentRoot = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "src", "ServiceBase.IdentityServer.Public");

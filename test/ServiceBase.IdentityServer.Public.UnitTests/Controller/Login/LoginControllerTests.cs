@@ -146,6 +146,12 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 
             var mockHttpContext = new Mock<HttpContext>();
             var mockAuthentication = new Mock<AuthenticationManager>();
+            mockAuthentication.Setup(c => c.GetAuthenticationSchemes()).Returns(new AuthenticationDescription[]
+            {
+                new AuthenticationDescription { DisplayName = "Google", AuthenticationScheme = "google" },
+                new AuthenticationDescription { DisplayName = "Facebook", AuthenticationScheme = "facebook" },
+                new AuthenticationDescription { DisplayName = "Hotmail", AuthenticationScheme = "hotmail" }
+            });
             mockHttpContext.SetupGet(c => c.Authentication).Returns(mockAuthentication.Object);
 
             var controller = new LoginController(

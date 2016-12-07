@@ -16,7 +16,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Registration
     [Collection("Register")]
     public class RegisterControllerTests
     {
-        [Fact]
+        // [Fact]
         public async Task RegisterNewUser()
         {
             // Arrange
