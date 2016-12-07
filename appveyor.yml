@@ -1,13 +1,27 @@
-init:
-  - git config --global core.autocrlf true
+
+skip_tags: true
+image: Visual Studio 2015
+clone_depth: 1
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: WtXI7jGbeHep0eLb9a0OYvUz52pNC63da
+
 branches:
   only:
     - master
     - release
     - dev
     - /^(.*\/)?ci-.*$/
+
+configuration: Release
 build_script:
-  - build.cmd verify
-clone_depth: 1
-test: off
+  - dotnet --info
+  - dotnet restore --no-cache
+  - dotnet build **/project.json --configuration Release --version-suffix %APPVEYOR_BUILD_NUMBER%
+
+test_script:
+  - dotnet test test/ServiceBase.IdentityServer.Public.UnitTests/project.json --configuration Release -f netcoreapp1.0 --no-build
+  - bash coverage.sh
+  - bash coveralls.sh
+
 deploy: off
