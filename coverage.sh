@@ -31,12 +31,12 @@ coverage=./coverage
 rm -rf $coverage
 mkdir $coverage
 
-dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/Stubbery.IntegrationTests
+dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests
 
 echo "Calculating coverage with OpenCover"
 $OPENCOVER \
   -target:"c:\Program Files\dotnet\dotnet.exe" \
-  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/Stubbery.IntegrationTests" \
+  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests" \
   -mergeoutput \
   -hideskipped:File \
   -output:$coverage/coverage.xml \
