@@ -2,9 +2,6 @@ version: 1.0.{build}
 skip_tags: true
 image: Visual Studio 2015
 clone_depth: 1
-environment:
-  COVERALLS_REPO_TOKEN:
-    secure: WtXI7jGbeHep0eLb9a0OYvUz52pNC63da
 
 branches:
   only:
