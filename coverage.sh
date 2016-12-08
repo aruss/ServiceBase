@@ -41,7 +41,7 @@ $OPENCOVER \
   -hideskipped:File \
   -output:$coverage/coverage.xml \
   -oldStyle \
-  -filter:"+[Stubbery*]* -[Stubbery.*Tests*]*" \
+  -filter:"+[ServiceBase*]* -[ServiceBase.*Tests*]*" \
   -searchdirs:$testdir/bin/$CONFIG/netcoreapp1.0 \
   -register:user
 
