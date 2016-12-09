@@ -13,7 +13,6 @@ using ServiceBase.IdentityServer.EntityFramework;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
 using ServiceBase.Notification.SMS;
-using ServiceBase.Notification.Twilio;
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
@@ -103,11 +102,11 @@ namespace ServiceBase.IdentityServer.Public
 
             #region Add SMS Sender
 
-            if (String.IsNullOrWhiteSpace(_configuration["Twillio"]))
+            /*if (String.IsNullOrWhiteSpace(_configuration["Twillio"]))
             {
                 services.Configure<TwillioOptions>(_configuration.GetSection("Twillio"));
                 services.AddTransient<ISmsSender, TwillioSmsSender>();
-            }
+            }*/
 
             #endregion
 
