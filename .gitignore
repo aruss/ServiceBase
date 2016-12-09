@@ -201,3 +201,4 @@ FakesAssemblies/
 .DS_STORE
 samples/AspNetCoreWeb/wwwroot/lib/
 .build/
+coverage/
