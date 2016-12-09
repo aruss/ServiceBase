@@ -21,8 +21,15 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
     // http://stackoverflow.com/questions/30557521/how-to-access-httpcontext-inside-a-unit-test-in-asp-net-5-mvc-6
 
     [Collection("Login Controller")]
-    public class LoggingControllerTests
+    public class LoginControllerTests
     {
+        /// <summary>
+        /// RP redirects to STS, the login page with local login and two IdPs should be shown
+        ///
+        ///   - Active client
+        ///   - Client settings restrict the external logins
+        ///   - Client settings allow local login
+        /// </summary>
         [Fact]
         public async Task LoginPageWithLocalLogin()
         {
@@ -109,6 +116,10 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             Assert.Equal("Facebook", facebookIdp.DisplayName);
         }
 
+        /// <summary>
+        /// RP redircts to STS with IdP option, since after client restrictions only one possible IdP is allowed to use,
+        /// STS should automatically redirect to IdP
+        /// </summary>
         [Fact]
         public async Task LoginPageWithProvidedValidIdp()
         {
@@ -123,8 +134,8 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 
             var mockLogger = new Mock<ILogger<LoginController>>();
             var mockInteraction = new Mock<IIdentityServerInteractionService>();
-            mockInteraction.Setup(c => c.GetAuthorizationContextAsync(returnUrl))
-                .Returns(Task.FromResult(new AuthorizationRequest
+            mockInteraction.Setup(c => c.GetAuthorizationContextAsync(returnUrl)).Returns(
+                Task.FromResult(new AuthorizationRequest
                 {
                     ClientId = clientId,
                     IdP = "facebook"
@@ -177,6 +188,10 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             Assert.Equal("facebook", viewResult.AuthenticationSchemes.FirstOrDefault());
         }
 
+        /// <summary>
+        /// RP redircts to STS with IdP option, since after client restrictions only one possible IdP is allowed to use
+        /// but don't match the allowed IdPs for that client STS will show a local login, since it is the only option
+        /// </summary>
         [Fact]
         public async Task LoginPageWithProvidedInvalidIdp()
         {
@@ -236,10 +251,13 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<LoginViewModel>(viewResult.ViewData.Model);
-
-
         }
 
+        // TODO: RP redirects to STS with invalid IdP option and client has no local login enabled, in this case an error must be shown
+
+        /// <summary>
+        /// TBD;
+        /// </summary>
         [Fact]
         public async Task LoginPageWithOnlyOneExternalProvider()
         {
@@ -304,7 +322,6 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 
             Assert.Equal("facebook", viewResult.AuthenticationSchemes.FirstOrDefault());
         }
-
     }
 }
 

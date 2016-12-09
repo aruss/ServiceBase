@@ -86,7 +86,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             var userAccount = await this._userAccountStore.LoadByExternalProviderAsync(provider, subject);
             if (userAccount != null)
             {
-                await HttpContext.Authentication.IssueCookie(userAccount, provider, "external");
+                await HttpContext.Authentication.IssueCookie(userAccount, provider, IdentityServerConstants.ExternalCookieAuthenticationScheme);
                 await HttpContext.Authentication.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
 
                 if (returnUrl != null && _interaction.IsValidReturnUrl(returnUrl))
@@ -119,7 +119,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                     };
 
                     await this._userAccountStore.WriteAsync(userAccount);
-                    await HttpContext.Authentication.IssueCookie(userAccount, provider, "external");
+                    await HttpContext.Authentication.IssueCookie(userAccount, provider, IdentityServerConstants.ExternalCookieAuthenticationScheme);
                     await HttpContext.Authentication.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
 
                     if (returnUrl != null && _interaction.IsValidReturnUrl(returnUrl))
@@ -144,7 +144,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                         };
 
                         await _userAccountStore.WriteExternalAccountAsync(externalAccount);
-                        await HttpContext.Authentication.IssueCookie(userAccount, provider, "external");
+                        await HttpContext.Authentication.IssueCookie(userAccount, provider, IdentityServerConstants.ExternalCookieAuthenticationScheme);
                         await HttpContext.Authentication.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
 
                         if (returnUrl != null && _interaction.IsValidReturnUrl(returnUrl))

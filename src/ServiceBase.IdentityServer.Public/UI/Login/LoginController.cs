@@ -106,11 +106,73 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         }
 
         /// <summary>
-        /// Handle postback from email (username)/password login
+        /// Handle postback from username/password login
         /// </summary>
-        [HttpPost("login")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginInputModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Get user account by provided email
+                var userAccount = await _userAccountStore.LoadByEmailAsync(model.Email);
+                if (userAccount != null)
+                {
+                    if (!userAccount.IsLoginAllowed)
+                    {
+                        ModelState.AddModelError("", "User account is diactivated");
+                    }
+                    else
+                    {
+                        // If user account has local password use password authentication
+                        if (userAccount.HasPassword())
+                        {
+                            if (_crypto.VerifyPasswordHash(userAccount.PasswordHash, model.Password, _applicationOptions.PasswordHashingIterationCount))
+                            {
+                                await this.HttpContext.Authentication.IssueCookie(userAccount,
+                                    IdentityServerConstants.LocalIdentityProvider,
+                                    "password", model.RememberLogin);
+
+                                // Make sure the returnUrl is still valid, and if yes - redirect back to authorize endpoint
+                                if (_interaction.IsValidReturnUrl(model.ReturnUrl))
+                                {
+                                    return Redirect(model.ReturnUrl);
+                                }
+
+                                return Redirect("~/");
+                            }
+                        }
+                        // In case the user does not have local password but has associated third party accounts
+                        // Show the accounts as login hints
+                        else
+                        {
+
+                        }
+                    }
+                }
+
+                ModelState.AddModelError("", "Invalid username or password.");
+            }
+
+            // something went wrong, show form with error
+            var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+            var client = await _clientStore.FindEnabledClientByIdAsync(context.ClientId);
+            var providers = this.GetEnabledProviders(client);
+            var vm = new LoginViewModel(model)
+            {
+                ExternalProviders = providers,
+                EnableLocalLogin = client.EnableLocalLogin,
+            };
+
+            return View(vm);
+        }
+
+        /// <summary>
+        /// Handle postback from email (username)/password login
+        /// </summary>
+        /*[HttpPost("login")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginXXXXX(LoginInputModel model)
         {
             var vm = new LoginViewModel(model);
             if (ModelState.IsValid)
@@ -183,7 +245,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             }
 
             return View(vm);
-        }
+        }*/
 
         /// <summary>
         /// Initiate roundtrip to external authentication provider

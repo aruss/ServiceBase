@@ -19,7 +19,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
     [Collection("Login")]
     public class LoggingControllerTests
     {
-        [Fact]
+        // [Fact]
         public async Task CallIndexPage()
         {
             // Arrange

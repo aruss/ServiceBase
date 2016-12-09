@@ -11,7 +11,8 @@ namespace ServiceBase.IdentityServer.Extensions
 {
     public static class AuthenticationManagerExtensions
     {
-        public static async Task IssueCookie(this AuthenticationManager manager, UserAccount userAccount, string idp, string amr)
+        public static async Task IssueCookie(this AuthenticationManager manager, UserAccount userAccount,
+            string identityProvider, string authenticationType, bool isPersistent = false)
         {
             var name = userAccount.Claims != null ? userAccount.Claims.Where(x => x.Type == JwtClaimTypes.Name)
                 .Select(x => x.Value).FirstOrDefault() ?? userAccount.Email : userAccount.Email;
@@ -19,13 +20,25 @@ namespace ServiceBase.IdentityServer.Extensions
             var claims = new Claim[] {
                 new Claim(JwtClaimTypes.Subject, userAccount.Id.ToString()),
                 new Claim(JwtClaimTypes.Name, name),
-                new Claim(JwtClaimTypes.IdentityProvider, idp),
+                new Claim(JwtClaimTypes.IdentityProvider, identityProvider),
                 new Claim(JwtClaimTypes.AuthenticationTime, DateTime.UtcNow.ToEpochTime().ToString()),
             };
-            var ci = new ClaimsIdentity(claims, amr, JwtClaimTypes.Name, JwtClaimTypes.Role);
+            var ci = new ClaimsIdentity(claims, authenticationType, JwtClaimTypes.Name, JwtClaimTypes.Role);
             var cp = new ClaimsPrincipal(ci);
-            
-            await manager.SignInAsync(IdentityServerConstants.DefaultCookieAuthenticationScheme, cp);            
+
+            AuthenticationProperties props = null;
+            // Only set explicit expiration here if persistent.
+            // otherwise we reply upon expiration configured in cookie middleware.
+            if (isPersistent)
+            {
+                props = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMonths(1)
+                };
+            };
+
+            await manager.SignInAsync(IdentityServerConstants.DefaultCookieAuthenticationScheme, cp, props);
         }
     }
 }
