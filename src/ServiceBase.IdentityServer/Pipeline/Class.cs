@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace ServiceBase.IdentityServer.Pipeline
 {
+    /*
     // https://msdn.microsoft.com/en-us/library/ff963548.aspx
 
 
@@ -14,7 +15,7 @@ namespace ServiceBase.IdentityServer.Pipeline
     public interface IPipelineService
     {
         void Execute<TMessage>(TMessage message);
-        IPipelineService AddListener<TMessage, TListener>(); 
+        IPipelineService AddListener<TMessage, TListener>();
     }
 
     /// <summary>
@@ -48,9 +49,9 @@ namespace ServiceBase.IdentityServer.Pipeline
 
                 if (listener != null)
                 {
-                    listener.Execute(message); 
+                    listener.Execute(message);
                 }
-            }            
+            }
         }
 
         public IPipelineService AddListener<TMessage, TListener>()
@@ -79,7 +80,7 @@ namespace ServiceBase.IdentityServer.Pipeline
     }
 
 
-    // User registration case 
+    // User registration case
 
     public class UserRegisteredInfo
     {
@@ -101,9 +102,9 @@ namespace ServiceBase.IdentityServer.Pipeline
 
         }
     }
-    
 
-    // Application bootstrapping 
+
+    // Application bootstrapping
 
     public class StartupFoo
     {
@@ -120,5 +121,5 @@ namespace ServiceBase.IdentityServer.Pipeline
                 .AddListener<UserRegisteredInfo, OnUserRegisteredSendEmail>()
                 .AddListener<UserRegisteredInfo, OnUserRegisteredSavePrimaryStore>();
         }
-    }
+    }*/
 }

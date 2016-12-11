@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
-using Microsoft.AspNetCore.Authentication;
+using System.Threading.Tasks;
 
 namespace AspNetCoreWeb.Controllers
 {
@@ -20,7 +20,7 @@ namespace AspNetCoreWeb.Controllers
         {
             ViewBag.IdentityToken = await HttpContext.Authentication.GetTokenAsync("id_token");
             ViewBag.AccessToken = await HttpContext.Authentication.GetTokenAsync("access_token");
-            
+
             return View();
         }
 
