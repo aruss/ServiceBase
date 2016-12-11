@@ -48,9 +48,12 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
         public void InitializeStores()
         {
-            _configurationDbContext.Database.Migrate();
-            _persistedGrantDbContext.Database.Migrate();
-            _defaultDbContext.Database.Migrate();
+            if (_options.MigrateDatabase)
+            {
+                _configurationDbContext.Database.Migrate();
+                _persistedGrantDbContext.Database.Migrate();
+                _defaultDbContext.Database.Migrate();
+            }
 
             if (_options.SeedExampleData)
             {

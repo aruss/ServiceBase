@@ -40,7 +40,6 @@ namespace ServiceBase.IdentityServer.Public
 
             services.AddOptions();
             services.Configure<ApplicationOptions>(_configuration.GetSection("App"));
-            services.AddSingleton<IConfiguration>(_configuration);
 
             #endregion
 

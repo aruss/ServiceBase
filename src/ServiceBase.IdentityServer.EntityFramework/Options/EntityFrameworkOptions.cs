@@ -1,12 +1,14 @@
-﻿namespace ServiceBase.IdentityServer.EntityFramework.Options
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+
+namespace ServiceBase.IdentityServer.EntityFramework.Options
 {
     public class EntityFrameworkOptions
     {
         public string ConnectionString { get; set; }
 
-        public bool CreateTablesAlways { get; set; } = false;
-        public bool CreateTablesIfNecessary { get; set; } = true;
-        public bool SeedExampleData { get; set; } = true;
+        public bool SeedExampleData { get; set; } = false;
+        public bool MigrateDatabase { get; set; } = false;
 
         public string TablePrefix { get; set; }
     }

@@ -25,17 +25,17 @@ coverage=./coverage
 rm -rf $coverage
 mkdir $coverage
 
-dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.EntityFramework.IntegrationTests
-dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.EntityFramework.UnitTests
+#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.EntityFramework.IntegrationTests
+#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.EntityFramework.UnitTests
 dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.IntegrationTests
-dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests
-dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.UnitTests
-dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.UnitTests
+#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests
+#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.UnitTests
+#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.UnitTests
 
 echo "Calculating coverage with OpenCover"
 $OPENCOVER \
   -target:"c:\Program Files\dotnet\dotnet.exe" \
-  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests" \
+  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.IntegrationTests" \
   -mergeoutput \
   -hideskipped:File \
   -output:$coverage/coverage.xml \

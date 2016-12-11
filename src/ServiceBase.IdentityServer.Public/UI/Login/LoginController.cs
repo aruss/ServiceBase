@@ -108,7 +108,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         /// <summary>
         /// Handle postback from username/password login
         /// </summary>
-        [HttpPost]
+        [HttpPost("login", Name = "Login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginInputModel model)
         {
