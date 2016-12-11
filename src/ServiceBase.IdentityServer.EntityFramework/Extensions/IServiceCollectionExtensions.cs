@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceBase.IdentityServer.EntityFramework.DbContexts;
-using ServiceBase.IdentityServer.EntityFramework.Extensions;
 using ServiceBase.IdentityServer.EntityFramework.Options;
 using ServiceBase.IdentityServer.Services;
 using System;
@@ -39,14 +38,28 @@ namespace ServiceBase.IdentityServer.EntityFramework
             ConfigureServices(services, options);
         }
 
+
         internal static void ConfigureServices(IServiceCollection services, EntityFrameworkOptions options)
         {
             var migrationsAssembly = typeof(IServiceCollectionExtensions).GetTypeInfo().Assembly.GetName().Name;
 
             // AddConfigurationStore
-            services.AddDbContext<ConfigurationDbContext>(builder =>
-                builder.UseSqlServer(options.ConnectionString, o => o.MigrationsAssembly(migrationsAssembly)));
+            /*services.AddDbContext<ConfigurationDbContext>(builder =>
+                builder.UseSqlServer(options.ConnectionString, o => o.MigrationsAssembly(migrationsAssembly)));*/
 
+            Action<DbContextOptionsBuilder> builderOptions = (builder) =>
+            {
+                if (String.IsNullOrWhiteSpace(options.ConnectionString))
+                {
+                    builder.UseInMemoryDatabase();
+                }
+                else
+                {
+                    builder.UseSqlServer(options.ConnectionString, o => o.MigrationsAssembly(migrationsAssembly));
+                }
+            };
+
+            services.AddDbContext<ConfigurationDbContext>(builderOptions);
             services.AddScoped<IConfigurationDbContext, ConfigurationDbContext>();
             services.AddTransient<IClientStore, ClientStore>();
             services.AddTransient<IScopeStore, ScopeStore>();
@@ -57,9 +70,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             services.AddSingleton(configStoreOptions);
 
             // AddOperationalStore
-            services.AddDbContext<PersistedGrantDbContext>(builder =>
-                builder.UseSqlServer(options.ConnectionString, o => o.MigrationsAssembly(migrationsAssembly)));
-
+            services.AddDbContext<PersistedGrantDbContext>(builderOptions);
             services.AddScoped<IPersistedGrantDbContext, PersistedGrantDbContext>();
             services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
@@ -73,9 +84,8 @@ namespace ServiceBase.IdentityServer.EntityFramework
             builder.Services.AddSingleton(tokenCleanupOptions);
             builder.Services.AddSingleton<TokenCleanup>();*/
 
-            services.AddDbContext<DefaultDbContext>(builder =>
-                builder.UseSqlServer(options.ConnectionString, o => o.MigrationsAssembly(migrationsAssembly)));
 
+            services.AddDbContext<DefaultDbContext>(builderOptions);
             services.AddScoped<DefaultDbContext>();
             services.AddTransient<IUserAccountStore, UserAccountStore>();
             services.AddTransient<IStoreInitializer, StoreInitializer>();
