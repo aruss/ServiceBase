@@ -27,7 +27,7 @@ mkdir $coverage
 
 #dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.EntityFramework.IntegrationTests
 #dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.EntityFramework.UnitTests
-dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.IntegrationTests
+#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.IntegrationTests
 #dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests
 #dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.UnitTests
 #dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.UnitTests
@@ -43,7 +43,7 @@ $OPENCOVER \
   -filter:"+[ServiceBase*]* -[ServiceBase.*Tests*]*" \
   -searchdirs:$testdir/bin/$CONFIG/netcoreapp1.0 \
   -register:user
-
+  
 echo "Generating HTML report"
 $REPORTGENERATOR \
   -reports:$coverage/coverage.xml \
