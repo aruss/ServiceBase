@@ -7,9 +7,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{723206AB-DF2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5EFD3297-E28B-41EB-82F1-F4B32D745420}"
 	ProjectSection(SolutionItems) = preProject
-		build.cmd = build.cmd
-		build.ps1 = build.ps1
-		build.sh = build.sh
+		.coveralls.yml = .coveralls.yml
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
+		coverage.sh = coverage.sh
+		coverage_local.sh = coverage_local.sh
+		coveralls.sh = coveralls.sh
 		global.json = global.json
 		NuGet.Config = NuGet.Config
 		README.md = README.md
