@@ -18,46 +18,36 @@ DOTNET_TEST_ARGS="$DOTNET_BUILD_ARGS"
 echo CLI args: $DOTNET_BUILD_ARGS
 
 echo Restoring
-
 #dotnet restore -v Warning
 
 echo Building
-
 #dotnet build $DOTNET_BUILD_ARGS **/project.json
 
 echo Testing
 
-coverage=./coverage
-rm -rf $coverage
-mkdir $coverage
+COVERAGE_DIR=./coverage
+rm -rf $COVERAGE_DIR
+mkdir $COVERAGE_DIR
 
-#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.IntegrationTests
+PROJECTS=(\
+"ServiceBase.IdentityServer.EntityFramework.IntegrationTests" \
+"ServiceBase.IdentityServer.EntityFramework.UnitTests" \
+"ServiceBase.IdentityServer.Public.IntegrationTests" \
+"ServiceBase.IdentityServer.Public.UnitTests" \
+"ServiceBase.IdentityServer.UnitTests" \
+"ServiceBase.UnitTests") 
 
-echo "Calculating coverage with OpenCover"
+for PROJECT in "${PROJECTS[@]}"
+do
+   : 
 $OPENCOVER \
   -target:"c:\Program Files\dotnet\dotnet.exe" \
-  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.IntegrationTests" \
+  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/$PROJECT" \
   -mergeoutput \
   -hideskipped:File \
-  -output:$coverage/coverage1.xml \
+  -output:$COVERAGE_DIR/coverage.xml \
   -oldStyle \
   -filter:"+[ServiceBase*]* -[ServiceBase.*Tests*]*" \
   -searchdirs:$testdir/bin/$CONFIG/netcoreapp1.0 \
   -register:user
-  
-$OPENCOVER \
-  -target:"c:\Program Files\dotnet\dotnet.exe" \
-  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests" \
-  -mergeoutput \
-  -hideskipped:File \
-  -output:$coverage/coverage2.xml \
-  -oldStyle \
-  -filter:"+[ServiceBase*]* -[ServiceBase.*Tests*]*" \
-  -searchdirs:$testdir/bin/$CONFIG/netcoreapp1.0 \
-  -register:user
-  
-echo "Generating HTML report"
-$REPORTGENERATOR \
-  -reports:$coverage/coverage*.xml \
-  -targetdir:$coverage \
-  -verbosity:Error
+done

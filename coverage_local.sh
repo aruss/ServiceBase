@@ -2,8 +2,8 @@
 
 set -e
 
-OPENCOVER=C:/opencover/OpenCover.Console.exe
-REPORTGENERATOR=C:/opencover/tools/ReportGenerator.exe
+OPENCOVER=C:/build/OpenCover/OpenCover.Console.exe
+REPORTGENERATOR=C:/build/ReportGenerator/ReportGenerator.exe
 
 CONFIG=Release
 # Arguments to use for the build
@@ -21,42 +21,40 @@ echo Building
 
 echo Testing
 
-coverage=./coverage
-rm -rf $coverage
-mkdir $coverage
-
-#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.EntityFramework.IntegrationTests
-#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.EntityFramework.UnitTests
-#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.IntegrationTests
-#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests
-#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.UnitTests
-#dotnet test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.UnitTests
+COVERAGE_DIR=./coverage/report
+COVERAGE_HISTORY_DIR=./coverage/history
+rm -rf $COVERAGE_DIR
+mkdir $COVERAGE_DIR
 
 echo "Calculating coverage with OpenCover"
+
+PROJECTS=(\
+"ServiceBase.IdentityServer.EntityFramework.IntegrationTests" \
+"ServiceBase.IdentityServer.EntityFramework.UnitTests" \
+"ServiceBase.IdentityServer.Public.IntegrationTests" \
+"ServiceBase.IdentityServer.Public.UnitTests" \
+"ServiceBase.IdentityServer.UnitTests" \
+"ServiceBase.UnitTests") 
+
+for PROJECT in "${PROJECTS[@]}"
+do
+   : 
 $OPENCOVER \
   -target:"c:\Program Files\dotnet\dotnet.exe" \
-  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.IntegrationTests" \
+  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/$PROJECT" \
   -mergeoutput \
   -hideskipped:File \
-  -output:$coverage/coverage1.xml \
+  -output:$COVERAGE_DIR/coverage.xml \
   -oldStyle \
   -filter:"+[ServiceBase*]* -[ServiceBase.*Tests*]*" \
   -searchdirs:$testdir/bin/$CONFIG/netcoreapp1.0 \
   -register:user
-  
-$OPENCOVER \
-  -target:"c:\Program Files\dotnet\dotnet.exe" \
-  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests" \
-  -mergeoutput \
-  -hideskipped:File \
-  -output:$coverage/coverage2.xml \
-  -oldStyle \
-  -filter:"+[ServiceBase*]* -[ServiceBase.*Tests*]*" \
-  -searchdirs:$testdir/bin/$CONFIG/netcoreapp1.0 \
-  -register:user
-  
+done
+    
 echo "Generating HTML report"
 $REPORTGENERATOR \
-  -reports:$coverage/coverage*.xml \
-  -targetdir:$coverage \
+  -reports:$COVERAGE_DIR/coverage.xml \
+  -targetdir:$COVERAGE_DIR \
+  -historydir:$COVERAGE_HISTORY_DIR \
+  -reporttypes:"Html" \
   -verbosity:Error

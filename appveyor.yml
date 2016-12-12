@@ -17,7 +17,6 @@ build_script:
   - dotnet build **/project.json --configuration Release --version-suffix %APPVEYOR_BUILD_NUMBER%
 
 test_script:
-  - dotnet test test/ServiceBase.IdentityServer.Public.UnitTests/project.json --configuration Release -f netcoreapp1.0 --no-build
   - bash coverage.sh
   - bash coveralls.sh
 
