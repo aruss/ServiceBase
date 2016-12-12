@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
 using System.Net;
+using AngleSharp.Parser.Html;
 
 namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 {
@@ -46,13 +47,14 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 
             // Create post body for login request
             var getResponseContent = await getResponse.Content.ReadAsStringAsync();
+            var doc = (new HtmlParser().Parse(getResponseContent));
             var formPostBodyData = new Dictionary<string, string>
             {
                 {"Email","alice@localhost"},
                 {"Password", "alice@localhost"},
                 {"RememberLogin", "false"},
-                {"__RequestVerificationToken", ResponseHelper.ExtractAntiForgeryToken(getResponseContent) },
-                {"ReturnUrl", ResponseHelper.ExtractReturnUrl(getResponseContent)}
+                {"__RequestVerificationToken", doc.GetAntiForgeryToken() },
+                {"ReturnUrl", doc.GetReturnUrl()}
             };
             var postRequest = getResponse.CreatePostRequest("/login", formPostBodyData);
 
@@ -69,10 +71,11 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             var getRequest = responseFrom.CreateGetRequest("/logout");
             var getResponse = await _client.SendAsync(getRequest);
             var content = await getResponse.Content.ReadAsStringAsync();
+            var doc = (new HtmlParser().Parse(content));
 
             var formPostBodyData = new Dictionary<string, string>
             {
-                {"__RequestVerificationToken", ResponseHelper.ExtractAntiForgeryToken(content) }
+                {"__RequestVerificationToken", doc.GetAntiForgeryToken() }
             };
 
             var postRequest = getResponse.CreatePostRequest("/logout", formPostBodyData);
@@ -88,13 +91,14 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 
             // Create post body for login request
             var getResponseContent = await getResponse.Content.ReadAsStringAsync();
+            var doc = (new HtmlParser().Parse(getResponseContent));
             var formPostBodyData = new Dictionary<string, string>
             {
                 {"Email","alice@localhost"},
                 {"Password", "alice@localhost"},
                 {"RememberLogin", "true"},
-                {"__RequestVerificationToken", ResponseHelper.ExtractAntiForgeryToken(getResponseContent) },
-                {"ReturnUrl", ResponseHelper.ExtractReturnUrl(getResponseContent)}
+                {"__RequestVerificationToken", doc.GetAntiForgeryToken() },
+                {"ReturnUrl", doc.GetReturnUrl()}
             };
             var postRequest = getResponse.CreatePostRequest("/login", formPostBodyData);
 
@@ -113,13 +117,14 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 
             // Create post body for login request
             var getResponseContent = await getResponse.Content.ReadAsStringAsync();
+            var doc = (new HtmlParser().Parse(getResponseContent));
             var formPostBodyData = new Dictionary<string, string>
             {
                 {"Email","alice@localhost"},
                 {"Password", "wrongpassword"},
                 {"RememberLogin", "false"},
-                {"__RequestVerificationToken", ResponseHelper.ExtractAntiForgeryToken(getResponseContent) },
-                {"ReturnUrl", ResponseHelper.ExtractReturnUrl(getResponseContent)}
+                {"__RequestVerificationToken", doc.GetAntiForgeryToken() },
+                {"ReturnUrl", doc.GetReturnUrl()}
             };
 
             var postRequest = getResponse.CreatePostRequest("/login", formPostBodyData);
@@ -136,13 +141,14 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 
             // Create post body for login request
             var getResponseContent = await getResponse.Content.ReadAsStringAsync();
+            var doc = (new HtmlParser().Parse(getResponseContent));
             var formPostBodyData = new Dictionary<string, string>
             {
                 {"Email","notthere@localhost"},
                 {"Password", "wrongpassword"},
                 {"RememberLogin", "false"},
-                {"__RequestVerificationToken", ResponseHelper.ExtractAntiForgeryToken(getResponseContent) },
-                {"ReturnUrl", ResponseHelper.ExtractReturnUrl(getResponseContent)}
+                {"__RequestVerificationToken", doc.GetAntiForgeryToken() },
+                {"ReturnUrl", doc.GetReturnUrl()}
             };
 
             var postRequest = getResponse.CreatePostRequest("/login", formPostBodyData);

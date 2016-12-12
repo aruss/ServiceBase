@@ -24,6 +24,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             var server = new TestServer(new WebHostBuilder()
                 .UseContentRoot(contentRoot)
                 .UseStartup<TestStartup>()
+
             );
 
             _client = server.CreateClient();

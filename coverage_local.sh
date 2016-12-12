@@ -13,11 +13,11 @@ DOTNET_TEST_ARGS="$DOTNET_BUILD_ARGS"
 
 echo CLI args: $DOTNET_BUILD_ARGS
 
-#echo Restoring
+echo Restoring
 #dotnet restore -v Warning
 
 echo Building
-dotnet build $DOTNET_BUILD_ARGS **/project.json
+#dotnet build $DOTNET_BUILD_ARGS **/project.json
 
 echo Testing
 
@@ -38,7 +38,18 @@ $OPENCOVER \
   -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.IntegrationTests" \
   -mergeoutput \
   -hideskipped:File \
-  -output:$coverage/coverage.xml \
+  -output:$coverage/coverage1.xml \
+  -oldStyle \
+  -filter:"+[ServiceBase*]* -[ServiceBase.*Tests*]*" \
+  -searchdirs:$testdir/bin/$CONFIG/netcoreapp1.0 \
+  -register:user
+  
+$OPENCOVER \
+  -target:"c:\Program Files\dotnet\dotnet.exe" \
+  -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/ServiceBase.IdentityServer.Public.UnitTests" \
+  -mergeoutput \
+  -hideskipped:File \
+  -output:$coverage/coverage2.xml \
   -oldStyle \
   -filter:"+[ServiceBase*]* -[ServiceBase.*Tests*]*" \
   -searchdirs:$testdir/bin/$CONFIG/netcoreapp1.0 \
@@ -46,6 +57,6 @@ $OPENCOVER \
   
 echo "Generating HTML report"
 $REPORTGENERATOR \
-  -reports:$coverage/coverage.xml \
+  -reports:$coverage/coverage*.xml \
   -targetdir:$coverage \
   -verbosity:Error
