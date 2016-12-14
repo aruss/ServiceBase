@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 {
-    [Collection("Login")]
-    public class GeneralTests
+    public static class ServerHelper
     {
-        HttpClient _client;
-
-        public GeneralTests()
+        public static TestServer CreateServer()
         {
             // Arrange
             var contentRoot = Path.Combine(Directory.GetCurrentDirectory(), "src", "ServiceBase.IdentityServer.Public");
@@ -22,24 +22,20 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             }
 
             var server = new TestServer(new WebHostBuilder()
+                .ConfigureServices((services) =>
+                {
+
+                })
+
                 .UseContentRoot(contentRoot)
                 .UseStartup<TestStartup>()
-
             );
 
-            _client = server.CreateClient();
-        }
 
-        [Fact]
-        public async Task GetIndex()
-        {
-            // Act
-            var response = await _client.GetAsync("/");
 
-            // Assert
-            response.EnsureSuccessStatusCode();
-            var responseString = await response.Content.ReadAsStringAsync();
+
+
+            return server;
         }
     }
 }
-

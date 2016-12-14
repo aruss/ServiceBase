@@ -14,7 +14,6 @@ using ServiceBase.Notification.Email;
 
 namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 {
-
     public class TestStartup
     {
         public TestStartup(IHostingEnvironment environment)
@@ -72,6 +71,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.UseMiddleware<RequestIdMiddleware>();
             app.UseExceptionHandler("/Home/Error");
             app.UseIdentityServer();
             app.UseCookieAuthentication(new CookieAuthenticationOptions

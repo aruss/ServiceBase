@@ -29,16 +29,17 @@ mkdir $COVERAGE_DIR
 echo "Calculating coverage with OpenCover"
 
 PROJECTS=(\
-"ServiceBase.IdentityServer.EntityFramework.IntegrationTests" \
-"ServiceBase.IdentityServer.EntityFramework.UnitTests" \
+#"ServiceBase.IdentityServer.EntityFramework.IntegrationTests" \
+#"ServiceBase.IdentityServer.EntityFramework.UnitTests" \
 "ServiceBase.IdentityServer.Public.IntegrationTests" \
-"ServiceBase.IdentityServer.Public.UnitTests" \
-"ServiceBase.IdentityServer.UnitTests" \
-"ServiceBase.UnitTests") 
+#"ServiceBase.IdentityServer.Public.UnitTests" \
+#"ServiceBase.IdentityServer.UnitTests" \
+#"ServiceBase.UnitTests"\
+)
 
 for PROJECT in "${PROJECTS[@]}"
 do
-   : 
+   :
 $OPENCOVER \
   -target:"c:\Program Files\dotnet\dotnet.exe" \
   -targetargs:"test -f netcoreapp1.0 $DOTNET_TEST_ARGS test/$PROJECT" \
@@ -50,7 +51,7 @@ $OPENCOVER \
   -searchdirs:$testdir/bin/$CONFIG/netcoreapp1.0 \
   -register:user
 done
-    
+
 echo "Generating HTML report"
 $REPORTGENERATOR \
   -reports:$COVERAGE_DIR/coverage.xml \

@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 namespace ServiceBase
 {
     // https://msdn.microsoft.com/de-de/library/dn589788.aspx
-    /* Example 
-     * 
+    /* Example
+     *
      * using (var client = new HttpClient(new RetryHttpClientHandler(3)))
      * {
      *      // Client will try 3 times to make a POST request until a success code is returned
      *      await client.PostAsync("http://domain.com/foo", content);
      * }
-     * 
+     *
      * FYI: http://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
      */
 
