@@ -1,18 +1,14 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Xunit;
+using System.IO;
 
 namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 {
     public static class ServerHelper
     {
-        public static TestServer CreateServer()
+        public static TestServer CreateServer(Action<IServiceCollection> configureServices = null)
         {
             // Arrange
             var contentRoot = Path.Combine(Directory.GetCurrentDirectory(), "src", "ServiceBase.IdentityServer.Public");
@@ -21,19 +17,16 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
                 contentRoot = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "src", "ServiceBase.IdentityServer.Public");
             }
 
-            var server = new TestServer(new WebHostBuilder()
-                .ConfigureServices((services) =>
-                {
-
-                })
-
+            var builder = new WebHostBuilder()
                 .UseContentRoot(contentRoot)
-                .UseStartup<TestStartup>()
-            );
+                .UseStartup<TestStartup>();
 
+            if (configureServices != null)
+            {
+                builder = builder.ConfigureServices(configureServices);
+            }
 
-
-
+            var server = new TestServer(builder);
 
             return server;
         }

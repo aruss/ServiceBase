@@ -8,9 +8,13 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using ServiceBase.IdentityServer.Config;
 using ServiceBase.IdentityServer.Crypto;
-using ServiceBase.IdentityServer.EntityFramework;
+using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
+using System.Linq;
+
+// Entity framework store layer
+using ServiceBase.IdentityServer.EntityFramework;
 
 namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 {
@@ -51,15 +55,31 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
                 .AddSecretValidator<PrivateKeyJwtSecretValidator>()
                 .AddTemporarySigningCredential();
 
-            var emailServiceMock = new Mock<IEmailService>();
-            services.AddSingleton<IEmailService>(emailServiceMock.Object);
+            // Register mocked email service in case none of the tests registered one already
+            if (!services.Any(c => c.ServiceType == typeof(IEmailService)))
+            {
+
+                var emailServiceMock = new Mock<IEmailService>();
+                services.AddSingleton<IEmailService>(emailServiceMock.Object);
+            }
 
             services.AddTransient<ICrypto, DefaultCrypto>();
 
-            services.AddEntityFrameworkStores((option) =>
+            #region Entity Framework Store Layer
+
+            services.AddEntityFrameworkStores((options) =>
             {
-                option.SeedExampleData = true;
+                options.SeedExampleData = false;
+                options.SeedExampleData = true;
             });
+
+            // Register default store initializer in case none of the tests registered one already
+            if (!services.Any(c => c.ServiceType == typeof(IStoreInitializer)))
+            {
+                services.AddTransient<IStoreInitializer, DefaultStoreInitializer>();
+            }
+
+            #endregion
 
             services
               .AddMvc()
@@ -82,11 +102,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             });
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
-
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                serviceScope.ServiceProvider.GetService<IStoreInitializer>().InitializeStores();
-            }
+            app.InitializeStores();
         }
     }
 }

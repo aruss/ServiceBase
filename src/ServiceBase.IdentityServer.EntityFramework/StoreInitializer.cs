@@ -15,10 +15,10 @@ using System.Linq;
 
 namespace ServiceBase.IdentityServer.EntityFramework
 {
-    public class StoreInitializer : IStoreInitializer
+    public class DefaultStoreInitializer : IStoreInitializer
     {
         private readonly EntityFrameworkOptions _options;
-        private readonly ILogger<StoreInitializer> _logger;
+        private readonly ILogger<DefaultStoreInitializer> _logger;
         private readonly IHostingEnvironment _env;
         private readonly ConfigurationDbContext _configurationDbContext;
         private readonly PersistedGrantDbContext _persistedGrantDbContext;
@@ -26,9 +26,9 @@ namespace ServiceBase.IdentityServer.EntityFramework
         private readonly ICrypto _crypto;
         private readonly ApplicationOptions _applicationOptions;
 
-        public StoreInitializer(
+        public DefaultStoreInitializer(
             IOptions<EntityFrameworkOptions> options,
-            ILogger<StoreInitializer> logger,
+            ILogger<DefaultStoreInitializer> logger,
             IHostingEnvironment env,
             ConfigurationDbContext configurationDbContext,
             PersistedGrantDbContext persistedGrantDbContext,
@@ -50,39 +50,57 @@ namespace ServiceBase.IdentityServer.EntityFramework
         {
             if (_options.MigrateDatabase)
             {
-                _configurationDbContext.Database.Migrate();
-                _persistedGrantDbContext.Database.Migrate();
-                _defaultDbContext.Database.Migrate();
+                this.MigrateDatabase();
             }
 
             if (_options.SeedExampleData)
             {
-                if (!_configurationDbContext.Clients.Any())
-                {
-                    foreach (var client in Clients.Get())
-                    {
-                        _configurationDbContext.Clients.Add(client.ToEntity());
-                    }
-                    _configurationDbContext.SaveChanges();
-                }
+                this.SeedClients();
+                this.SeedScopes();
+                this.SeedUserAccounts();
+            }
+        }
 
-                if (!_configurationDbContext.Scopes.Any())
-                {
-                    foreach (var client in Scopes.Get())
-                    {
-                        _configurationDbContext.Scopes.Add(client.ToEntity());
-                    }
-                    _configurationDbContext.SaveChanges();
-                }
+        internal virtual void MigrateDatabase()
+        {
+            _configurationDbContext.Database.Migrate();
+            _persistedGrantDbContext.Database.Migrate();
+            _defaultDbContext.Database.Migrate();
+        }
 
-                if (!_defaultDbContext.UserAccounts.Any())
+        internal virtual void SeedClients()
+        {
+            if (!_configurationDbContext.Clients.Any())
+            {
+                foreach (var client in Clients.Get())
                 {
-                    foreach (var userAccount in UserAccounts.Get(_crypto, _applicationOptions))
-                    {
-                        _defaultDbContext.UserAccounts.Add(userAccount.ToEntity());
-                    }
-                    _defaultDbContext.SaveChanges();
+                    _configurationDbContext.Clients.Add(client.ToEntity());
                 }
+                _configurationDbContext.SaveChanges();
+            }
+        }
+
+        internal virtual void SeedScopes()
+        {
+            if (!_configurationDbContext.Scopes.Any())
+            {
+                foreach (var client in Scopes.Get())
+                {
+                    _configurationDbContext.Scopes.Add(client.ToEntity());
+                }
+                _configurationDbContext.SaveChanges();
+            }
+        }
+
+        internal virtual void SeedUserAccounts()
+        {
+            if (!_defaultDbContext.UserAccounts.Any())
+            {
+                foreach (var userAccount in UserAccounts.Get(_crypto, _applicationOptions))
+                {
+                    _defaultDbContext.UserAccounts.Add(userAccount.ToEntity());
+                }
+                _defaultDbContext.SaveChanges();
             }
         }
     }

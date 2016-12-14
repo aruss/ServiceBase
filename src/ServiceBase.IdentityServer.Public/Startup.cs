@@ -10,9 +10,9 @@ using ServiceBase.Config;
 using ServiceBase.IdentityServer.Config;
 using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.EntityFramework;
+using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
-using ServiceBase.Notification.SMS;
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
@@ -187,11 +187,7 @@ namespace ServiceBase.IdentityServer.Public
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
 
-            // Initialize database
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                serviceScope.ServiceProvider.GetService<IStoreInitializer>().InitializeStores();
-            }
+            app.InitializeStores();
         }
     }
 }

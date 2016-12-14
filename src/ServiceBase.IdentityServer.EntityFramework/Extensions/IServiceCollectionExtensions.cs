@@ -19,13 +19,16 @@ namespace ServiceBase.IdentityServer.EntityFramework
     public static class IServiceCollectionExtensions
     {
         public static void AddEntityFrameworkStores(
-            this IServiceCollection services,
-            Action<EntityFrameworkOptions> configure)
+          this IServiceCollection services,
+          Action<EntityFrameworkOptions> configure = null)
         {
             services.Configure<EntityFrameworkOptions>(configure);
 
             var options = new EntityFrameworkOptions();
-            configure(options);
+            if (configure != null)
+            {
+                configure(options);
+            }
             ConfigureServices(services, options);
         }
 
@@ -37,8 +40,6 @@ namespace ServiceBase.IdentityServer.EntityFramework
             section.Bind(options);
             ConfigureServices(services, options);
         }
-
-        //public static void AddEntityFrameworkInitializer(this IServiceSc)
 
         internal static void ConfigureServices(IServiceCollection services, EntityFrameworkOptions options)
         {
@@ -83,7 +84,11 @@ namespace ServiceBase.IdentityServer.EntityFramework
             services.AddScoped<DefaultDbContext>();
             services.AddTransient<IUserAccountStore, UserAccountStore>();
 
-            // services.AddTransient<IStoreInitializer, StoreInitializer>();
+            // If db inialization or example data seeding is required add a default store initializer
+            if (options.MigrateDatabase || options.SeedExampleData)
+            {
+                services.AddTransient<IStoreInitializer, DefaultStoreInitializer>();
+            }
 
             var defaultStoreOptions = new DefaultStoreOptions();
             services.AddSingleton(defaultStoreOptions);
