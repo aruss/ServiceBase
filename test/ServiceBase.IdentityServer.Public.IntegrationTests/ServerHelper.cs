@@ -26,9 +26,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
                 builder = builder.ConfigureServices(configureServices);
             }
 
-            var server = new TestServer(builder);
-
-            return server;
+            return new TestServer(builder);
         }
     }
 }

@@ -60,7 +60,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             {
 
                 var emailServiceMock = new Mock<IEmailService>();
-                services.AddSingleton<IEmailService>(emailServiceMock.Object);
+                services.AddSingleton<IEmailService>(emailServiceMock.Object);               
             }
 
             services.AddTransient<ICrypto, DefaultCrypto>();
@@ -69,14 +69,14 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 
             services.AddEntityFrameworkStores((options) =>
             {
+                options.MigrateDatabase = false;
                 options.SeedExampleData = false;
-                options.SeedExampleData = true;
             });
 
             // Register default store initializer in case none of the tests registered one already
             if (!services.Any(c => c.ServiceType == typeof(IStoreInitializer)))
             {
-                services.AddTransient<IStoreInitializer, DefaultStoreInitializer>();
+                services.AddTransient<IStoreInitializer, TestStoreInitializer>();
             }
 
             #endregion
