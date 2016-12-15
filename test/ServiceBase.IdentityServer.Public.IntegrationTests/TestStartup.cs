@@ -16,7 +16,7 @@ using System.Linq;
 // Entity framework store layer
 using ServiceBase.IdentityServer.EntityFramework;
 
-namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
+namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
     public class TestStartup
     {
@@ -60,7 +60,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             {
 
                 var emailServiceMock = new Mock<IEmailService>();
-                services.AddSingleton<IEmailService>(emailServiceMock.Object);               
+                services.AddSingleton<IEmailService>(emailServiceMock.Object);
             }
 
             services.AddTransient<ICrypto, DefaultCrypto>();
@@ -92,7 +92,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseMiddleware<RequestIdMiddleware>();
-            app.UseExceptionHandler("/Home/Error");
+            app.UseExceptionHandler("/error");
             app.UseIdentityServer();
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {

@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
+namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
     // http://stackoverflow.com/questions/30557521/how-to-access-httpcontext-inside-a-unit-test-in-asp-net-5-mvc-6
 

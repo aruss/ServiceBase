@@ -10,18 +10,18 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 {
     // http://stackoverflow.com/questions/30557521/how-to-access-httpcontext-inside-a-unit-test-in-asp-net-5-mvc-6
 
-    [Collection("Home Controller")]
-    public class HomeControllerTests
+    [Collection("Error Controller")]
+    public class ErrorControllerTests
     {
         [Fact]
         public async Task IndexActionWithoutAnyParameters()
         {
             // Arrange
             var mockInteraction = new Mock<IIdentityServerInteractionService>();
-            var controller = new HomeController(mockInteraction.Object);
+            var controller = new ErrorController(mockInteraction.Object);
 
             // Act
-            var result = await controller.Index();
+            var result = await controller.Index(null);
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);

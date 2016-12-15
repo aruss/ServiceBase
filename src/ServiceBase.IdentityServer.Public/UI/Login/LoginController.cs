@@ -1,23 +1,21 @@
-﻿using ServiceBase.IdentityServer.Config;
-using ServiceBase.IdentityServer.Crypto;
-using ServiceBase.IdentityServer.Extensions;
-using ServiceBase.IdentityServer.Services;
-using IdentityServer4;
+﻿using IdentityServer4;
+using IdentityServer4.Models;
 using IdentityServer4.Services;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.Extensions;
+using ServiceBase.IdentityServer.Services;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Text.Encodings.Web;
-using Microsoft.AspNetCore.Http.Authentication;
-using IdentityServer4.Models;
-using IdentityServer4.Stores;
-using Microsoft.AspNetCore.Http;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
+using System.Linq;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace ServiceBase.IdentityServer.Public.UI.Login
 {

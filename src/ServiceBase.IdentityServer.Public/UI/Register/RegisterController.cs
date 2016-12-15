@@ -90,27 +90,23 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                         UpdatedAt = now
                     };
 
-                    #region Send email verification message
-
+                    // Set verification key
                     userAccount.SetVerification(
                         _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
                         VerificationKeyPurpose.ConfirmAccount,
                         model.ReturnUrl,
                         now);
 
-                    await _emailService.SendEmailAsync("AccountCreated", userAccount.Email, new
-                    {
-                        // TODO: Url.Action seems to ignore HttpGetAttributes template property
-                        /*ConfirmUrl = Url.Action("RegisterConfirm", new { Key = userAccount.VerificationKey }),
-                        CancelUrl = Url.Action("RegisterCancel", new { Key = userAccount.VerificationKey })*/
-                        ConfirmUrl = String.Format("register/confirm/{0}", userAccount.VerificationKey),
-                        CancelUrl = String.Format("register/cancel/{0}", userAccount.VerificationKey)
-                    });
-
-                    #endregion
-
                     // Save user to data store
                     await _userAccountStore.WriteAsync(userAccount);
+
+                    // Send email
+                    await _emailService.SendEmailAsync("AccountCreated", userAccount.Email, new
+                    {
+                        // TODO: change to read x-forwared-host
+                        ConfirmUrl = String.Format("{0}://{1}/register/confirm/{2}", this.Request.Scheme, this.Request.Host, userAccount.VerificationKey),
+                        CancelUrl = String.Format("{0}://{1}/register/cancel/{2}", this.Request.Scheme, this.Request.Host, userAccount.VerificationKey)
+                    });
 
                     // Emit event
                     // _eventService.RaiseAccountCreatedEventAsync()

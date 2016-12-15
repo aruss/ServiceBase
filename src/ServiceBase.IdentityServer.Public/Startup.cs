@@ -110,6 +110,7 @@ namespace ServiceBase.IdentityServer.Public
             #endregion
 
             services.AddTransient<ICrypto, DefaultCrypto>();
+            services.AddAntiforgery();
 
             services
                 .AddMvc()
@@ -140,7 +141,7 @@ namespace ServiceBase.IdentityServer.Public
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/error");
             }
 
             app.UseIdentityServer();
@@ -181,11 +182,11 @@ namespace ServiceBase.IdentityServer.Public
                 });
             }
 
-
             #endregion
 
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
+            app.UseMiddleware<RequestIdMiddleware>();
 
             app.InitializeStores();
         }

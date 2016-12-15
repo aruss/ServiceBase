@@ -1,6 +1,5 @@
 ﻿using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
-using ServiceBase.IdentityServer.Public.UI.Error;
 using System.Threading.Tasks;
 
 namespace ServiceBase.IdentityServer.Public.UI.Home
@@ -14,29 +13,15 @@ namespace ServiceBase.IdentityServer.Public.UI.Home
             _interaction = interaction;
         }
 
+        /// <summary>
+        /// Show landing page
+        /// </summary>
         [Route("/")]
         public async Task<IActionResult> Index()
         {
             // TODO: redirect to default RP since index page does not provide any value
 
             return View();
-        }
-
-        /// <summary>
-        /// Shows the error page
-        /// </summary>
-        public async Task<IActionResult> Error(string errorId)
-        {
-            var vm = new ErrorViewModel();
-
-            // retrieve error details from identityserver
-            var message = await _interaction.GetErrorContextAsync(errorId);
-            if (message != null)
-            {
-                vm.Error = message;
-            }
-
-            return View("Error", vm);
         }
     }
 }

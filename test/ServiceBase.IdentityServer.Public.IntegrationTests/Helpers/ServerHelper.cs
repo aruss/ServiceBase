@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 
-namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
+namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
     public static class ServerHelper
     {

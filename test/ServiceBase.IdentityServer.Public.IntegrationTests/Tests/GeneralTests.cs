@@ -3,9 +3,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
+namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
-    [Collection("Login")]
+    [Collection("Landing Page")]
     public class GeneralTests
     {
         HttpClient _client;

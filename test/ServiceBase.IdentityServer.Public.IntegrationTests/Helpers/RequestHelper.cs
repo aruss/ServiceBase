@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 
-namespace ServiceBase.IdentityServer.UnitTests
+namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
-
     public static class RequestHelper
     {
         public static HttpRequestMessage CreatePostRequest(String path, Dictionary<string, string> formPostBodyData)

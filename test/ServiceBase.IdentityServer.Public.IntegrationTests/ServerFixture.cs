@@ -2,7 +2,7 @@
 using System;
 using System.Net.Http;
 
-namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
+namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
     public class ServerFixture : IDisposable
     {

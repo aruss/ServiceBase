@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 
-namespace ServiceBase.IdentityServer.UnitTests.Events
+namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
     [Collection("ServiceBase")]
     public class EventServiceHelperTests : IDisposable

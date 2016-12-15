@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 
-namespace ServiceBase.IdentityServer.UnitTests
+namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
-
     public class CookiesHelper
     {
         // Inspired from:

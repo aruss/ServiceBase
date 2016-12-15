@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom.Html;
 
-namespace ServiceBase.IdentityServer.UnitTests
+namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
     // http://www.stefanhendriks.com/2016/04/29/integration-testing-your-dot-net-core-app-with-an-in-memory-database/
     // http://www.stefanhendriks.com/2016/05/11/integration-testing-your-asp-net-core-app-dealing-with-anti-request-forgery-csrf-formdata-and-cookies/
