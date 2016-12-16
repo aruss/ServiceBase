@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServiceBase.IdentityServer.Config;
 using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.Events;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Models;
 using ServiceBase.IdentityServer.Services;
@@ -23,7 +24,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         private readonly IUserAccountStore _userAccountStore;
         private readonly ICrypto _crypto;
         private readonly IEmailService _emailService;
-        private readonly IEventService _eventService;
+        private readonly ServiceBase.Events.IEventService _eventService;
 
         public RegisterController(
             IOptions<ApplicationOptions> applicationOptions,
@@ -32,7 +33,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             IUserAccountStore userAccountStore,
             ICrypto crypto,
             IEmailService emailService,
-            IEventService eventService)
+            ServiceBase.Events.IEventService eventService)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
@@ -80,6 +81,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                     // Create new user instance
                     userAccount = new UserAccount
                     {
+                        Id = Guid.NewGuid(),
                         Email = model.Email,
                         PasswordHash = _crypto.HashPassword(model.Password, _applicationOptions.PasswordHashingIterationCount),
                         FailedLoginCount = 0,
@@ -90,26 +92,22 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                         UpdatedAt = now
                     };
 
-                    // Set verification key
-                    userAccount.SetVerification(
-                        _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
-                        VerificationKeyPurpose.ConfirmAccount,
-                        model.ReturnUrl,
-                        now);
+                    if (_applicationOptions.RequireLocalAccountVerification)
+                    {
+                        // Set verification key
+                        userAccount.SetVerification(
+                            _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
+                            VerificationKeyPurpose.ConfirmAccount,
+                            model.ReturnUrl,
+                            now);
+                    }
 
                     // Save user to data store
                     await _userAccountStore.WriteAsync(userAccount);
 
-                    // Send email
-                    await _emailService.SendEmailAsync("AccountCreated", userAccount.Email, new
-                    {
-                        // TODO: change to read x-forwared-host
-                        ConfirmUrl = String.Format("{0}://{1}/register/confirm/{2}", this.Request.Scheme, this.Request.Host, userAccount.VerificationKey),
-                        CancelUrl = String.Format("{0}://{1}/register/cancel/{2}", this.Request.Scheme, this.Request.Host, userAccount.VerificationKey)
-                    });
-
                     // Emit event
-                    // _eventService.RaiseAccountCreatedEventAsync()
+                    await _eventService.RaiseSuccessfulUserAccountCreatedEventAsync(
+                        userAccount.Id, IdentityServerConstants.LocalIdentityProvider);
 
                     if (_applicationOptions.LoginAfterAccountCreation)
                     {
@@ -250,10 +248,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 // ERROR
             }
 
-            await _userAccountStore.DeleteByIdAsync(userAccount.Id);
-
             var returnUrl = userAccount.VerificationStorage;
-
+            await _userAccountStore.DeleteByIdAsync(userAccount.Id);
             return Redirect(Url.Action("login", new { returnUrl = returnUrl }));
         }
     }

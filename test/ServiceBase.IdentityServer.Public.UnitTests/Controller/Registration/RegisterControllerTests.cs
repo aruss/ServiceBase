@@ -1,7 +1,9 @@
-﻿using IdentityServer4.Services;
+﻿
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using ServiceBase.Events;
 using ServiceBase.IdentityServer.Config;
 using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.Public.UI.Register;
@@ -33,7 +35,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Registration
             mockCrypto.Setup(c => c.Hash("salt")).Returns("hash");
 
             var mockEmailService = new Mock<IEmailService>();
-            var mockEventService = new Mock<IEventService>();
+            var mockEventService = new Mock<ServiceBase.Events.IEventService>();
 
             var controller = new RegisterController(
                 options,

@@ -2,9 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using ServiceBase.Extensions;
+using ServiceBase.IdentityServer.Config;
 using ServiceBase.Notification.Email;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -34,11 +36,17 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             };
 
             emailServiceMock.Setup(c =>
-                c.SendEmailAsync("AccountCreated", "john@localhost", It.IsAny<object>())).Returns(sendEmailAsync);
+                c.SendEmailAsync("UserAccountCreated", "john@localhost", It.IsAny<object>())).Returns(sendEmailAsync);
 
             var server = ServerHelper.CreateServer((services) =>
             {
                 services.AddSingleton<IEmailService>(emailServiceMock.Object);
+
+                services.Configure<ApplicationOptions>((option) =>
+                {
+                    option.LoginAfterAccountCreation = false;
+                    option.RequireExternalAccountVerification = false;
+                });
             });
 
             client = server.CreateClient();
@@ -63,7 +71,12 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             var postResponse = await client.SendAsync(postRequest);
             // postResponse.EnsureSuccessStatusCode();
 
+            /*var watch = Stopwatch.StartNew();
+            do
+            {
 
+            } while (watch.ElapsedMilliseconds < 100);
+            emailServiceMock.Verify(c => c.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>()), Times.Once);*/
         }
 
     }

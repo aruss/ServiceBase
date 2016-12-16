@@ -68,9 +68,18 @@ namespace ServiceBase.IdentityServer.EntityFramework
             return Task.FromResult(0);
         }
 
-        public Task DeleteByIdAsync(Guid id)
+        public async Task DeleteByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var userAccount = _context.UserAccounts
+             //.Include(x => x.Accounts)
+             //.Include(x => x.Claims)
+             .FirstOrDefault(x => x.Id == id);
+
+            if (userAccount != null)
+            {
+                _context.Remove(userAccount);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task DeleteExternalAccountAsync(Guid id)

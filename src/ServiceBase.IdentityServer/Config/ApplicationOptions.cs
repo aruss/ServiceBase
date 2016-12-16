@@ -1,5 +1,8 @@
 ﻿namespace ServiceBase.IdentityServer.Config
 {
+    /// <summary>
+    /// IdentityBase application options
+    /// </summary>
     public class ApplicationOptions
     {
         // Local account options
@@ -32,13 +35,29 @@
         /// </summary>
         public bool DisplayLoginHints { get; set; } = false;
 
+        /// <summary>
+        /// Login user automatically after he created a local account
+        /// </summary>
         public bool LoginAfterAccountCreation { get; set; } = true;
+
+        /// <summary>
+        /// Login user automatically after account confirmation
+        /// </summary>
         public bool LoginAfterAccountConfirmation { get; set; } = true;
+
+        /// <summary>
+        /// Login user automatically after successful recovery
+        /// </summary>
         public bool LoginAfterAccountRecovery { get; set; } = true;
 
+        /// <summary>
+        /// Timespan the confirmation and concelation links a valid
+        /// </summary>
         public int VerificationKeyLifetime { get; set; } = 86400; // 24 hours
 
+        /// <summary>
+        /// Automatically merges third party accounts with local account if email matches
+        /// </summary>
         public bool MergeAccountsAutomatically { get; set; } = true;
-
     }
 }

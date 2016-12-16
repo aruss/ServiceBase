@@ -1,26 +1,25 @@
-﻿using IdentityServer4.Events;
-using IdentityServer4.Services;
+﻿using ServiceBase.Events;
+using System;
 using System.Threading.Tasks;
 
 namespace ServiceBase.IdentityServer.Events
 {
-    internal static class IEventServiceExtensions
+    public static class IEventServiceExtensions
     {
-        public static async Task RaiseSuccessfulUserRegisteredEventAsync(this IEventService events,
-            string userName, string subjectId)
+        public static async Task RaiseSuccessfulUserAccountCreatedEventAsync(this IEventService events, Guid userAccountId, string provider)
         {
-            /*var evt = new Event<LocalLoginDetails>(
-                EventConstants.Categories.Authentication,
-                "Resource Owner Flow Login Success",
+            var evt = new Event<UserAccountCreatedDetails>(
+                EventConstants.Categories.UserAccount,
+                "User Account Creation Success",
                 EventTypes.Success,
-                EventConstants.Ids.ResourceOwnerFlowLoginSuccess,
-                new LocalLoginDetails
+                EventConstants.Ids.UserAccountCreated,
+                new UserAccountCreatedDetails
                 {
-                    SubjectId = subjectId,
-                    LoginUserName = userName
+                    UserAccountId = userAccountId,
+                    Provider = provider
                 });
 
-            await events.RaiseAsync(evt);*/
+            await events.RaiseAsync(evt);
         }
     }
 }

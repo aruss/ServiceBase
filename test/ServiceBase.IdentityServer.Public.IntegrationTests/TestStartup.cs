@@ -6,15 +6,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ServiceBase.IdentityServer.Config;
 using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.EntityFramework;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
 using System.Linq;
-
-// Entity framework store layer
-using ServiceBase.IdentityServer.EntityFramework;
 
 namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
@@ -28,10 +25,6 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
-            services.Configure<ApplicationOptions>((option) =>
-            {
-
-            });
 
             var builder = services.AddIdentityServer((options) =>
             {
@@ -64,6 +57,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             }
 
             services.AddTransient<ICrypto, DefaultCrypto>();
+            services.AddTransient<ServiceBase.Events.IEventService, ServiceBase.IdentityServer.Events.DefaultEventService>();
 
             #region Entity Framework Store Layer
 
