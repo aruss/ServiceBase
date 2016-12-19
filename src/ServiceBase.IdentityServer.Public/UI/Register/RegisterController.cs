@@ -24,7 +24,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         private readonly IUserAccountStore _userAccountStore;
         private readonly ICrypto _crypto;
         private readonly IEmailService _emailService;
-        private readonly ServiceBase.Events.IEventService _eventService;
+        private readonly IEventService _eventService;
 
         public RegisterController(
             IOptions<ApplicationOptions> applicationOptions,
@@ -33,7 +33,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             IUserAccountStore userAccountStore,
             ICrypto crypto,
             IEmailService emailService,
-            ServiceBase.Events.IEventService eventService)
+            IEventService eventService)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
@@ -104,6 +104,15 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
 
                     // Save user to data store
                     await _userAccountStore.WriteAsync(userAccount);
+
+                    // Send email 
+                    await _emailService.SendEmailAsync("UserAccountCreated", userAccount.Email, new
+                    {
+                        // TODO: change to read x-forwared-host or use event context
+
+                        ConfirmUrl = String.Format("http://localhost/register/confirm/{0}", userAccount.VerificationKey),
+                        CancelUrl = String.Format("http://localhost/register/cancel/{0}", userAccount.VerificationKey)
+                    });
 
                     // Emit event
                     await _eventService.RaiseSuccessfulUserAccountCreatedEventAsync(

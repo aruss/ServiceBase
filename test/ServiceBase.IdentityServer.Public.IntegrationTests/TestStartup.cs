@@ -57,7 +57,6 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             }
 
             services.AddTransient<ICrypto, DefaultCrypto>();
-            services.AddTransient<ServiceBase.Events.IEventService, ServiceBase.IdentityServer.Events.DefaultEventService>();
 
             #region Entity Framework Store Layer
 

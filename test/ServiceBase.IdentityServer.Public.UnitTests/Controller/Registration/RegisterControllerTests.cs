@@ -35,7 +35,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Registration
             mockCrypto.Setup(c => c.Hash("salt")).Returns("hash");
 
             var mockEmailService = new Mock<IEmailService>();
-            var mockEventService = new Mock<ServiceBase.Events.IEventService>();
+            var mockEventService = new Mock<IdentityServer4.Services.IEventService>();
 
             var controller = new RegisterController(
                 options,

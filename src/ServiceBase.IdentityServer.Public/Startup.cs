@@ -110,6 +110,7 @@ namespace ServiceBase.IdentityServer.Public
             #endregion
 
             services.AddTransient<ICrypto, DefaultCrypto>();
+            // register event service
             services.AddAntiforgery();
 
             services
