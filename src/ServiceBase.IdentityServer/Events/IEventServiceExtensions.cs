@@ -29,5 +29,27 @@ namespace ServiceBase.IdentityServer.Events
 
             await events.RaiseAsync(evt);
         }
+
+        /// <summary>
+        /// Raises successfull <see cref="Models.UserAccount" updated <see cref="IdentityServer4.Events.Event{UserAccountUpdatedDetails}"/> />
+        /// </summary>
+        /// <param name="events"></param>
+        /// <param name="userAccountId"><see cref="Models.UserAccount"/> primary key</param>
+        /// <returns></returns>
+        public static async Task RaiseSuccessfulUserAccountUpdatedEventAsync(this IEventService events, Guid userAccountId)
+        {
+            var evt = new Event<UserAccountUpdatedDetails>(
+                 EventConstants.Categories.UserAccount,
+                 "User Account Update Success",
+                 EventTypes.Success,
+                 EventConstants.Ids.UserAccountUpdated,
+                 new UserAccountUpdatedDetails
+                 {
+                     UserAccountId = userAccountId
+                 });
+
+            await events.RaiseAsync(evt);
+
+        }
     }
 }
