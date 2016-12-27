@@ -1,9 +1,14 @@
-﻿namespace ServiceBase.IdentityServer.Public.UI.Register
+﻿using System;
+using System.Collections.Generic;
+using ServiceBase.IdentityServer.Public.UI.Login;
+
+namespace ServiceBase.IdentityServer.Public.UI.Register
 {
-    public class RegisterViewModel : RegisterInputModel
+    public class RegisterViewModel : RegisterInputModel, IExternalLoginsViewModel
     {
         public string[] HintExternalAccounts { get; set; }
         public string ErrorMessage { get; set; }
+        public IEnumerable<ExternalProvider> ExternalProviders { get; set; }
 
         public RegisterViewModel()
         {
@@ -14,6 +19,6 @@
             this.Email = other.Email;
             this.Password = other.Password;
             this.PasswordConfirm = other.PasswordConfirm;
-        }        
+        }
     }
 }

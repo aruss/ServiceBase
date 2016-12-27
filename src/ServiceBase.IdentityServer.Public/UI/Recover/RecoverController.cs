@@ -13,12 +13,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using ServiceBase.Notification.Email;
 
-namespace ServiceBase.IdentityServer.Public.UI.Login
+namespace ServiceBase.IdentityServer.Public.UI.Recover
 {
     public class RecoverController : Controller
     {
         private readonly ApplicationOptions _applicationOptions;
-        private readonly ILogger<ExternalController> _logger;
+        private readonly ILogger<RecoverController> _logger;
         private readonly IUserAccountStore _userAccountStore;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IEmailService _emailService;
@@ -26,7 +26,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
 
         public RecoverController(
             IOptions<ApplicationOptions> applicationOptions,
-            ILogger<ExternalController> logger,
+            ILogger<RecoverController> logger,
             IUserAccountStore userAccountStore,
             IIdentityServerInteractionService interaction,
             IEmailService emailService,
@@ -64,7 +64,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         {
             if (ModelState.IsValid)
             {
-                // Load user by email 
+                // Load user by email
                 var email = model.Email.ToLower();
 
                 // Check if user with same email exists
@@ -73,18 +73,21 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                 if (userAccount != null)
                 {
                     userAccount.VerificationKey = StripUglyBase64(_crypto.Hash(_crypto.GenerateSalt()));
-                    userAccount.VerificationPurpose = (int)VerificationKeyPurpose.ConfirmAccount;
+                    userAccount.VerificationPurpose = (int)VerificationKeyPurpose.ResetPassword;
                     userAccount.VerificationKeySentAt = DateTime.UtcNow;
                     // account.VerificationStorage = WebUtility.HtmlDecode(model.ReturnUrl);
                     userAccount.VerificationStorage = model.ReturnUrl;
 
+                    await _userAccountStore.WriteAsync(userAccount);
 
-                    await _emailService.SendEmailAsync("AccountRecoverEvent", userAccount.Email, new
+                    await _emailService.SendEmailAsync(IdentityBaseConstants.EmailTemplates.UserAccountRecover, userAccount.Email, new
                     {
-                        Token = userAccount.VerificationKey
-                    }); 
-                    
-                    // Redirect to success page by preserving the email provider name 
+                        // TODO: change to read x-forwared-host or use event context
+                        ConfirmUrl = Url.Action("Confirm", "Recover", new { Key = userAccount.VerificationKey }, Request.Scheme),
+                        CancelUrl = Url.Action("Cancel", "Recover", new { Key = userAccount.VerificationKey }, Request.Scheme)
+                    });
+
+                    // Redirect to success page by preserving the email provider name
                     return Redirect(Url.Action("Success", "Recover", new
                     {
                         returnUrl = model.ReturnUrl,
@@ -104,35 +107,42 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         [HttpGet("recover/success", Name = "RecoverSuccess")]
         public async Task<IActionResult> Success(string returnUrl, string provider)
         {
-            // select propper mail provider and render it as button 
+            // select propper mail provider and render it as button
 
-            return  View();
+            return View();
         }
 
         [HttpGet("recover/confirm/{key}", Name = "RecoverConfirm")]
         public async Task<IActionResult> Confirm(string key)
         {
-            // Load token data from database 
             var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
-
             if (userAccount == null)
             {
-                // ERROR
+                ModelState.AddModelError("", "Invalid token");
+                return View("InvalidToken");
             }
 
             if (userAccount.VerificationPurpose != (int)VerificationKeyPurpose.ResetPassword)
             {
-                // ERROR
+                ModelState.AddModelError("", "Invalid token");
+                return View("InvalidToken");
             }
 
-            var vm = new RecoverViewModel();
+            var returnUrl = userAccount.VerificationStorage;
+
+            var vm = new RecoverViewModel
+            {
+                ReturnUrl = returnUrl,
+                Email = userAccount.Email
+            };
+
             return View(vm);
         }
 
         [HttpGet("recover/cancel/{key}", Name = "RecoverCancel")]
         public async Task<IActionResult> Cancel(string key)
         {
-            // Load token data from database 
+            // Load token data from database
             var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
 
             if (userAccount == null)
@@ -150,8 +160,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                 // ERROR
             }
 
-              
-
             return Redirect("~/");
         }
 
@@ -165,7 +173,5 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             }
             return s;
         }
-
-
     }
 }

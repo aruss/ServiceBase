@@ -18,6 +18,7 @@ namespace ServiceBase.IdentityServer
         public static class EmailTemplates
         {
             public const string UserAccountCreated = "UserAccountCreated";
+            public const string UserAccountRecover = "UserAccountRecover";
         }
     }
 }

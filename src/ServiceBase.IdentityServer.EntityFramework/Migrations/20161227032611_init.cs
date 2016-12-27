@@ -42,7 +42,9 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
                     Subject = table.Column<string>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Email = table.Column<string>(maxLength: 250, nullable: true),
+                    IsLoginAllowed = table.Column<bool>(nullable: false),
                     LastLoginAt = table.Column<DateTime>(nullable: true),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     UserAccountId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>

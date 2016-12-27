@@ -23,7 +23,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 {
     // http://stackoverflow.com/questions/30557521/how-to-access-httpcontext-inside-a-unit-test-in-asp-net-5-mvc-6
 
-    [Collection("Login Controller")]
+    /*[Collection("Login Controller")]
     public class LoginSubmitControllerTests
     {
         Mock<AuthenticationManager> _mockAuthentication;
@@ -233,5 +233,6 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
         }
 
     }
+    */
 }
 

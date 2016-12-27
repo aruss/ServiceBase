@@ -2,7 +2,7 @@
 
 namespace ServiceBase.IdentityServer.Public.UI.Login
 {
-    public class LoginViewModel : LoginInputModel
+    public class LoginViewModel : LoginInputModel, IExternalLoginsViewModel
     {
         public LoginViewModel()
         {
@@ -27,5 +27,11 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
     {
         public string DisplayName { get; set; }
         public string AuthenticationScheme { get; set; }
+    }
+
+    public interface IExternalLoginsViewModel
+    {
+        IEnumerable<ExternalProvider> ExternalProviders { get; set; }
+        string ReturnUrl { get; set; }
     }
 }

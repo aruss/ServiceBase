@@ -5,6 +5,11 @@ namespace ServiceBase.IdentityServer.EntityFramework
     // Only for `dotnet ef migrations` command
     public class Startup
     {
+        public static void Main()
+        {
+
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEntityFrameworkStores(opt =>

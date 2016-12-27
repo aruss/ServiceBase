@@ -25,6 +25,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         private readonly ICrypto _crypto;
         private readonly IEmailService _emailService;
         private readonly IEventService _eventService;
+        private readonly UserAccountService _userAccountService;
 
         public RegisterController(
             IOptions<ApplicationOptions> applicationOptions,
@@ -33,7 +34,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             IUserAccountStore userAccountStore,
             ICrypto crypto,
             IEmailService emailService,
-            IEventService eventService)
+            IEventService eventService,
+            UserAccountService userAccountService)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
@@ -42,6 +44,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             _emailService = emailService;
             _crypto = crypto;
             _eventService = eventService;
+            _userAccountService = userAccountService;
         }
 
         [HttpGet(IdentityBaseConstants.Routes.Register, Name = "Register")]
@@ -62,75 +65,30 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             return View(vm);
         }
 
-        private async Task SendConfirmationMail(UserAccount userAccount)
-        {
-            if (_applicationOptions.RequireLocalAccountVerification)
-            {
-                await _emailService.SendEmailAsync(IdentityBaseConstants.EmailTemplates.UserAccountCreated, userAccount.Email, new
-                {
-                    // TODO: change to read x-forwared-host or use event context
-
-                    ConfirmUrl = Url.Action("Confirm", "Register", new { Key = userAccount.VerificationKey }, Request.Scheme),
-                    CancelUrl = Url.Action("Cancel", "Register", new { Key = userAccount.VerificationKey }, Request.Scheme)
-                });
-            }
-        }
-
-        private void SetConfirmationVirificationKey(UserAccount userAccount, string returnUrl, DateTime now)
-        {
-            if (_applicationOptions.RequireLocalAccountVerification)
-            {
-                // Set verification key
-                userAccount.SetVerification(
-                    _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
-                    VerificationKeyPurpose.ConfirmAccount,
-                    returnUrl,
-                    now);
-            }
-        }
-
         [HttpPost(IdentityBaseConstants.Routes.Register)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(RegisterInputModel model)
         {
             if (ModelState.IsValid)
             {
-                var email = model.Email.ToLower();
-
                 // Check if user with same email exists
-                var userAccount = await _userAccountStore.LoadByEmailWithExternalAsync(email);
+                var userAccount = await _userAccountStore.LoadByEmailWithExternalAsync(model.Email);
 
                 // If user dont exists create a new one
                 if (userAccount == null)
                 {
-                    var now = DateTime.UtcNow;
-
-                    // Create new user instance
-                    userAccount = new UserAccount
-                    {
-                        Id = Guid.NewGuid(),
-                        Email = model.Email,
-                        PasswordHash = _crypto.HashPassword(model.Password, _applicationOptions.PasswordHashingIterationCount),
-                        FailedLoginCount = 0,
-                        IsEmailVerified = false,
-                        IsLoginAllowed = _applicationOptions.LoginAfterAccountCreation,
-                        PasswordChangedAt = now,
-                        CreatedAt = now,
-                        UpdatedAt = now
-                    };
-
-                    // If application settings require account verification a verification token will be generated
-                    SetConfirmationVirificationKey(userAccount, model.ReturnUrl, now);
-
-                    // Save user to data store
-                    await _userAccountStore.WriteAsync(userAccount);
+                    userAccount = await _userAccountService.CreateNewLocalUserAccount(model.Email, model.Password, model.ReturnUrl);
 
                     // Send confirmation mail
-                    await SendConfirmationMail(userAccount);
-
-                    // Emit event
-                    await _eventService.RaiseSuccessfulUserAccountCreatedEventAsync(
-                        userAccount.Id, IdentityServerConstants.LocalIdentityProvider);
+                    if (_applicationOptions.RequireLocalAccountVerification)
+                    {
+                        await _emailService.SendEmailAsync(IdentityBaseConstants.EmailTemplates.UserAccountCreated, userAccount.Email, new
+                        {
+                            // TODO: change to read x-forwared-host or use event context
+                            ConfirmUrl = Url.Action("Confirm", "Register", new { Key = userAccount.VerificationKey }, Request.Scheme),
+                            CancelUrl = Url.Action("Cancel", "Register", new { Key = userAccount.VerificationKey }, Request.Scheme)
+                        });
+                    }
 
                     if (_applicationOptions.LoginAfterAccountCreation)
                     {
@@ -153,65 +111,54 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                         }));
                     }
                 }
+                else if (_applicationOptions.RequireLocalAccountVerification && !userAccount.IsEmailVerified)
+                {
+                    ModelState.AddModelError("", "Please confirm your email account");
+                }
                 else if (!userAccount.IsLoginAllowed)
                 {
-                    if (!userAccount.IsEmailVerified)
-                    {
-                        ModelState.AddModelError("", "Please confirm your email account");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Your user account has be disabled");
-                    }
+                    ModelState.AddModelError("", "Your user account has be disabled");
                 }
+                // If user has a password then its a local account
+                else if (userAccount.HasPassword())
+                {
+                    ModelState.AddModelError("", "User already exists");
+                }
+                // External account with same email
                 else
                 {
-                    // If user has a password then its a local account
-                    if (userAccount.HasPassword())
+                    if (_applicationOptions.MergeAccountsAutomatically)
                     {
-                        ModelState.AddModelError("", "User already exists");
-                    }
+                        var now = DateTime.UtcNow;
 
-                    // External account with same email
-                    else
-                    {
-                        if (_applicationOptions.MergeAccountsAutomatically)
+                        // Set user account password
+                        userAccount.PasswordHash = _crypto.HashPassword(model.Password, _applicationOptions.PasswordHashingIterationCount);
+
+                        // If application settings require account verification a verification token will be generated
+                        //SetConfirmationVirificationKey(userAccount, model.ReturnUrl, now);
+
+                        // Send email
+                        //await SendConfirmationMail(userAccount);
+
+                        if (_applicationOptions.LoginAfterAccountCreation)
                         {
-                            var now = DateTime.UtcNow;
+                            await HttpContext.Authentication.IssueCookie(userAccount,
+                                IdentityServerConstants.LocalIdentityProvider,
+                                IdentityBaseConstants.AuthenticationTypePassword);
 
-                            // Set user account password
-                            userAccount.PasswordHash = _crypto.HashPassword(model.Password, _applicationOptions.PasswordHashingIterationCount);
-
-                            // If application settings require account verification a verification token will be generated
-                            SetConfirmationVirificationKey(userAccount, model.ReturnUrl, now);
-
-                            // Send email
-                            await SendConfirmationMail(userAccount);
-
-                            if (_applicationOptions.LoginAfterAccountCreation)
+                            if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
                             {
-                                await HttpContext.Authentication.IssueCookie(userAccount,
-                                    IdentityServerConstants.LocalIdentityProvider,
-                                    IdentityBaseConstants.AuthenticationTypePassword);
-
-                                if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
-                                {
-                                    return Redirect(model.ReturnUrl);
-                                }
-                            }
-                            else
-                            {
-                                // Redirect to success page by preserving the email provider name
-                                return Redirect(Url.Action("Success", "Register", new
-                                {
-                                    returnUrl = model.ReturnUrl,
-                                    provider = userAccount.Email.Split('@').LastOrDefault()
-                                }));
+                                return Redirect(model.ReturnUrl);
                             }
                         }
                         else
                         {
-
+                            // Redirect to success page by preserving the email provider name
+                            return Redirect(Url.Action("Success", "Register", new
+                            {
+                                returnUrl = model.ReturnUrl,
+                                provider = userAccount.Email.Split('@').LastOrDefault()
+                            }));
                         }
                     }
 

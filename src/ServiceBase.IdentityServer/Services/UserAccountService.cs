@@ -45,7 +45,7 @@ namespace ServiceBase.IdentityServer.Services
                     _applicationOptions.PasswordHashingIterationCount),
                 FailedLoginCount = 0,
                 IsEmailVerified = false,
-                IsLoginAllowed = _applicationOptions.LoginAfterAccountCreation,
+                IsLoginAllowed = _applicationOptions.RequireLocalAccountVerification,
                 PasswordChangedAt = now,
                 CreatedAt = now,
                 UpdatedAt = now

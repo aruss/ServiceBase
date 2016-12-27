@@ -27,7 +27,11 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
                     b.Property<string>("Email")
                         .HasAnnotation("MaxLength", 250);
 
+                    b.Property<bool>("IsLoginAllowed");
+
                     b.Property<DateTime?>("LastLoginAt");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<Guid>("UserAccountId");
 

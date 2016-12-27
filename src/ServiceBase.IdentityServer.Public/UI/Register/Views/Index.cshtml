@@ -45,17 +45,6 @@
       </div>
     </div>
 
-    <div class="col-md-6 col-sm-6 external-providers">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">External Account</h3>
-        </div>
-        <div class="panel-body">
-
-          @Html.Partial("_ExternalLogins")
-
-        </div>
-      </div>
-    </div>
+    @Html.Partial("_ExternalLogins", Model)
   </div>
 </div>

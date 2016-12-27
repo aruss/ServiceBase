@@ -1,6 +1,9 @@
-﻿namespace ServiceBase.IdentityServer.Public.UI.Login
+﻿using ServiceBase.IdentityServer.Public.UI.Login;
+using System.Collections.Generic;
+
+namespace ServiceBase.IdentityServer.Public.UI.Recover
 {
-    public class RecoverViewModel : RecoverInputModel
+    public class RecoverViewModel : RecoverInputModel, IExternalLoginsViewModel
     {
         public RecoverViewModel()
         {
@@ -12,5 +15,7 @@
         }
 
         public string ErrorMessage { get; set; }
+
+        public IEnumerable<ExternalProvider> ExternalProviders { get; set; }
     }
 }

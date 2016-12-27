@@ -15,7 +15,7 @@ using Xunit;
 
 namespace ServiceBase.IdentityServer.UnitTests.Controller.Registration
 {
-    [Collection("Register")]
+    /*[Collection("Register")]
     public class RegisterControllerTests
     {
         // [Fact]
@@ -60,5 +60,5 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Registration
             var model = Assert.IsAssignableFrom<RegisterViewModel>(viewResult.ViewData.Model);
 
         }
-    }
+    }*/
 }

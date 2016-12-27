@@ -10,7 +10,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
 {
     // http://stackoverflow.com/questions/30557521/how-to-access-httpcontext-inside-a-unit-test-in-asp-net-5-mvc-6
 
-    [Collection("Error Controller")]
+    /*[Collection("Error Controller")]
     public class ErrorControllerTests
     {
         [Fact]
@@ -26,8 +26,7 @@ namespace ServiceBase.IdentityServer.UnitTests.Controller.Login
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
             //var model = Assert.IsAssignableFrom<LoginViewModel>(viewResult.ViewData.Model);
-
         }
-    }
+    }*/
 }
 

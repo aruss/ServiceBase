@@ -1,9 +1,9 @@
 ﻿Please click here to confirm account recovery request:
 
-http://localhost:5000/recover/confirm/{Token}
+{ConfirmUrl}
 
 If this was in error or not requested then click to cancel the request:
 
-http://localhost:5000/recover/cancel/{Token}
+{CancelUrl}
 
 Thanks!

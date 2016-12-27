@@ -139,8 +139,8 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
                     Email = "bob@localhost",
                     CreatedAt = now,
                     UpdatedAt = now,
-                    IsEmailVerified = false,
-                    IsLoginAllowed = false,
+                    IsEmailVerified = false, // had never confirmed the email
+                    IsLoginAllowed = true,  // is allowed to login since he registed via facebook
                     Claims = this.CreateClaims("Bob Smith", "Bob", "Smith"),
                     Accounts = new List<ExternalAccount>()
                     {

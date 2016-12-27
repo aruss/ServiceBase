@@ -8,7 +8,7 @@ using ServiceBase.IdentityServer.EntityFramework.DbContexts;
 namespace ServiceBase.IdentityServer.EntityFramework.Migrations
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20161124092817_init")]
+    [Migration("20161227032611_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,11 @@ namespace ServiceBase.IdentityServer.EntityFramework.Migrations
                     b.Property<string>("Email")
                         .HasAnnotation("MaxLength", 250);
 
+                    b.Property<bool>("IsLoginAllowed");
+
                     b.Property<DateTime?>("LastLoginAt");
+
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<Guid>("UserAccountId");
 
