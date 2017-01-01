@@ -17,7 +17,6 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
 
         public void Dispose()
         {
-
         }
     }
 }

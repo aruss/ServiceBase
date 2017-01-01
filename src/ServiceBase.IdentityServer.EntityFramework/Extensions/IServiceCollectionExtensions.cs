@@ -64,9 +64,13 @@ namespace ServiceBase.IdentityServer.EntityFramework
             services.AddUserAccountStore(builderOptions);
 
             // If db inialization or example data seeding is required add a default store initializer
-            if (options.MigrateDatabase || options.SeedExampleData)
+            if (options.MigrateDatabase)
             {
-                services.AddTransient<IStoreInitializer, DefaultStoreInitializer>();
+                services.AddDbContext<DefaultDbContext>(builderOptions);
+                if (options.SeedExampleData)
+                {
+                    services.AddTransient<IStoreInitializer, DefaultStoreInitializer>();
+                }
             }
 
             var defaultStoreOptions = new UserAccountStoreOptions();

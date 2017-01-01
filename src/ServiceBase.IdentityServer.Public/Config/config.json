@@ -1,8 +1,8 @@
 ﻿{
   "EntityFramework": {
     "ConnectionString": "Server=.\\SQLEXPRESS;Database=IdentityServer;Trusted_Connection=True;",
-    "SeedExampleData": true,
-    "TablePrefix":  ""
+    "MigrateDatabase": true,
+    "SeedExampleData": true
   },
   "Postgres": {
     "ConnectionString": "User ID=postgres;Password=root;Host=localhost;Port=5432;Database=identitysrv;Pooling=true;",

@@ -3,19 +3,17 @@ using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ServiceBase.Configuration;
 using ServiceBase.IdentityServer.Configuration;
 using ServiceBase.IdentityServer.Crypto;
-
-//using ServiceBase.IdentityServer.EntityFramework;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
 using System;
 using System.IO;
+using ServiceBase.IdentityServer.EntityFramework;
 using System.Security.Cryptography.X509Certificates;
 
 namespace ServiceBase.IdentityServer.Public
@@ -76,7 +74,7 @@ namespace ServiceBase.IdentityServer.Public
             #endregion Add IdentityServer
 
             // Add Data Layer
-            //services.AddEntityFrameworkStores(_configuration.GetSection("EntityFramework"));
+            services.AddEntityFrameworkStores(_configuration.GetSection("EntityFramework"));
 
             #region Add Email Sender
 
@@ -139,7 +137,8 @@ namespace ServiceBase.IdentityServer.Public
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 
-            if (env.IsDevelopment())
+            app.UseDeveloperExceptionPage();
+            /*if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 //app.UseBrowserLink();
@@ -147,7 +146,7 @@ namespace ServiceBase.IdentityServer.Public
             else
             {
                 app.UseExceptionHandler("/error");
-            }
+            }*/
 
             app.UseIdentityServer();
 

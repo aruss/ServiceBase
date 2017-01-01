@@ -69,6 +69,6 @@ namespace ServiceBase.IdentityServer.Models
         public DateTime UpdatedAt { get; set; }
 
         public IEnumerable<ExternalAccount> Accounts { get; set; }
-        public IEnumerable<UserClaim> Claims { get; set; }
+        public IEnumerable<UserAccountClaim> Claims { get; set; }
     }
 }

@@ -27,17 +27,17 @@ namespace ServiceBase.IdentityServer.Configuration
                     UpdatedAt = now,
                     IsEmailVerified = true,
                     IsLoginAllowed = true,
-                    Claims = new List<UserClaim>
+                    Claims = new List<UserAccountClaim>
                     {
-                        new UserClaim(JwtClaimTypes.Name, "Alice Smith"),
-                        new UserClaim(JwtClaimTypes.GivenName, "Alice"),
-                        new UserClaim(JwtClaimTypes.FamilyName, "Smith"),
-                        new UserClaim(JwtClaimTypes.Email, "alice@localhost"),
-                        new UserClaim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                        new UserClaim(JwtClaimTypes.Role, "Admin"),
-                        new UserClaim(JwtClaimTypes.Role, "Geek"),
-                        new UserClaim(JwtClaimTypes.WebSite, "http://alice.com"),
-                        new UserClaim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServerConstants.ClaimValueTypes.Json)
+                        new UserAccountClaim(JwtClaimTypes.Name, "Alice Smith"),
+                        new UserAccountClaim(JwtClaimTypes.GivenName, "Alice"),
+                        new UserAccountClaim(JwtClaimTypes.FamilyName, "Smith"),
+                        new UserAccountClaim(JwtClaimTypes.Email, "alice@localhost"),
+                        new UserAccountClaim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                        new UserAccountClaim(JwtClaimTypes.Role, "Admin"),
+                        new UserAccountClaim(JwtClaimTypes.Role, "Geek"),
+                        new UserAccountClaim(JwtClaimTypes.WebSite, "http://alice.com"),
+                        new UserAccountClaim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServerConstants.ClaimValueTypes.Json)
                     }
                 },
                 new UserAccount
@@ -49,28 +49,20 @@ namespace ServiceBase.IdentityServer.Configuration
                     UpdatedAt = now,
                     IsEmailVerified = true,
                     IsLoginAllowed = true,
-                    Claims = new List<UserClaim>
+                    Claims = new List<UserAccountClaim>
                     {
-                        new UserClaim(JwtClaimTypes.Name, "Bob Smith"),
-                        new UserClaim(JwtClaimTypes.GivenName, "Bob"),
-                        new UserClaim(JwtClaimTypes.FamilyName, "Smith"),
-                        new UserClaim(JwtClaimTypes.Email, "bob@localhost"),
-                        new UserClaim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                        new UserClaim(JwtClaimTypes.Role, "Developer"),
-                        new UserClaim(JwtClaimTypes.Role, "Geek"),
-                        new UserClaim(JwtClaimTypes.WebSite, "http://bob.com"),
-                        new UserClaim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServerConstants.ClaimValueTypes.Json)
+                        new UserAccountClaim(JwtClaimTypes.Name, "Bob Smith"),
+                        new UserAccountClaim(JwtClaimTypes.GivenName, "Bob"),
+                        new UserAccountClaim(JwtClaimTypes.FamilyName, "Smith"),
+                        new UserAccountClaim(JwtClaimTypes.Email, "bob@localhost"),
+                        new UserAccountClaim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
+                        new UserAccountClaim(JwtClaimTypes.Role, "Developer"),
+                        new UserAccountClaim(JwtClaimTypes.Role, "Geek"),
+                        new UserAccountClaim(JwtClaimTypes.WebSite, "http://bob.com"),
+                        new UserAccountClaim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServerConstants.ClaimValueTypes.Json)
                     }
                 }
             };
-
-            foreach (var user in users)
-            {
-                foreach (var claim in user.Claims)
-                {
-                    claim.UserAccountId = user.Id;
-                }
-            }
 
             return users;
         }

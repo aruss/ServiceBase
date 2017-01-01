@@ -2,16 +2,21 @@
 
 namespace ServiceBase.IdentityServer.Models
 {
-    public class UserClaim
+    public class UserAccountClaim
     {
-        public UserClaim(string type, string value, string valueType = null)
+        public UserAccountClaim()
+        {
+
+        }
+
+        public UserAccountClaim(string type, string value, string valueType = null)
         {
             this.Type = type;
             this.Value = value;
             this.ValueType = valueType;
         }
 
-        public Guid UserAccountId { get; set; }
+        public Guid Id { get; set; }
         public string Type { get; set; }
         public string Value { get; set; }
         public string ValueType { get; set; }

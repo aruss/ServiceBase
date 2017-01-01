@@ -241,10 +241,12 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
                 externalAccount.Property(x => x.CreatedAt).IsRequired();
             });
 
-            modelBuilder.Entity<UserAccountClaim>(userClaim =>
+            modelBuilder.Entity<UserAccountClaim>(claim =>
             {
-                userClaim.ToTable(storeOptions.UserAccountClaim);
-                userClaim.HasKey(x => new { x.Id });
+                claim.ToTable(storeOptions.UserAccountClaim);
+                claim.Property(x => x.Type).HasMaxLength(250).IsRequired();
+                claim.Property(x => x.Value).HasMaxLength(250).IsRequired();
+                claim.Property(x => x.ValueType).HasMaxLength(2000);
             });
         }
     }

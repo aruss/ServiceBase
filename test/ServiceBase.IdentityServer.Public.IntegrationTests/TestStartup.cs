@@ -1,5 +1,4 @@
 ﻿using IdentityServer4;
-using IdentityServer4.Configuration;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,7 +18,6 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
     {
         public TestStartup(IHostingEnvironment environment)
         {
-
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -29,18 +27,17 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             var builder = services.AddIdentityServer((options) =>
             {
                 //options.RequireSsl = false;
-                options.EventsOptions = new EventsOptions
-                {
-                    RaiseErrorEvents = true,
-                    RaiseFailureEvents = true,
-                    RaiseInformationEvents = true,
-                    RaiseSuccessEvents = true
-                };
-                options.UserInteractionOptions.LoginUrl = "/login";
-                options.UserInteractionOptions.LogoutUrl = "/logout";
-                options.UserInteractionOptions.ConsentUrl = "/consent";
-                options.UserInteractionOptions.ErrorUrl = "/error";
-                options.AuthenticationOptions.FederatedSignOutPaths.Add("/signout-oidc");
+
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+
+                options.UserInteraction.LoginUrl = "/login";
+                options.UserInteraction.LogoutUrl = "/logout";
+                options.UserInteraction.ConsentUrl = "/consent";
+                options.UserInteraction.ErrorUrl = "/error";
+                options.Authentication.FederatedSignOutPaths.Add("/signout-oidc");
             })
                 .AddTemporarySigningCredential()
                 .AddProfileService<ProfileService>()
@@ -51,7 +48,6 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             // Register mocked email service in case none of the tests registered one already
             if (!services.Any(c => c.ServiceType == typeof(IEmailService)))
             {
-
                 var emailServiceMock = new Mock<IEmailService>();
                 services.AddSingleton<IEmailService>(emailServiceMock.Object);
             }
@@ -73,7 +69,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
                 services.AddTransient<IStoreInitializer, TestStoreInitializer>();
             }
 
-            #endregion
+            #endregion Entity Framework Store Layer
 
             services
               .AddMvc()

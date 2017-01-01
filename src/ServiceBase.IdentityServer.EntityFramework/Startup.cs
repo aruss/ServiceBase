@@ -14,26 +14,17 @@ namespace ServiceBase.IdentityServer.EntityFramework
     // dotnet ef migrations add init --context DefaultDbContext
     public class Startup
     {
-        public static void Main()
+        static void Main()
         {
+
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DefaultDbContext>((builder) =>
             {
-                builder.SelectDatabase(new EntityFrameworkOptions
-                {
-                    ConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;database=Test.IdentityServer4.EntityFramework;trusted_connection=yes;"
-                });
+                builder.UseSqlServer("just for migration creation purposes");
             });
-
-            /*services.AddEntityFrameworkStores(opt =>
-            {
-                opt.ConnectionString = @"Data Source=(LocalDb)\MSSQLLocalDB;database=Test.IdentityServer4.EntityFramework;trusted_connection=yes;";
-
-                opt.SeedExampleData = false;
-            });*/
         }
     }
 
@@ -46,6 +37,17 @@ namespace ServiceBase.IdentityServer.EntityFramework
         public DbSet<UserAccount> UserAccounts { get; set; }
         public DbSet<ExternalAccount> ExternalAccounts { get; set; }
         public DbSet<UserAccountClaim> UserAccountClaims { get; set; }
+
+        public DefaultDbContext()
+        {
+
+        }
+
+        public DefaultDbContext(DbContextOptions<DefaultDbContext> options)
+            : base(options)
+        {
+
+        }
 
         public Task<int> SaveChangesAsync()
         {

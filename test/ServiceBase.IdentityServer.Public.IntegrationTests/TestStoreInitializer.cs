@@ -1,32 +1,29 @@
 ﻿using IdentityModel;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.Extensions.Options;
-using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Configuration;
 using ServiceBase.IdentityServer.Crypto;
-using ServiceBase.IdentityServer.EntityFramework.Configuration;
 using ServiceBase.IdentityServer.EntityFramework.DbContexts;
 using ServiceBase.IdentityServer.EntityFramework.Mappers;
 using ServiceBase.IdentityServer.Models;
 using ServiceBase.IdentityServer.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
-
     public class TestStoreInitializer : IStoreInitializer, IDisposable
     {
         private readonly ConfigurationDbContext _configurationDbContext;
         private readonly PersistedGrantDbContext _persistedGrantDbContext;
-        private readonly DefaultDbContext _defaultDbContext;
+        private readonly UserAccountDbContext _defaultDbContext;
         private readonly ICrypto _crypto;
         private readonly ApplicationOptions _applicationOptions;
 
         public TestStoreInitializer(
             ConfigurationDbContext configurationDbContext,
             PersistedGrantDbContext persistedGrantDbContext,
-            DefaultDbContext defaultDbContext,
+            UserAccountDbContext defaultDbContext,
             ICrypto crypto,
             IOptions<ApplicationOptions> applicationOptions)
         {
@@ -39,16 +36,15 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
 
         public void Dispose()
         {
-
         }
 
-        private List<UserClaim> CreateClaims(string name, string givenName, string familyName)
+        private List<UserAccountClaim> CreateClaims(string name, string givenName, string familyName)
         {
-            return new List<UserClaim>
+            return new List<UserAccountClaim>
             {
-                new UserClaim(JwtClaimTypes.Name, name),
-                new UserClaim(JwtClaimTypes.GivenName, givenName),
-                new UserClaim(JwtClaimTypes.FamilyName, familyName)
+                new UserAccountClaim(JwtClaimTypes.Name, name),
+                new UserAccountClaim(JwtClaimTypes.GivenName, givenName),
+                new UserAccountClaim(JwtClaimTypes.FamilyName, familyName)
             };
         }
 
@@ -58,26 +54,32 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             // HACK: the memory db survives server dispose so i have to cleanup it here
             //       cannot run this tests in parallel
             _configurationDbContext.Clients.Clear();
-            _configurationDbContext.Scopes.Clear();
+            _configurationDbContext.IdentityResources.Clear();
+            _configurationDbContext.ApiResources.Clear();
             _configurationDbContext.SaveChanges();
             _persistedGrantDbContext.PersistedGrants.Clear();
             _persistedGrantDbContext.SaveChanges();
             _defaultDbContext.UserAccounts.Clear();
             _defaultDbContext.ExternalAccounts.Clear();
-            _defaultDbContext.UserClaims.Clear();
+            _defaultDbContext.UserAccountClaims.Clear();
             _defaultDbContext.SaveChanges();
 
             // Add default sample data clients
-            foreach (var client in Clients.Get())
+            foreach (var client in Clients.Get().ToList())
             {
                 _configurationDbContext.Clients.Add(client.ToEntity());
             }
             _configurationDbContext.SaveChanges();
 
-            // Add default sample data scopes
-            foreach (var client in Scopes.Get())
+            foreach (var resource in Resources.GetIdentityResources().ToList())
             {
-                _configurationDbContext.Scopes.Add(client.ToEntity());
+                _configurationDbContext.IdentityResources.Add(resource.ToEntity());
+            }
+            _configurationDbContext.SaveChanges();
+
+            foreach (var resource in Resources.GetApiResources().ToList())
+            {
+                _configurationDbContext.ApiResources.Add(resource.ToEntity());
             }
             _configurationDbContext.SaveChanges();
 
@@ -110,11 +112,11 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
                     IsEmailVerified = true,
                     EmailVerifiedAt = now,
                     IsLoginAllowed = false,
-                    Claims = new List<UserClaim>
+                    Claims = new List<UserAccountClaim>
                     {
-                        new UserClaim(JwtClaimTypes.Name, "Jim Panse"),
-                        new UserClaim(JwtClaimTypes.GivenName, "Jim"),
-                        new UserClaim(JwtClaimTypes.FamilyName, "Panse")
+                        new UserAccountClaim(JwtClaimTypes.Name, "Jim Panse"),
+                        new UserAccountClaim(JwtClaimTypes.GivenName, "Jim"),
+                        new UserAccountClaim(JwtClaimTypes.FamilyName, "Panse")
                     }
                 },
 
@@ -160,7 +162,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             {
                 foreach (var claim in userAccount.Claims)
                 {
-                    claim.UserAccountId = userAccount.Id;
+                    //claim.UserAccountId = userAccount.Id;
                     claim.UserAccount = userAccount;
                 }
 
@@ -178,7 +180,5 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
 
             _defaultDbContext.SaveChanges();
         }
-
-
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ServiceBase.IdentityServer.Crypto;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ServiceBase.IdentityServer.UnitTests
@@ -22,5 +23,13 @@ namespace ServiceBase.IdentityServer.UnitTests
         // do not touch the magic unicorn
 
         // TODO: port the MembershipReboot tests here
+
+        [Fact]
+        public Task Foo()
+        {
+
+
+            return Task.FromResult(0);
+        }
     }
 }

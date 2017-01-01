@@ -17,9 +17,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
         private readonly EntityFrameworkOptions _options;
         private readonly ILogger<DefaultStoreInitializer> _logger;
         private readonly IHostingEnvironment _env;
-        private readonly ConfigurationDbContext _configurationDbContext;
-        private readonly PersistedGrantDbContext _persistedGrantDbContext;
-        private readonly UserAccountDbContext _userAccountDbContext;
+        private readonly DefaultDbContext _defaultDbContext;
         private readonly ICrypto _crypto;
         private readonly ApplicationOptions _applicationOptions;
 
@@ -27,18 +25,14 @@ namespace ServiceBase.IdentityServer.EntityFramework
             IOptions<EntityFrameworkOptions> options,
             ILogger<DefaultStoreInitializer> logger,
             IHostingEnvironment env,
-            ConfigurationDbContext configurationDbContext,
-            PersistedGrantDbContext persistedGrantDbContext,
-            UserAccountDbContext userAccountDbContext,
+            DefaultDbContext defaultDbContext,
             ICrypto crypto,
             IOptions<ApplicationOptions> applicationOptions)
         {
             _options = options.Value;
             _logger = logger;
             _env = env;
-            _configurationDbContext = configurationDbContext;
-            _persistedGrantDbContext = persistedGrantDbContext;
-            _userAccountDbContext = userAccountDbContext;
+            _defaultDbContext = defaultDbContext;
             _crypto = crypto;
             _applicationOptions = applicationOptions.Value;
         }
@@ -58,47 +52,45 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
         internal virtual void MigrateDatabase()
         {
-            _configurationDbContext.Database.Migrate();
-            _persistedGrantDbContext.Database.Migrate();
-            _userAccountDbContext.Database.Migrate();
+            _defaultDbContext.Database.Migrate();
         }
 
         internal virtual void EnsureSeedData()
         {
-            if (!_configurationDbContext.Clients.Any())
+            if (!_defaultDbContext.Clients.Any())
             {
                 foreach (var client in Clients.Get().ToList())
                 {
-                    _configurationDbContext.Clients.Add(client.ToEntity());
+                    _defaultDbContext.Clients.Add(client.ToEntity());
                 }
-                _configurationDbContext.SaveChanges();
+                _defaultDbContext.SaveChanges();
             }
 
-            if (!_configurationDbContext.IdentityResources.Any())
+            if (!_defaultDbContext.IdentityResources.Any())
             {
                 foreach (var resource in Resources.GetIdentityResources().ToList())
                 {
-                    _configurationDbContext.IdentityResources.Add(resource.ToEntity());
+                    _defaultDbContext.IdentityResources.Add(resource.ToEntity());
                 }
-                _configurationDbContext.SaveChanges();
+                _defaultDbContext.SaveChanges();
             }
 
-            if (!_configurationDbContext.ApiResources.Any())
+            if (!_defaultDbContext.ApiResources.Any())
             {
                 foreach (var resource in Resources.GetApiResources().ToList())
                 {
-                    _configurationDbContext.ApiResources.Add(resource.ToEntity());
+                    _defaultDbContext.ApiResources.Add(resource.ToEntity());
                 }
-                _configurationDbContext.SaveChanges();
+                _defaultDbContext.SaveChanges();
             }
 
-            if (!_userAccountDbContext.UserAccounts.Any())
+            if (!_defaultDbContext.UserAccounts.Any())
             {
                 foreach (var userAccount in UserAccounts.Get(_crypto, _applicationOptions).ToList())
                 {
-                    _userAccountDbContext.UserAccounts.Add(userAccount.ToEntity());
+                    _defaultDbContext.UserAccounts.Add(userAccount.ToEntity());
                 }
-                _userAccountDbContext.SaveChanges();
+                _defaultDbContext.SaveChanges();
             }
         }
     }

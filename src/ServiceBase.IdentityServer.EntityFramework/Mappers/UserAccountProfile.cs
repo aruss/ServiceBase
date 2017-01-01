@@ -17,9 +17,9 @@ namespace ServiceBase.IdentityServer.EntityFramework.Mappers
             CreateMap<Models.ExternalAccount, ExternalAccount>(MemberList.Source)
                 .PreserveReferences();
 
-            CreateMap<UserClaim, Models.UserClaim>(MemberList.Destination)
+            CreateMap<UserAccountClaim, Models.UserAccountClaim>(MemberList.Destination)
                 .PreserveReferences();
-            CreateMap<Models.UserClaim, UserClaim>(MemberList.Source)
+            CreateMap<Models.UserAccountClaim, UserAccountClaim>(MemberList.Source)
                 .PreserveReferences();
         }
     }

@@ -8,8 +8,8 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
     [Collection("Landing Page")]
     public class GeneralTests
     {
-        HttpClient _client;
-        TestServer _server;
+        private HttpClient _client;
+        private TestServer _server;
 
         public GeneralTests()
         {
@@ -29,4 +29,3 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
         }
     }
 }
-
