@@ -1,26 +1,32 @@
 {
+  "description": "",
   "userSecretsId": "ServiceBase.IdentityServer.Public-c23d27a4-eb88-4b18-9b77-2a93f3b15119",
   "title": "ServiceBase.IdentityServer.Public",
   "version": "1.0.0-*",
 
   "dependencies": {
-    "IdentityServer4": "1.0.0-rc3",
-    "Microsoft.AspNetCore.Authentication.Facebook": "1.0.0",
-    "Microsoft.AspNetCore.Authentication.Google": "1.0.0",
-    "Microsoft.AspNetCore.Diagnostics": "1.0.0",
-    "Microsoft.AspNetCore.Mvc": "1.0.1",
-    "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
-    "Microsoft.AspNetCore.StaticFiles": "1.0.0",
-    "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
-    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0",
-    "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
-    "Microsoft.Extensions.Logging.Console": "1.0.0",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0",
+    "IdentityServer4": "1.0.0",
+    "Microsoft.AspNetCore.Authentication.Facebook": "1.1.0",
+    "Microsoft.AspNetCore.Authentication.Google": "1.1.0",
+    "Microsoft.AspNetCore.Diagnostics": "1.1.0",
+    "Microsoft.AspNetCore.Mvc": "1.1.0",
+    "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",
+    "Microsoft.AspNetCore.StaticFiles": "1.1.0",
+    "Microsoft.Extensions.Configuration.FileExtensions": "1.1.0",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
+    "Microsoft.Extensions.Configuration.Json": "1.1.0",
+    "Microsoft.Extensions.Configuration.UserSecrets": "1.1.0",
+    "Microsoft.Extensions.Logging.Console": "1.1.0",
+    "Microsoft.Extensions.Logging.Debug": "1.1.0",
     "Newtonsoft.Json": "9.0.1",
-    "ServiceBase": "1.0.0-*",
-    "ServiceBase.IdentityServer": "1.0.0-*",
-    "ServiceBase.IdentityServer.EntityFramework": "1.0.0-*"
+    "ServiceBase": {
+      "target": "project"
+    },
+    "ServiceBase.IdentityServer": {
+      "target": "project"
+    },
+    "Microsoft.AspNetCore.Hosting": "1.1.0",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.1.0"
   },
 
   "tools": {
@@ -29,17 +35,17 @@
   },
 
   "frameworks": {
-    "netcoreapp1.0": {
+    "netcoreapp1.1": {
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
-          "version": "1.0.0"
-        },
-        "Microsoft.AspNetCore.Server.Kestrel": "1.0.0"
+          "version": "1.1.0"
+        }
       },
       "imports": "dnxcore50"
     }
   },
+
   "buildOptions": {
     "emitEntryPoint": true,
     "preserveCompilationContext": true,
@@ -53,7 +59,7 @@
   "publishOptions": {
     "include": [
       "wwwroot",
-      "UI/**/Views",
+      "UI/**/Views/*.cshtml",
       "Config/*.json",
       "web.config"
     ]

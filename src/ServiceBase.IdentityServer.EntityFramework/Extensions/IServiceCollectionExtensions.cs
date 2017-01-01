@@ -1,15 +1,13 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Interfaces;
-using IdentityServer4.EntityFramework.Options;
-using IdentityServer4.EntityFramework.Services;
-using IdentityServer4.EntityFramework.Stores;
-using IdentityServer4.Services;
+﻿using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceBase.IdentityServer.EntityFramework.DbContexts;
+using ServiceBase.IdentityServer.EntityFramework.Interfaces;
 using ServiceBase.IdentityServer.EntityFramework.Options;
+using ServiceBase.IdentityServer.EntityFramework.Services;
+using ServiceBase.IdentityServer.EntityFramework.Stores;
 using ServiceBase.IdentityServer.Services;
 using System;
 using System.Reflection;
@@ -41,48 +39,29 @@ namespace ServiceBase.IdentityServer.EntityFramework
             ConfigureServices(services, options);
         }
 
+        internal static void SelectDatabase(this DbContextOptionsBuilder builder, EntityFrameworkOptions options)
+        {
+            if (String.IsNullOrWhiteSpace(options.ConnectionString))
+            {
+                builder.UseInMemoryDatabase();
+            }
+            else
+            {
+                var migrationsAssembly = typeof(IServiceCollectionExtensions).GetTypeInfo().Assembly.GetName().Name;
+                builder.UseSqlServer(options.ConnectionString, o => o.MigrationsAssembly(migrationsAssembly));
+            }
+        }
+
         internal static void ConfigureServices(IServiceCollection services, EntityFrameworkOptions options)
         {
-            var migrationsAssembly = typeof(IServiceCollectionExtensions).GetTypeInfo().Assembly.GetName().Name;
-
             Action<DbContextOptionsBuilder> builderOptions = (builder) =>
             {
-                if (String.IsNullOrWhiteSpace(options.ConnectionString))
-                {
-                    builder.UseInMemoryDatabase();
-                }
-                else
-                {
-                    builder.UseSqlServer(options.ConnectionString, o => o.MigrationsAssembly(migrationsAssembly));
-                }
+                builder.SelectDatabase(options);
             };
 
-            services.AddDbContext<ConfigurationDbContext>(builderOptions);
-            services.AddScoped<IConfigurationDbContext, ConfigurationDbContext>();
-            services.AddTransient<IClientStore, ClientStore>();
-            services.AddTransient<IScopeStore, ScopeStore>();
-            services.AddTransient<ICorsPolicyService, CorsPolicyService>();
-
-            var configStoreOptions = new ConfigurationStoreOptions();
-            services.AddSingleton(configStoreOptions);
-
-            // AddOperationalStore
-            services.AddDbContext<PersistedGrantDbContext>(builderOptions);
-            services.AddScoped<IPersistedGrantDbContext, PersistedGrantDbContext>();
-            services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
-
-            var operationStoreOptions = new OperationalStoreOptions();
-            services.AddSingleton(operationStoreOptions);
-
-            // TODO: take care of token cleanup
-            /*var tokenCleanupOptions = new TokenCleanupOptions();
-            tokenCleanUpOptions?.Invoke(tokenCleanupOptions);
-            builder.Services.AddSingleton(tokenCleanupOptions);
-            builder.Services.AddSingleton<TokenCleanup>();*/
-
-            services.AddDbContext<DefaultDbContext>(builderOptions);
-            services.AddScoped<DefaultDbContext>();
-            services.AddTransient<IUserAccountStore, UserAccountStore>();
+            services.AddConfigurationStore(builderOptions);
+            services.AddOperationalStore(builderOptions);
+            services.AddUserAccountStore(builderOptions);
 
             // If db inialization or example data seeding is required add a default store initializer
             if (options.MigrateDatabase || options.SeedExampleData)
@@ -90,8 +69,55 @@ namespace ServiceBase.IdentityServer.EntityFramework
                 services.AddTransient<IStoreInitializer, DefaultStoreInitializer>();
             }
 
-            var defaultStoreOptions = new DefaultStoreOptions();
+            var defaultStoreOptions = new UserAccountStoreOptions();
             services.AddSingleton(defaultStoreOptions);
+        }
+
+        internal static void AddConfigurationStore(
+           this IServiceCollection services,
+           Action<DbContextOptionsBuilder> dbContextOptionsAction = null,
+           Action<ConfigurationStoreOptions> storeOptionsAction = null)
+        {
+            services.AddDbContext<ConfigurationDbContext>(dbContextOptionsAction);
+            services.AddScoped<IConfigurationDbContext, ConfigurationDbContext>();
+
+            services.AddTransient<IClientStore, ClientStore>();
+            services.AddTransient<IResourceStore, ResourceStore>();
+            services.AddTransient<ICorsPolicyService, CorsPolicyService>();
+
+            var options = new ConfigurationStoreOptions();
+            storeOptionsAction?.Invoke(options);
+            services.AddSingleton(options);
+        }
+
+        internal static void AddOperationalStore(
+           this IServiceCollection services,
+           Action<DbContextOptionsBuilder> dbContextOptionsAction = null,
+           Action<PersistentGrantStoreOptions> storeOptionsAction = null,
+           Action<TokenCleanupOptions> tokenCleanUpOptions = null)
+        {
+            services.AddDbContext<PersistedGrantDbContext>(dbContextOptionsAction);
+            services.AddScoped<IPersistedGrantDbContext, PersistedGrantDbContext>();
+
+            services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
+
+            var storeOptions = new PersistentGrantStoreOptions();
+            storeOptionsAction?.Invoke(storeOptions);
+            services.AddSingleton(storeOptions);
+
+            var tokenCleanupOptions = new TokenCleanupOptions();
+            tokenCleanUpOptions?.Invoke(tokenCleanupOptions);
+            services.AddSingleton(tokenCleanupOptions);
+            services.AddSingleton<TokenCleanup>();
+        }
+
+        internal static void AddUserAccountStore(
+            this IServiceCollection services,
+            Action<DbContextOptionsBuilder> dbContextOptionsAction = null)
+        {
+            services.AddDbContext<UserAccountDbContext>(dbContextOptionsAction);
+            services.AddScoped<UserAccountDbContext>();
+            services.AddTransient<IUserAccountStore, UserAccountStore>();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Services;
 using Microsoft.Extensions.Options;
-using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Configuration;
 using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.Events;
 using ServiceBase.IdentityServer.Extensions;

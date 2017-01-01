@@ -6,10 +6,10 @@ namespace ServiceBase.Notification.Twilio
 {
     public static class IServiceCollectionExtensions
     {
-        public static void AddTwillioSmsSender(this IServiceCollection services, IConfigurationSection config)
+        /*public static void AddTwillioSmsSender(this IServiceCollection services, IConfigurationSection config)
         {
             services.Configure<TwillioOptions>(config);
             services.AddTransient<ISmsSender, TwillioSmsSender>();
-        }        
+        }*/
     }
 }

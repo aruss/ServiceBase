@@ -1,15 +1,16 @@
 ﻿using IdentityServer4;
-using IdentityServer4.Configuration;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ServiceBase.Config;
-using ServiceBase.IdentityServer.Config;
+using ServiceBase.Configuration;
+using ServiceBase.IdentityServer.Configuration;
 using ServiceBase.IdentityServer.Crypto;
-using ServiceBase.IdentityServer.EntityFramework;
+
+//using ServiceBase.IdentityServer.EntityFramework;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
@@ -19,6 +20,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace ServiceBase.IdentityServer.Public
 {
+
     public class Startup
     {
         private readonly ILogger _logger;
@@ -41,7 +43,7 @@ namespace ServiceBase.IdentityServer.Public
             services.AddOptions();
             services.Configure<ApplicationOptions>(_configuration.GetSection("App"));
 
-            #endregion
+            #endregion Add application configuration
 
             #region Add IdentityServer
 
@@ -51,18 +53,18 @@ namespace ServiceBase.IdentityServer.Public
             var builder = services.AddIdentityServer((options) =>
             {
                 //options.RequireSsl = false;
-                options.EventsOptions = new EventsOptions
-                {
-                    RaiseErrorEvents = true,
-                    RaiseFailureEvents = true,
-                    RaiseInformationEvents = true,
-                    RaiseSuccessEvents = true
-                };
-                options.UserInteractionOptions.LoginUrl = "/login";
-                options.UserInteractionOptions.LogoutUrl = "/logout";
-                options.UserInteractionOptions.ConsentUrl = "/consent";
-                options.UserInteractionOptions.ErrorUrl = "/error";
-                options.AuthenticationOptions.FederatedSignOutPaths.Add("/signout-oidc");
+
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+
+                options.UserInteraction.LoginUrl = "/login";
+                options.UserInteraction.LogoutUrl = "/logout";
+                options.UserInteraction.ConsentUrl = "/consent";
+                options.UserInteraction.ErrorUrl = "/error";
+                options.Authentication.FederatedSignOutPaths.Add("/signout-oidc");
             })
                 .AddTemporarySigningCredential()
                 //AddExtensionGrantValidator<Extensions.ExtensionGrantValidator>()
@@ -71,10 +73,10 @@ namespace ServiceBase.IdentityServer.Public
                 .AddSecretValidator<PrivateKeyJwtSecretValidator>()
                 .AddSigningCredential(cert);
 
-            #endregion
+            #endregion Add IdentityServer
 
             // Add Data Layer
-            services.AddEntityFrameworkStores(_configuration.GetSection("EntityFramework"));
+            //services.AddEntityFrameworkStores(_configuration.GetSection("EntityFramework"));
 
             #region Add Email Sender
 
@@ -97,7 +99,7 @@ namespace ServiceBase.IdentityServer.Public
 
             // services.AddTransient<IEmailFormatter, EmailFormatter>();
 
-            #endregion
+            #endregion Add Email Sender
 
             #region Add SMS Sender
 
@@ -107,7 +109,7 @@ namespace ServiceBase.IdentityServer.Public
                 services.AddTransient<ISmsSender, TwillioSmsSender>();
             }*/
 
-            #endregion
+            #endregion Add SMS Sender
 
             services.AddTransient<ICrypto, DefaultCrypto>();
             services.AddTransient<UserAccountService>();
@@ -171,7 +173,6 @@ namespace ServiceBase.IdentityServer.Public
                 });
             }
 
-
             if (!String.IsNullOrWhiteSpace(_configuration["Authentication:Facebook:AppId"]))
             {
                 _logger.LogInformation("Registering Facebook authentication scheme");
@@ -185,7 +186,7 @@ namespace ServiceBase.IdentityServer.Public
                 });
             }
 
-            #endregion
+            #endregion Use third party authentication
 
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();

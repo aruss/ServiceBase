@@ -6,7 +6,7 @@ using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Configuration;
 using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.Events;
 using ServiceBase.IdentityServer.Extensions;

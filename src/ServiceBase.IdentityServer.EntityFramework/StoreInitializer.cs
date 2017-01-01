@@ -1,12 +1,9 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ServiceBase.IdentityServer.Config;
+using ServiceBase.IdentityServer.Configuration;
 using ServiceBase.IdentityServer.Crypto;
-using ServiceBase.IdentityServer.EntityFramework.Configuration;
 using ServiceBase.IdentityServer.EntityFramework.DbContexts;
 using ServiceBase.IdentityServer.EntityFramework.Mappers;
 using ServiceBase.IdentityServer.EntityFramework.Options;
@@ -22,7 +19,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
         private readonly IHostingEnvironment _env;
         private readonly ConfigurationDbContext _configurationDbContext;
         private readonly PersistedGrantDbContext _persistedGrantDbContext;
-        private readonly DefaultDbContext _defaultDbContext;
+        private readonly UserAccountDbContext _userAccountDbContext;
         private readonly ICrypto _crypto;
         private readonly ApplicationOptions _applicationOptions;
 
@@ -32,7 +29,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             IHostingEnvironment env,
             ConfigurationDbContext configurationDbContext,
             PersistedGrantDbContext persistedGrantDbContext,
-            DefaultDbContext defaultDbContext,
+            UserAccountDbContext userAccountDbContext,
             ICrypto crypto,
             IOptions<ApplicationOptions> applicationOptions)
         {
@@ -41,7 +38,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             _env = env;
             _configurationDbContext = configurationDbContext;
             _persistedGrantDbContext = persistedGrantDbContext;
-            _defaultDbContext = defaultDbContext;
+            _userAccountDbContext = userAccountDbContext;
             _crypto = crypto;
             _applicationOptions = applicationOptions.Value;
         }
@@ -55,9 +52,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
             if (_options.SeedExampleData)
             {
-                this.SeedClients();
-                this.SeedScopes();
-                this.SeedUserAccounts();
+                this.EnsureSeedData();
             }
         }
 
@@ -65,45 +60,46 @@ namespace ServiceBase.IdentityServer.EntityFramework
         {
             _configurationDbContext.Database.Migrate();
             _persistedGrantDbContext.Database.Migrate();
-            _defaultDbContext.Database.Migrate();
+            _userAccountDbContext.Database.Migrate();
         }
 
-        internal virtual void SeedClients()
+        internal virtual void EnsureSeedData()
         {
             if (!_configurationDbContext.Clients.Any())
             {
-                foreach (var client in Clients.Get())
+                foreach (var client in Clients.Get().ToList())
                 {
                     _configurationDbContext.Clients.Add(client.ToEntity());
                 }
                 _configurationDbContext.SaveChanges();
             }
-        }
 
-        internal virtual void SeedScopes()
-        {
-            if (!_configurationDbContext.Scopes.Any())
+            if (!_configurationDbContext.IdentityResources.Any())
             {
-                foreach (var client in Scopes.Get())
+                foreach (var resource in Resources.GetIdentityResources().ToList())
                 {
-                    _configurationDbContext.Scopes.Add(client.ToEntity());
+                    _configurationDbContext.IdentityResources.Add(resource.ToEntity());
                 }
                 _configurationDbContext.SaveChanges();
             }
-        }
 
-        internal virtual void SeedUserAccounts()
-        {
-            if (!_defaultDbContext.UserAccounts.Any())
+            if (!_configurationDbContext.ApiResources.Any())
             {
-                foreach (var userAccount in UserAccounts.Get(_crypto, _applicationOptions))
+                foreach (var resource in Resources.GetApiResources().ToList())
                 {
-                    _defaultDbContext.UserAccounts.Add(userAccount.ToEntity());
+                    _configurationDbContext.ApiResources.Add(resource.ToEntity());
                 }
-                _defaultDbContext.SaveChanges();
+                _configurationDbContext.SaveChanges();
+            }
+
+            if (!_userAccountDbContext.UserAccounts.Any())
+            {
+                foreach (var userAccount in UserAccounts.Get(_crypto, _applicationOptions).ToList())
+                {
+                    _userAccountDbContext.UserAccounts.Add(userAccount.ToEntity());
+                }
+                _userAccountDbContext.SaveChanges();
             }
         }
     }
 }
-
-

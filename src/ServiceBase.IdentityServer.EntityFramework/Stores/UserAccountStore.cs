@@ -1,6 +1,4 @@
-﻿using IdentityServer4.EntityFramework.Mappers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServiceBase.IdentityServer.EntityFramework.DbContexts;
 using ServiceBase.IdentityServer.EntityFramework.Mappers;
@@ -17,10 +15,10 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
     public class UserAccountStore : IUserAccountStore
     {
-        private readonly DefaultDbContext _context;
+        private readonly UserAccountDbContext _context;
         private readonly ILogger<UserAccountStore> _logger;
 
-        public UserAccountStore(DefaultDbContext context, ILogger<UserAccountStore> logger)
+        public UserAccountStore(UserAccountDbContext context, ILogger<UserAccountStore> logger)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
 

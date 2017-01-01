@@ -1,4 +1,4 @@
-﻿using ServiceBase.IdentityServer.Config;
+﻿using ServiceBase.IdentityServer.Configuration;
 using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Models;

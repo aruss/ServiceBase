@@ -1,4 +1,8 @@
-﻿using System.Reflection;
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -7,10 +11,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ServiceBase.IdentityServer.Postgres")]
+[assembly: AssemblyProduct("ServiceBase.IdentityServer.EntityFramework")]
 [assembly: AssemblyTrademark("")]
 
 [assembly: InternalsVisibleTo("ServiceBase.IdentityServer.EntityFramework.UnitTests")]
+[assembly: InternalsVisibleTo("ServiceBase.IdentityServer.EntityFramework.IntegrationTests")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -18,4 +23,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("a09ca51a-e0c3-4b3f-b115-33ddf909f227")]
+[assembly: Guid("ab83f911-8b78-4973-a3a9-2a2d85581f25")]

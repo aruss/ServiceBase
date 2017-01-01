@@ -6,18 +6,15 @@
     "emitEntryPoint": false
   },
   "dependencies": {
-    "ServiceBase": "1.0.0-*",
-    "Microsoft.Extensions.Options.ConfigurationExtensions":  "1.0.0"
+    "NETStandard.Library": "1.6.1",
+    "ServiceBase": {
+      "target": "project"
+    }
   },
   "frameworks": {
-    "netcoreapp1.0": {
-      "dependencies": {
-        "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.0"
-        }
-      },
-      "imports": "dnxcore50"
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "dependencies": {}
     }
   }
 }

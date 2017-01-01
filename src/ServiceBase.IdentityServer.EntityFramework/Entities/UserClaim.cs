@@ -1,13 +1,13 @@
-﻿using System;
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using System;
 
 namespace ServiceBase.IdentityServer.EntityFramework.Entities
 {
-    public class UserClaim
+    public abstract class UserClaim
     {
-        public Guid UserAccountId { get; set; }
+        public Guid Id { get; set; }
         public string Type { get; set; }
-        public string Value { get; set; }
-        public string ValueType { get; set; }
-        public UserAccount UserAccount { get; set; }
     }
 }

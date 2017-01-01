@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ServiceBase.Notification.Email;
-using ServiceBase.Notification.SendGrid;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace AspNetCoreWeb
@@ -43,17 +42,6 @@ namespace AspNetCoreWeb
                 });
 
             services.AddTransient<IEmailService, DefaultEmailService>();
-            services.Configure<DefaultEmailServiceOptions>(opt =>
-            {
-                opt.TemplateDirectoryPath = "./foo/bar";
-            });
-
-            services.Configure<SendGridOptions>(opt =>
-            {
-                opt.Key = "foo";
-                opt.User = "bar";
-            });
-            services.AddTransient<IEmailSender, SendGridEmailSender>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -95,12 +83,12 @@ namespace AspNetCoreWeb
                          var profile = await profileService.GetByIdAsync(profileId);
                          if (profile == null)
                          {
-                             // TODO: Encapsulate 
+                             // TODO: Encapsulate
                              profile = new Profile
                              {
                                  Id = profileId,
                                  DisplayName = "john doe"
-                                 // TODO: set other fields 
+                                 // TODO: set other fields
                              };
 
                              await profileService.SaveAsync(profile);

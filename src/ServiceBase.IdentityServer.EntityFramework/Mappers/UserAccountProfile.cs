@@ -1,9 +1,5 @@
 ﻿using AutoMapper;
 using ServiceBase.IdentityServer.EntityFramework.Entities;
-using System.Linq;
-using System.Security.Claims;
-using IdentityServer4.EntityFramework.Entities;
-
 
 namespace ServiceBase.IdentityServer.EntityFramework.Mappers
 {

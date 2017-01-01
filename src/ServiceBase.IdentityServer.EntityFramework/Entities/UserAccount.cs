@@ -22,6 +22,6 @@ namespace ServiceBase.IdentityServer.EntityFramework.Entities
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public List<ExternalAccount> Accounts { get; set; }
-        public List<UserClaim> Claims { get; set; }
+        public List<UserAccountClaim> Claims { get; set; }
     }
 }

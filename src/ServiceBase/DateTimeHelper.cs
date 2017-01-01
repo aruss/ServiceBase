@@ -7,8 +7,8 @@ namespace ServiceBase
 {
     internal static class DateTimeHelper
     {
-        internal static Func<DateTime> UtcNowFunc = () => DateTime.UtcNow;
+        public static Func<DateTime> UtcNowFunc = () => DateTime.UtcNow;
 
-        internal static DateTime UtcNow => UtcNowFunc();
+        public static DateTime UtcNow => UtcNowFunc();
     }
 }
