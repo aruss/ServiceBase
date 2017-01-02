@@ -549,7 +549,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
 
         #endregion Valid input, successfull registration
 
-        /*[Fact]
+        [Fact]
         public async Task RegisterUserWhichHasAlreadyAExternalAccount_MergeAccountsAutomatically()
         {
             var emailServiceMock = new Mock<IEmailService>();
@@ -567,7 +567,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             };
 
             emailServiceMock.Setup(c =>
-                c.SendEmailAsync("UserAccountCreated", "john@localhost", It.IsAny<object>())).Returns(sendEmailAsync);
+                c.SendEmailAsync("UserAccountCreated", "bob@localhost", It.IsAny<object>())).Returns(sendEmailAsync);
 
             var server = ServerHelper.CreateServer((services) =>
             {
@@ -606,7 +606,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             // 3. The registration success page should be shown
             postResponse.StatusCode.Should().Be(HttpStatusCode.Found);
             postResponse.Headers.Location.ToString().Should().StartWith("/register/success");
-        }*/
+        }
 
         /*[Fact]
         public async Task RegisterUserWhichHasAlreadyAExternalAccount_AskIfMerge_Merge()

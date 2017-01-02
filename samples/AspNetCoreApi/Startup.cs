@@ -21,8 +21,7 @@ namespace AspNetCoreApi
             {
                 Authority = "http://localhost:5000",
                 RequireHttpsMetadata = false,
-
-                ScopeName = "api1",
+                AllowedScopes = { "api1" },
                 AutomaticAuthenticate = true
             });
 

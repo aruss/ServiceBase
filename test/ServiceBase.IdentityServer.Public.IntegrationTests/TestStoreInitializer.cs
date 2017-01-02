@@ -112,12 +112,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
                     IsEmailVerified = true,
                     EmailVerifiedAt = now,
                     IsLoginAllowed = false,
-                    Claims = new List<UserAccountClaim>
-                    {
-                        new UserAccountClaim(JwtClaimTypes.Name, "Jim Panse"),
-                        new UserAccountClaim(JwtClaimTypes.GivenName, "Jim"),
-                        new UserAccountClaim(JwtClaimTypes.FamilyName, "Panse")
-                    }
+                    Claims = this.CreateClaims("Jim Panse", "Jim", "Panse"),
                 },
 
                 // Not verified user account with local account but no external accounts
@@ -141,7 +136,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
                     Email = "bob@localhost",
                     CreatedAt = now,
                     UpdatedAt = now,
-                    IsEmailVerified = false, // had never confirmed the email
+                    IsEmailVerified = false, // had never confirmed the email, since he got via facebook
                     IsLoginAllowed = true,  // is allowed to login since he registed via facebook
                     Claims = this.CreateClaims("Bob Smith", "Bob", "Smith"),
                     Accounts = new List<ExternalAccount>()

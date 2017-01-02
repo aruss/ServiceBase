@@ -30,6 +30,37 @@ namespace ServiceBase.IdentityServer.Services
             _eventService = eventService;
         }
 
+        public async Task<bool> VerifyPasswordAsyc(UserAccount userAccount, string password)
+        {
+            var result = _crypto.VerifyPasswordHash(userAccount.PasswordHash, password,
+                _applicationOptions.PasswordHashingIterationCount);
+
+            var now = DateTime.UtcNow;
+
+            if (result)
+            {
+                userAccount.FailedLoginCount = 0;
+                userAccount.LastFailedLoginAt = null;
+                userAccount.LastLoginAt = now;
+            }
+            else
+            {
+                userAccount.FailedLoginCount++;
+                userAccount.LastFailedLoginAt = now;
+                if (userAccount.FailedLoginCount >= _applicationOptions.AccountLockoutFailedLoginAttempts)
+                {
+                    userAccount.IsLoginAllowed = false;
+                }
+            }
+
+            // Update user account
+            userAccount.UpdatedAt = now;
+            await _userAccountStore.WriteAsync(userAccount);
+
+            return result;
+        }
+
+
         public async Task<UserAccount> CreateNewLocalUserAccountAsync(
             string email,
             string password,
@@ -65,6 +96,21 @@ namespace ServiceBase.IdentityServer.Services
                 IdentityServerConstants.LocalIdentityProvider);
 
             return userAccount;
+        }
+
+        public async Task SetAccountRecoverAsync(UserAccount userAccount, string returnUrl = null)
+        {
+            userAccount.VerificationKey = _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64();
+            userAccount.VerificationPurpose = (int)VerificationKeyPurpose.ResetPassword;
+            userAccount.VerificationKeySentAt = DateTime.UtcNow;
+            userAccount.VerificationStorage = returnUrl;
+
+            // Update user account
+            await _userAccountStore.WriteAsync(userAccount);
+
+            // Emit event
+            await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(
+                userAccount.Id);
         }
 
         public async Task SetEmailVerifiedAsync(UserAccount userAccount)
@@ -103,7 +149,28 @@ namespace ServiceBase.IdentityServer.Services
                 now);
         }
 
-        public async Task<VerificationResult> HandleVerificationKey(string key, VerificationKeyPurpose purpose)
+        public void SetResetPasswordVirificationKey(
+          UserAccount userAccount,
+          string returnUrl,
+          DateTime? now = null)
+        {
+            // Set verification key
+            userAccount.SetVerification(
+                _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
+                VerificationKeyPurpose.ResetPassword,
+                returnUrl,
+                now);
+        }
+
+        /// <summary>
+        /// Validate if verification key is valid, if yes it will load a corresponding user account
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="purpose"></param>
+        /// <returns></returns>
+        public async Task<VerificationResult> HandleVerificationKey(
+            string key,
+            VerificationKeyPurpose purpose)
         {
             var result = new VerificationResult();
             var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);

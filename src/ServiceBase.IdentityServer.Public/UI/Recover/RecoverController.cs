@@ -1,17 +1,15 @@
-﻿using ServiceBase.IdentityServer.Configuration;
-using ServiceBase.IdentityServer.Crypto;
-using ServiceBase.IdentityServer.Extensions;
-using ServiceBase.IdentityServer.Models;
-using ServiceBase.IdentityServer.Services;
-using IdentityServer4.Services;
+﻿using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ServiceBase.IdentityServer.Configuration;
+using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.Models;
+using ServiceBase.IdentityServer.Services;
+using ServiceBase.Notification.Email;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ServiceBase.Notification.Email;
 
 namespace ServiceBase.IdentityServer.Public.UI.Recover
 {
@@ -23,6 +21,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IEmailService _emailService;
         private readonly ICrypto _crypto;
+        private readonly ClientService _clientService;
+        private readonly UserAccountService _userAccountService;
 
         public RecoverController(
             IOptions<ApplicationOptions> applicationOptions,
@@ -30,7 +30,9 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
             IUserAccountStore userAccountStore,
             IIdentityServerInteractionService interaction,
             IEmailService emailService,
-            ICrypto crypto)
+            ICrypto crypto,
+            ClientService clientService,
+            UserAccountService userAccountService)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
@@ -38,6 +40,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
             _interaction = interaction;
             _emailService = emailService;
             _crypto = crypto;
+            _clientService = clientService;
+            _userAccountService = userAccountService;
         }
 
         [HttpGet("recover", Name = "Recover")]
@@ -47,16 +51,44 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
 
             if (!String.IsNullOrWhiteSpace(returnUrl))
             {
-                var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
-                if (request != null)
+                var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+                if (context != null)
                 {
-                    vm.Email = request.LoginHint;
+                    vm.Email = context.LoginHint;
                     vm.ReturnUrl = returnUrl;
+
+                    var client = await _clientService.FindEnabledClientByIdAsync(context.ClientId);
+                    vm.ExternalProviders = await _clientService.GetEnabledProvidersAsync(client);
+                    vm.EnableLocalLogin = client.EnableLocalLogin;
                 }
             }
 
             return View(vm);
         }
+
+        private async Task<IActionResult> RedirectToSuccessAsync(UserAccount userAccount, string returnUrl)
+        {
+            // Redirect to success page by preserving the email provider name
+            return Redirect(Url.Action("Success", "Recover", new
+            {
+                returnUrl = returnUrl,
+                provider = userAccount.Email.Split('@').LastOrDefault()
+            }));
+        }
+
+        private async Task SendUserAccountRecoverAsync(UserAccount userAccount)
+        {
+            var args = new { Key = userAccount.VerificationKey };
+
+            await _emailService.SendEmailAsync(
+                IdentityBaseConstants.EmailTemplates.UserAccountRecover, userAccount.Email, new
+                {
+                    ConfirmUrl = Url.Action("Confirm", "Recover", args, Request.Scheme),
+                    CancelUrl = Url.Action("Cancel", "Recover", args, Request.Scheme)
+                }
+            );
+        }
+
 
         [HttpPost("recover")]
         [ValidateAntiForgeryToken]
@@ -72,27 +104,9 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
 
                 if (userAccount != null)
                 {
-                    userAccount.VerificationKey = StripUglyBase64(_crypto.Hash(_crypto.GenerateSalt()));
-                    userAccount.VerificationPurpose = (int)VerificationKeyPurpose.ResetPassword;
-                    userAccount.VerificationKeySentAt = DateTime.UtcNow;
-                    // account.VerificationStorage = WebUtility.HtmlDecode(model.ReturnUrl);
-                    userAccount.VerificationStorage = model.ReturnUrl;
-
-                    await _userAccountStore.WriteAsync(userAccount);
-
-                    await _emailService.SendEmailAsync(IdentityBaseConstants.EmailTemplates.UserAccountRecover, userAccount.Email, new
-                    {
-                        // TODO: change to read x-forwared-host or use event context
-                        ConfirmUrl = Url.Action("Confirm", "Recover", new { Key = userAccount.VerificationKey }, Request.Scheme),
-                        CancelUrl = Url.Action("Cancel", "Recover", new { Key = userAccount.VerificationKey }, Request.Scheme)
-                    });
-
-                    // Redirect to success page by preserving the email provider name
-                    return Redirect(Url.Action("Success", "Recover", new
-                    {
-                        returnUrl = model.ReturnUrl,
-                        provider = userAccount.Email.Split('@').LastOrDefault()
-                    }));
+                    await _userAccountService.SetAccountRecoverAsync(userAccount, model.ReturnUrl);
+                    await this.SendUserAccountRecoverAsync(userAccount);
+                    return await this.RedirectToSuccessAsync(userAccount, model.ReturnUrl);
                 }
                 else
                 {
@@ -115,25 +129,21 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
         [HttpGet("recover/confirm/{key}", Name = "RecoverConfirm")]
         public async Task<IActionResult> Confirm(string key)
         {
-            var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
-            if (userAccount == null)
+            var result = await _userAccountService.HandleVerificationKey(key,
+                VerificationKeyPurpose.ResetPassword);
+
+            if (result.UserAccount == null || !result.PurposeValid || result.TokenExpired)
             {
                 ModelState.AddModelError("", "Invalid token");
                 return View("InvalidToken");
             }
 
-            if (userAccount.VerificationPurpose != (int)VerificationKeyPurpose.ResetPassword)
-            {
-                ModelState.AddModelError("", "Invalid token");
-                return View("InvalidToken");
-            }
-
-            var returnUrl = userAccount.VerificationStorage;
+            var returnUrl = result.UserAccount.VerificationStorage;
 
             var vm = new RecoverViewModel
             {
                 ReturnUrl = returnUrl,
-                Email = userAccount.Email
+                Email = result.UserAccount.Email
             };
 
             return View(vm);
@@ -142,36 +152,16 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
         [HttpGet("recover/cancel/{key}", Name = "RecoverCancel")]
         public async Task<IActionResult> Cancel(string key)
         {
-            // Load token data from database
-            var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
+            var result = await _userAccountService.HandleVerificationKey(key,
+                VerificationKeyPurpose.ResetPassword);
 
-            if (userAccount == null)
+            if (result.UserAccount == null || !result.PurposeValid || result.TokenExpired)
             {
-                // ERROR
-            }
-
-            if (userAccount.VerificationPurpose != (int)VerificationKeyPurpose.ResetPassword)
-            {
-                // ERROR
-            }
-
-            if (userAccount.LastLoginAt != null)
-            {
-                // ERROR
+                ModelState.AddModelError("", "Invalid token");
+                return View("InvalidToken");
             }
 
             return Redirect("~/");
-        }
-
-        static readonly string[] UglyBase64 = { "+", "/", "=" };
-        protected virtual string StripUglyBase64(string s)
-        {
-            if (s == null) return s;
-            foreach (var ugly in UglyBase64)
-            {
-                s = s.Replace(ugly, String.Empty);
-            }
-            return s;
         }
     }
 }

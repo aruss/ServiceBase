@@ -27,6 +27,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IUserAccountStore _userAccountStore;
         private readonly ICrypto _crypto;
+        private readonly UserAccountService _userAccountService;
         private readonly ClientService _clientService;
 
         public LoginController(
@@ -36,6 +37,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             IUserAccountStore userAccountStore,
             ICrypto crypto,
             IClientStore clientStore,
+            UserAccountService userAccountService,
             ClientService clientService)
         {
             _applicationOptions = applicationOptions.Value;
@@ -43,6 +45,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             _interaction = interaction;
             _userAccountStore = userAccountStore;
             _crypto = crypto;
+            _userAccountService = userAccountService;
             _clientService = clientService;
         }
 
@@ -59,7 +62,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             if (context?.IdP != null)
             {
                 // If IdP is passed, then bypass showing the login screen only if client is allowed to signin with provided idp
-                if (providers.Any(c => c.AuthenticationScheme.Equals(context.IdP, StringComparison.OrdinalIgnoreCase)))
+                if (providers.Any(c => c.AuthenticationScheme.Equals(
+                    context.IdP, StringComparison.OrdinalIgnoreCase)))
                 {
                     return this.ExternalLogin(context.IdP, returnUrl);
                 }
@@ -76,7 +80,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             if (vm.EnableLocalLogin == false && vm.ExternalProviders.Count() == 1)
             {
                 // Only one option for logging in, so redirect to it automatically
-                return this.ExternalLogin(vm.ExternalProviders.First().AuthenticationScheme, returnUrl);
+                return this.ExternalLogin(vm.ExternalProviders.First()
+                    .AuthenticationScheme, returnUrl);
             }
 
             return View(vm);
@@ -99,33 +104,46 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                     {
                         ModelState.AddModelError("", "User account is diactivated");
                     }
-                    else
+                    // If user account has local password use password authentication
+                    else if (userAccount.HasPassword())
                     {
-                        // If user account has local password use password authentication
-                        if (userAccount.HasPassword())
+                        // User has to follow a link in confirmation mail
+                        if (_applicationOptions.RequireLocalAccountVerification && !userAccount.IsEmailVerified)
                         {
-                            if (_crypto.VerifyPasswordHash(userAccount.PasswordHash,
-                                model.Password, _applicationOptions.PasswordHashingIterationCount))
-                            {
-                                await this.HttpContext.Authentication.IssueCookieAsync(userAccount,
-                                    IdentityServerConstants.LocalIdentityProvider,
-                                    "password", model.RememberLogin);
-
-                                // Make sure the returnUrl is still valid, and if yes - redirect back to authorize endpoint
-                                if (_interaction.IsValidReturnUrl(model.ReturnUrl))
-                                {
-                                    return Redirect(model.ReturnUrl);
-                                }
-
-                                return Redirect("~/");
-                            }
+                            ModelState.AddModelError("", "Please confirm your email account");
                         }
-                        // In case the user does not have local password but has associated third party accounts
-                        // Show the accounts as login hints
+                        // Match passwords
+                        else if (_crypto.VerifyPasswordHash(userAccount.PasswordHash,
+                            model.Password, _applicationOptions.PasswordHashingIterationCount))
+                        {
+                            await this.HttpContext.Authentication.IssueCookieAsync(userAccount,
+                                IdentityServerConstants.LocalIdentityProvider,
+                                "password", model.RememberLogin);
+
+                            // Make sure the returnUrl is still valid, and if yes - redirect back to authorize endpoint
+                            if (_interaction.IsValidReturnUrl(model.ReturnUrl))
+                            {
+                                return Redirect(model.ReturnUrl);
+                            }
+
+                            return Redirect("~/");
+                        }
+                        // Wrong password
                         else
                         {
-
+                            userAccount.FailedLoginCount++;
+                            userAccount.LastFailedLoginAt = DateTime.UtcNow;
+                            if (userAccount.FailedLoginCount >= _applicationOptions.AccountLockoutFailedLoginAttempts)
+                            {
+                                userAccount.IsLoginAllowed = false;
+                            }
                         }
+                    }
+                    // In case the user does not have local password but has associated third party accounts
+                    // Show the accounts as login hints
+                    else
+                    {
+                        throw new NotImplementedException();
                     }
                 }
 

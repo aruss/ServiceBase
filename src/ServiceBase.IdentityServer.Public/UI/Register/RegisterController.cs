@@ -110,10 +110,15 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 }
             }
 
+            return await this.RedirectToSuccessAsync(userAccount, model.ReturnUrl);
+        }
+
+        private async Task<IActionResult> RedirectToSuccessAsync(UserAccount userAccount, string returnUrl)
+        {
             // Redirect to success page by preserving the email provider name
             return Redirect(Url.Action("Success", "Register", new
             {
-                returnUrl = model.ReturnUrl,
+                returnUrl = returnUrl,
                 provider = userAccount.Email.Split('@').LastOrDefault()
             }));
         }
@@ -122,12 +127,14 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             UserAccount userAccount,
             RegisterInputModel model)
         {
+            // Merge accounts without user consent
             if (_applicationOptions.MergeAccountsAutomatically)
             {
                 var now = DateTime.UtcNow;
 
                 // Set user account password
-                userAccount.PasswordHash = _crypto.HashPassword(model.Password, _applicationOptions.PasswordHashingIterationCount);
+                userAccount.PasswordHash = _crypto.HashPassword(model.Password,
+                    _applicationOptions.PasswordHashingIterationCount);
 
                 // If application settings require account verification a verification token will be generated
                 //SetConfirmationVirificationKey(userAccount, model.ReturnUrl, now);
@@ -148,13 +155,13 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 }
                 else
                 {
-                    // Redirect to success page by preserving the email provider name
-                    return Redirect(Url.Action("Success", "Register", new
-                    {
-                        returnUrl = model.ReturnUrl,
-                        provider = userAccount.Email.Split('@').LastOrDefault()
-                    }));
+                    return await this.RedirectToSuccessAsync(userAccount, model.ReturnUrl);
                 }
+            }
+            // Ask user if he wants to merge accounts
+            else
+            {
+                throw new NotImplementedException();
             }
 
             // Return list of external account providers as hint
@@ -169,18 +176,15 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         {
             if (ModelState.IsValid)
             {
+                var email = model.Email.ToLower();
+
                 // Check if user with same email exists
-                var userAccount = await _userAccountStore.LoadByEmailWithExternalAsync(model.Email);
+                var userAccount = await _userAccountStore.LoadByEmailWithExternalAsync(email);
 
                 // If user dont exists create a new one
                 if (userAccount == null)
                 {
                     return await this.TryCreateNewUserAccount(userAccount, model);
-                }
-                // User has to follow a link in confirmation mail
-                else if (_applicationOptions.RequireLocalAccountVerification && !userAccount.IsEmailVerified)
-                {
-                    ModelState.AddModelError("", "Please confirm your email account");
                 }
                 // User is just disabled by whatever reason
                 else if (!userAccount.IsLoginAllowed)
@@ -190,6 +194,13 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 // If user has a password then its a local account
                 else if (userAccount.HasPassword())
                 {
+                    // User has to follow a link in confirmation mail
+                    if (_applicationOptions.RequireLocalAccountVerification && !userAccount.IsEmailVerified)
+                    {
+                        ModelState.AddModelError("", "Please confirm your email account");
+                    }
+
+                    // If user has a password then its a local account
                     ModelState.AddModelError("", "User already exists");
                 }
                 // External account with same email
