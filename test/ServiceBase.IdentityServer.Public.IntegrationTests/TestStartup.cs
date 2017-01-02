@@ -54,6 +54,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
 
             services.AddTransient<ICrypto, DefaultCrypto>();
             services.AddTransient<UserAccountService>();
+            services.AddTransient<ClientService>();
 
             #region Entity Framework Store Layer
 

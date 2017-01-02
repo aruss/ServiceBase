@@ -1,5 +1,7 @@
 ﻿using ServiceBase.IdentityServer.Public.UI.Login;
 using System.Collections.Generic;
+using System;
+using ServiceBase.IdentityServer.Models;
 
 namespace ServiceBase.IdentityServer.Public.UI.Recover
 {
@@ -13,6 +15,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
         {
             this.Email = other.Email;
         }
+
+        public bool EnableLocalLogin { get; set; }
 
         public string ErrorMessage { get; set; }
 

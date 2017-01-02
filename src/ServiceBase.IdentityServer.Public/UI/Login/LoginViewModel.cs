@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ServiceBase.IdentityServer.Models;
+using System.Collections.Generic;
 
 namespace ServiceBase.IdentityServer.Public.UI.Login
 {
@@ -23,15 +24,10 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         public IEnumerable<string> LoginHints { get; set; }
     }
 
-    public class ExternalProvider
-    {
-        public string DisplayName { get; set; }
-        public string AuthenticationScheme { get; set; }
-    }
-
     public interface IExternalLoginsViewModel
     {
         IEnumerable<ExternalProvider> ExternalProviders { get; set; }
+        bool EnableLocalLogin { get; set; }
         string ReturnUrl { get; set; }
     }
 }

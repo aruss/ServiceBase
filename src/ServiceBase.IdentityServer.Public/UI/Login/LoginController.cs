@@ -27,7 +27,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IUserAccountStore _userAccountStore;
         private readonly ICrypto _crypto;
-        private readonly IClientStore _clientStore;
+        private readonly ClientService _clientService;
 
         public LoginController(
             IOptions<ApplicationOptions> applicationOptions,
@@ -35,14 +35,15 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             IIdentityServerInteractionService interaction,
             IUserAccountStore userAccountStore,
             ICrypto crypto,
-            IClientStore clientStore)
+            IClientStore clientStore,
+            ClientService clientService)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
             _interaction = interaction;
             _userAccountStore = userAccountStore;
             _crypto = crypto;
-            _clientStore = clientStore;
+            _clientService = clientService;
         }
 
         /// <summary>
@@ -52,10 +53,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         public async Task<IActionResult> Login(string returnUrl)
         {
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-
-            // TODO: ClientId may be null
-            var client = await _clientStore.FindEnabledClientByIdAsync(context.ClientId);
-            var providers = this.GetEnabledProviders(client);
+            var client = await _clientService.FindEnabledClientByIdAsync(context.ClientId);
+            var providers = await _clientService.GetEnabledProvidersAsync(client);
 
             if (context?.IdP != null)
             {
@@ -70,7 +69,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             {
                 ReturnUrl = returnUrl,
                 ExternalProviders = providers,
-                EnableLocalLogin = client.EnableLocalLogin,
+                EnableLocalLogin = client == null ? false : client.EnableLocalLogin,
                 Email = context.LoginHint
             };
 
@@ -81,27 +80,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             }
 
             return View(vm);
-        }
-
-        private IEnumerable<ExternalProvider> GetEnabledProviders(Client client)
-        {
-            var providers = HttpContext.Authentication.GetAuthenticationSchemes()
-                  .Where(x => x.DisplayName != null)
-                  .Select(x => new ExternalProvider
-                  {
-                      DisplayName = x.DisplayName,
-                      AuthenticationScheme = x.AuthenticationScheme
-                  });
-
-            if (client != null)
-            {
-                if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Any())
-                {
-                    providers = providers.Where(provider => client.IdentityProviderRestrictions.Contains(provider.AuthenticationScheme));
-                }
-            }
-
-            return providers;
         }
 
         /// <summary>
@@ -154,10 +132,10 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                 ModelState.AddModelError("", "Invalid username or password.");
             }
 
-            // something went wrong, show form with error
+            // Something went wrong, show form with error
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
-            var client = await _clientStore.FindEnabledClientByIdAsync(context.ClientId);
-            var providers = this.GetEnabledProviders(client);
+            var client = await _clientService.FindEnabledClientByIdAsync(context.ClientId);
+            var providers = await _clientService.GetEnabledProvidersAsync(client);
             var vm = new LoginViewModel(model)
             {
                 ExternalProviders = providers,

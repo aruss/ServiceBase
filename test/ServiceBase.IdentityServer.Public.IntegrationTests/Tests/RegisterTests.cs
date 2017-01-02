@@ -110,7 +110,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
 
         #endregion Invalid input
 
-        #region Valid input, valid does not exists
+        #region Valid input, invalid user
 
         /// <summary>
         /// Try to register with a email that is already registered and confirmed
@@ -157,6 +157,94 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             postResponse.Headers.Location.Should().BeNull();
         }
+
+        [Fact]
+        public async Task RegisterWithDisabledAccount()
+        {
+            var server = ServerHelper.CreateServer((services) =>
+            {
+                var emailServiceMock = new Mock<IEmailService>();
+                services.AddSingleton<IEmailService>(emailServiceMock.Object);
+
+                services.Configure<ApplicationOptions>((option) =>
+                {
+                    option.LoginAfterAccountCreation = false;
+                    option.LoginAfterAccountConfirmation = true;
+                    option.RequireLocalAccountVerification = true;
+                });
+            });
+
+            var client = server.CreateClient();
+
+            // 1. Navigate to register page
+            var response = await client.GetAsync("/register?returnUrl=" + _returnUrl);
+            response.EnsureSuccessStatusCode();
+            var html = await response.Content.ReadAsStringAsync();
+            var doc = (new HtmlParser().Parse(html));
+
+            // 2. Post registration form
+            var formPostBodyData = new Dictionary<string, string>
+            {
+                {"Email","jim@localhost"},
+                {"Password", "password"},
+                {"PasswordConfirm", "password" },
+                {"__RequestVerificationToken", doc.GetAntiForgeryToken() },
+                {"ReturnUrl", doc.GetReturnUrl()}
+            };
+
+            var postRequest = response.CreatePostRequest("/register", formPostBodyData);
+            var postResponse = await client.SendAsync(postRequest);
+
+            // 3. The error should be shown
+            postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            postResponse.Headers.Location.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task RegisterWithUnconfirmedAccount()
+        {
+            var server = ServerHelper.CreateServer((services) =>
+            {
+                var emailServiceMock = new Mock<IEmailService>();
+                services.AddSingleton<IEmailService>(emailServiceMock.Object);
+
+                services.Configure<ApplicationOptions>((option) =>
+                {
+                    option.LoginAfterAccountCreation = false;
+                    option.LoginAfterAccountConfirmation = true;
+                    option.RequireLocalAccountVerification = true;
+                });
+            });
+
+            var client = server.CreateClient();
+
+            // 1. Navigate to register page
+            var response = await client.GetAsync("/register?returnUrl=" + _returnUrl);
+            response.EnsureSuccessStatusCode();
+            var html = await response.Content.ReadAsStringAsync();
+            var doc = (new HtmlParser().Parse(html));
+
+            // 2. Post registration form
+            var formPostBodyData = new Dictionary<string, string>
+            {
+                {"Email","paul@localhost"},
+                {"Password", "password"},
+                {"PasswordConfirm", "password" },
+                {"__RequestVerificationToken", doc.GetAntiForgeryToken() },
+                {"ReturnUrl", doc.GetReturnUrl()}
+            };
+
+            var postRequest = response.CreatePostRequest("/register", formPostBodyData);
+            var postResponse = await client.SendAsync(postRequest);
+
+            // 3. The error should be shown
+            postResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            postResponse.Headers.Location.Should().BeNull();
+        }
+
+        #endregion Valid input, invalid user
+
+        #region Valid input, successfull registration
 
         /// <summary>
         /// Register valid user, confirm the email, login after confirmation automatically
@@ -459,7 +547,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             postResponse.Headers.Location.ToString().Should().StartWith("/register/success");
         }
 
-        #endregion Valid input, valid does not exists
+        #endregion Valid input, successfull registration
 
         /*[Fact]
         public async Task RegisterUserWhichHasAlreadyAExternalAccount_MergeAccountsAutomatically()

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServiceBase.IdentityServer.Configuration;
 using ServiceBase.IdentityServer.Crypto;
-using ServiceBase.IdentityServer.Events;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Models;
 using ServiceBase.IdentityServer.Services;
@@ -26,6 +25,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         private readonly IEmailService _emailService;
         private readonly IEventService _eventService;
         private readonly UserAccountService _userAccountService;
+        private readonly ClientService _clientService;
 
         public RegisterController(
             IOptions<ApplicationOptions> applicationOptions,
@@ -35,7 +35,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             ICrypto crypto,
             IEmailService emailService,
             IEventService eventService,
-            UserAccountService userAccountService)
+            UserAccountService userAccountService,
+            ClientService clientService)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
@@ -45,6 +46,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             _crypto = crypto;
             _eventService = eventService;
             _userAccountService = userAccountService;
+            _clientService = clientService;
         }
 
         [HttpGet(IdentityBaseConstants.Routes.Register, Name = "Register")]
@@ -54,11 +56,15 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
 
             if (!String.IsNullOrWhiteSpace(returnUrl))
             {
-                var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
-                if (request != null)
+                var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+                if (context != null)
                 {
-                    vm.Email = request.LoginHint;
+                    vm.Email = context.LoginHint;
                     vm.ReturnUrl = returnUrl;
+
+                    var client = await _clientService.FindEnabledClientByIdAsync(context.ClientId);
+                    vm.ExternalProviders = await _clientService.GetEnabledProvidersAsync(client);
+                    vm.EnableLocalLogin = client.EnableLocalLogin;
                 }
             }
 
@@ -79,6 +85,84 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             );
         }
 
+        private async Task<IActionResult> TryCreateNewUserAccount(
+            UserAccount userAccount,
+            RegisterInputModel model)
+        {
+            userAccount = await _userAccountService.CreateNewLocalUserAccountAsync(
+                        model.Email, model.Password, model.ReturnUrl);
+
+            // Send confirmation mail
+            if (_applicationOptions.RequireLocalAccountVerification)
+            {
+                await SendUserAccountCreatedAsync(userAccount);
+            }
+
+            if (_applicationOptions.LoginAfterAccountCreation)
+            {
+                await HttpContext.Authentication.IssueCookieAsync(userAccount,
+                    IdentityServerConstants.LocalIdentityProvider,
+                    IdentityBaseConstants.AuthenticationTypePassword);
+
+                if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
+                {
+                    return Redirect(model.ReturnUrl);
+                }
+            }
+
+            // Redirect to success page by preserving the email provider name
+            return Redirect(Url.Action("Success", "Register", new
+            {
+                returnUrl = model.ReturnUrl,
+                provider = userAccount.Email.Split('@').LastOrDefault()
+            }));
+        }
+
+        private async Task<IActionResult> TryMergeWithExistingUserAccount(
+            UserAccount userAccount,
+            RegisterInputModel model)
+        {
+            if (_applicationOptions.MergeAccountsAutomatically)
+            {
+                var now = DateTime.UtcNow;
+
+                // Set user account password
+                userAccount.PasswordHash = _crypto.HashPassword(model.Password, _applicationOptions.PasswordHashingIterationCount);
+
+                // If application settings require account verification a verification token will be generated
+                //SetConfirmationVirificationKey(userAccount, model.ReturnUrl, now);
+
+                // Send email
+                //await SendConfirmationMail(userAccount);
+
+                if (_applicationOptions.LoginAfterAccountCreation)
+                {
+                    await HttpContext.Authentication.IssueCookieAsync(userAccount,
+                        IdentityServerConstants.LocalIdentityProvider,
+                        IdentityBaseConstants.AuthenticationTypePassword);
+
+                    if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
+                    {
+                        return Redirect(model.ReturnUrl);
+                    }
+                }
+                else
+                {
+                    // Redirect to success page by preserving the email provider name
+                    return Redirect(Url.Action("Success", "Register", new
+                    {
+                        returnUrl = model.ReturnUrl,
+                        provider = userAccount.Email.Split('@').LastOrDefault()
+                    }));
+                }
+            }
+
+            // Return list of external account providers as hint
+            var vm = new RegisterViewModel(model);
+            vm.HintExternalAccounts = userAccount.Accounts.Select(s => s.Provider).ToArray();
+            return View(vm);
+        }
+
         [HttpPost(IdentityBaseConstants.Routes.Register)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(RegisterInputModel model)
@@ -91,40 +175,14 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 // If user dont exists create a new one
                 if (userAccount == null)
                 {
-                    userAccount = await _userAccountService.CreateNewLocalUserAccountAsync(
-                        model.Email, model.Password, model.ReturnUrl);
-
-                    // Send confirmation mail
-                    if (_applicationOptions.RequireLocalAccountVerification)
-                    {
-                        await SendUserAccountCreatedAsync(userAccount);
-                    }
-
-                    if (_applicationOptions.LoginAfterAccountCreation)
-                    {
-                        await HttpContext.Authentication.IssueCookieAsync(userAccount,
-                            IdentityServerConstants.LocalIdentityProvider,
-                            IdentityBaseConstants.AuthenticationTypePassword);
-
-                        if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
-                        {
-                            return Redirect(model.ReturnUrl);
-                        }
-                    }
-                    else
-                    {
-                        // Redirect to success page by preserving the email provider name
-                        return Redirect(Url.Action("Success", "Register", new
-                        {
-                            returnUrl = model.ReturnUrl,
-                            provider = userAccount.Email.Split('@').LastOrDefault()
-                        }));
-                    }
+                    return await this.TryCreateNewUserAccount(userAccount, model);
                 }
+                // User has to follow a link in confirmation mail
                 else if (_applicationOptions.RequireLocalAccountVerification && !userAccount.IsEmailVerified)
                 {
                     ModelState.AddModelError("", "Please confirm your email account");
                 }
+                // User is just disabled by whatever reason
                 else if (!userAccount.IsLoginAllowed)
                 {
                     ModelState.AddModelError("", "Your user account has be disabled");
@@ -137,45 +195,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 // External account with same email
                 else
                 {
-                    if (_applicationOptions.MergeAccountsAutomatically)
-                    {
-                        var now = DateTime.UtcNow;
-
-                        // Set user account password
-                        userAccount.PasswordHash = _crypto.HashPassword(model.Password, _applicationOptions.PasswordHashingIterationCount);
-
-                        // If application settings require account verification a verification token will be generated
-                        //SetConfirmationVirificationKey(userAccount, model.ReturnUrl, now);
-
-                        // Send email
-                        //await SendConfirmationMail(userAccount);
-
-                        if (_applicationOptions.LoginAfterAccountCreation)
-                        {
-                            await HttpContext.Authentication.IssueCookieAsync(userAccount,
-                                IdentityServerConstants.LocalIdentityProvider,
-                                IdentityBaseConstants.AuthenticationTypePassword);
-
-                            if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
-                            {
-                                return Redirect(model.ReturnUrl);
-                            }
-                        }
-                        else
-                        {
-                            // Redirect to success page by preserving the email provider name
-                            return Redirect(Url.Action("Success", "Register", new
-                            {
-                                returnUrl = model.ReturnUrl,
-                                provider = userAccount.Email.Split('@').LastOrDefault()
-                            }));
-                        }
-                    }
-
-                    // Return list of external account providers as hint
-                    var vm = new RegisterViewModel(model);
-                    vm.HintExternalAccounts = userAccount.Accounts.Select(s => s.Provider).ToArray();
-                    return View(vm);
+                    return await this.TryMergeWithExistingUserAccount(userAccount, model);
                 }
             }
 

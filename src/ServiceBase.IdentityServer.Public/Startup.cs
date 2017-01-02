@@ -111,6 +111,7 @@ namespace ServiceBase.IdentityServer.Public
 
             services.AddTransient<ICrypto, DefaultCrypto>();
             services.AddTransient<UserAccountService>();
+            services.AddTransient<ClientService>();
 
             // register event service
             services.AddAntiforgery();
