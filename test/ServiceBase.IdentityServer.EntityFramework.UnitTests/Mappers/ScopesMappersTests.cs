@@ -2,14 +2,14 @@
 using ServiceBase.IdentityServer.EntityFramework.Mappers;
 using Xunit;
 
-namespace IdentityServer4.EntityFramework.UnitTests.Mappers
+namespace ServiceBase.IdentityServer.EntityFramework.UnitTests.Mappers
 {
     public class ScopesMappersTests
     {
         [Fact]
         public void IdentityResourceModelToEntityConfigurationIsValid()
         {
-            var model = new Models.IdentityResource();
+            var model = new IdentityServer4.Models.IdentityResource();
 
             // TODO: set references
 
@@ -39,7 +39,7 @@ namespace IdentityServer4.EntityFramework.UnitTests.Mappers
         [Fact]
         public void ApiResourceModelToEntityConfigurationIsValid()
         {
-            var model = new Models.ApiResource();
+            var model = new IdentityServer4.Models.ApiResource();
 
             // TODO: set references
 

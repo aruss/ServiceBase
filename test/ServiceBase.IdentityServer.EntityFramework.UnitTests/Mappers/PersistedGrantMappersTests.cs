@@ -2,14 +2,14 @@
 using ServiceBase.IdentityServer.EntityFramework.Mappers;
 using Xunit;
 
-namespace IdentityServer4.EntityFramework.UnitTests.Mappers
+namespace ServiceBase.IdentityServer.EntityFramework.UnitTests.Mappers
 {
     public class PersistedGrantMappersTests
     {
         [Fact]
         public void PersistedGrantModelToEntityConfigurationIsValid()
         {
-            var model = new Models.PersistedGrant();
+            var model = new IdentityServer4.Models.PersistedGrant();
 
             // TODO: set references
 

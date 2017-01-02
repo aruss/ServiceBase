@@ -4,14 +4,14 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace IdentityServer4.EntityFramework.UnitTests.Mappers
+namespace ServiceBase.IdentityServer.EntityFramework.UnitTests.Mappers
 {
     public class ClientMappersTests
     {
         [Fact]
         public void ClientModelToEntityConfigurationIsValid()
         {
-            var model = new Models.Client();
+            var model = new IdentityServer4.Models.Client();
 
             // TODO: set references
 
