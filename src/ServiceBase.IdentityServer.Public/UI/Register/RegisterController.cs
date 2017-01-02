@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using IdentityServer4;
+﻿using IdentityServer4;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,6 +10,9 @@ using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Models;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ServiceBase.IdentityServer.Public.UI.Register
 {
@@ -65,6 +65,20 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             return View(vm);
         }
 
+        private async Task SendUserAccountCreatedAsync(UserAccount userAccount)
+        {
+            var args = new { Key = userAccount.VerificationKey };
+
+            await _emailService.SendEmailAsync(
+                IdentityBaseConstants.EmailTemplates.UserAccountCreated, userAccount.Email, new
+                {
+                    // TODO: change to read x-forwared-host or use event context
+                    ConfirmUrl = Url.Action("Confirm", "Register", args, Request.Scheme),
+                    CancelUrl = Url.Action("Cancel", "Register", args, Request.Scheme)
+                }
+            );
+        }
+
         [HttpPost(IdentityBaseConstants.Routes.Register)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(RegisterInputModel model)
@@ -77,22 +91,18 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 // If user dont exists create a new one
                 if (userAccount == null)
                 {
-                    userAccount = await _userAccountService.CreateNewLocalUserAccount(model.Email, model.Password, model.ReturnUrl);
+                    userAccount = await _userAccountService.CreateNewLocalUserAccountAsync(
+                        model.Email, model.Password, model.ReturnUrl);
 
                     // Send confirmation mail
                     if (_applicationOptions.RequireLocalAccountVerification)
                     {
-                        await _emailService.SendEmailAsync(IdentityBaseConstants.EmailTemplates.UserAccountCreated, userAccount.Email, new
-                        {
-                            // TODO: change to read x-forwared-host or use event context
-                            ConfirmUrl = Url.Action("Confirm", "Register", new { Key = userAccount.VerificationKey }, Request.Scheme),
-                            CancelUrl = Url.Action("Cancel", "Register", new { Key = userAccount.VerificationKey }, Request.Scheme)
-                        });
+                        await SendUserAccountCreatedAsync(userAccount);
                     }
 
                     if (_applicationOptions.LoginAfterAccountCreation)
                     {
-                        await HttpContext.Authentication.IssueCookie(userAccount,
+                        await HttpContext.Authentication.IssueCookieAsync(userAccount,
                             IdentityServerConstants.LocalIdentityProvider,
                             IdentityBaseConstants.AuthenticationTypePassword);
 
@@ -142,7 +152,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
 
                         if (_applicationOptions.LoginAfterAccountCreation)
                         {
-                            await HttpContext.Authentication.IssueCookie(userAccount,
+                            await HttpContext.Authentication.IssueCookieAsync(userAccount,
                                 IdentityServerConstants.LocalIdentityProvider,
                                 IdentityBaseConstants.AuthenticationTypePassword);
 
@@ -176,7 +186,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         public async Task<IActionResult> Success(SuccessInputModel model)
         {
             // TODO: Select propper mail provider and render it as button
-            //          use GetEnabledProviders from LoginController
 
             var vm = new SuccessViewModel(model);
 
@@ -186,39 +195,22 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         [HttpGet("register/confirm/{key}", Name = "RegisterConfirm")]
         public async Task<IActionResult> Confirm(string key)
         {
-            var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
-            if (userAccount == null)
+            var result = await _userAccountService.HandleVerificationKey(key,
+                VerificationKeyPurpose.ConfirmAccount);
+
+            if (result.UserAccount == null || !result.PurposeValid || result.TokenExpired)
             {
                 ModelState.AddModelError("", "Invalid token");
                 return View("InvalidToken");
             }
 
-            if (userAccount.VerificationPurpose != (int)VerificationKeyPurpose.ConfirmAccount)
-            {
-                ModelState.AddModelError("", "Invalid token");
-                return View("InvalidToken");
-            }
-
-            var returnUrl = userAccount.VerificationStorage;
-
-            var now = DateTime.UtcNow;
-            userAccount.IsLoginAllowed = true;
-            userAccount.IsEmailVerified = true;
-            userAccount.EmailVerifiedAt = now;
-            userAccount.UpdatedAt = now;
-            userAccount.ClearVerification();
-
-            // Update user account
-            await _userAccountStore.WriteAsync(userAccount);
-
-            // Emit event
-            await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(
-                userAccount.Id);
+            var returnUrl = result.UserAccount.VerificationStorage;
+            await _userAccountService.SetEmailVerifiedAsync(result.UserAccount);
 
             // If applicatin settings provided login user after confirmation
             if (_applicationOptions.LoginAfterAccountConfirmation)
             {
-                await HttpContext.Authentication.IssueCookie(userAccount,
+                await HttpContext.Authentication.IssueCookieAsync(result.UserAccount,
                     IdentityServerConstants.LocalIdentityProvider,
                     IdentityBaseConstants.AuthenticationTypePassword);
 
@@ -234,27 +226,17 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         [HttpGet("register/cancel/{key}", Name = "RegisterCancel")]
         public async Task<IActionResult> Cancel(string key)
         {
-            var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
-            if (userAccount == null)
+            var result = await _userAccountService.HandleVerificationKey(key,
+               VerificationKeyPurpose.ConfirmAccount);
+
+            if (result.UserAccount == null || !result.PurposeValid || result.TokenExpired)
             {
                 ModelState.AddModelError("", "Invalid token");
                 return View("InvalidToken");
             }
 
-            if (userAccount.VerificationPurpose != (int)VerificationKeyPurpose.ConfirmAccount)
-            {
-                ModelState.AddModelError("", "Invalid token");
-                return View("InvalidToken");
-            }
-
-            if (userAccount.LastLoginAt != null)
-            {
-                ModelState.AddModelError("", "Invalid token");
-                return View("InvalidToken");
-            }
-
-            var returnUrl = userAccount.VerificationStorage;
-            await _userAccountStore.DeleteByIdAsync(userAccount.Id);
+            var returnUrl = result.UserAccount.VerificationStorage;
+            await _userAccountStore.DeleteByIdAsync(result.UserAccount.Id);
             return Redirect(Url.Action("Login", "Login", new { returnUrl = returnUrl }));
         }
     }

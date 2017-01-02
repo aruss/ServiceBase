@@ -126,9 +126,10 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                         // If user account has local password use password authentication
                         if (userAccount.HasPassword())
                         {
-                            if (_crypto.VerifyPasswordHash(userAccount.PasswordHash, model.Password, _applicationOptions.PasswordHashingIterationCount))
+                            if (_crypto.VerifyPasswordHash(userAccount.PasswordHash,
+                                model.Password, _applicationOptions.PasswordHashingIterationCount))
                             {
-                                await this.HttpContext.Authentication.IssueCookie(userAccount,
+                                await this.HttpContext.Authentication.IssueCookieAsync(userAccount,
                                     IdentityServerConstants.LocalIdentityProvider,
                                     "password", model.RememberLogin);
 
@@ -165,86 +166,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
 
             return View(vm);
         }
-
-        /// <summary>
-        /// Handle postback from email (username)/password login
-        /// </summary>
-        /*[HttpPost("login")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoginXXXXX(LoginInputModel model)
-        {
-            var vm = new LoginViewModel(model);
-            if (ModelState.IsValid)
-            {
-                // Get user by email
-                var userAccount = await _userAccountStore.LoadByEmailAsync(model.Email);
-                if (userAccount != null)
-                {
-                    // Check if active
-                    if (userAccount.IsLoginAllowed)
-                    {
-                        // Does the user has a local account?
-                        if (userAccount.HasPassword())
-                        {
-                            // Check if email already confirmed
-                            if (userAccount.IsEmailVerified)
-                            {
-                                // Check if needs two factor auth
-                                if (_crypto.VerifyPasswordHash(userAccount.PasswordHash, model.Password,
-                                    _applicationOptions.PasswordHashingIterationCount))
-                                {
-                                    await this.HttpContext.Authentication.IssueCookie(userAccount,
-                                         IdentityServerConstants.LocalIdentityProvider, "password");
-
-                                    if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
-                                    {
-                                        return Redirect(model.ReturnUrl);
-                                    }
-
-                                    return Redirect("~/");
-                                }
-                                else
-                                {
-                                    ModelState.AddModelError("", "Invalid username or password.");
-                                }
-                            }
-                            else
-                            {
-                                ModelState.AddModelError("", "Email is not verified yet.");
-                            }
-                        }
-                        else
-                        {
-                            ModelState.AddModelError("", "Invalid username or password.");
-
-                            if (_applicationOptions.DisplayLoginHints)
-                            {
-                                // Does user has third party accounts ?
-                                if (userAccount.Accounts != null && userAccount.Accounts.Count() > 0)
-                                {
-                                    // If yes show them as sign in hints
-                                    vm.LoginHints = userAccount.Accounts.Select(s => s.Provider).ToArray();
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "User is deactivated.");
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid username or password.");
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("", "Invalid username or password.");
-            }
-
-            return View(vm);
-        }*/
 
         /// <summary>
         /// Initiate roundtrip to external authentication provider

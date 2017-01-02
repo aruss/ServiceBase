@@ -13,10 +13,10 @@ namespace ServiceBase.IdentityServer.Services
 {
     public class UserAccountService
     {
-        ApplicationOptions _applicationOptions;
-        ICrypto _crypto;
-        IUserAccountStore _userAccountStore;
-        IEventService _eventService;
+        private ApplicationOptions _applicationOptions;
+        private ICrypto _crypto;
+        private IUserAccountStore _userAccountStore;
+        private IEventService _eventService;
 
         public UserAccountService(
             IOptions<ApplicationOptions> applicationOptions,
@@ -30,7 +30,7 @@ namespace ServiceBase.IdentityServer.Services
             _eventService = eventService;
         }
 
-        public async Task<UserAccount> CreateNewLocalUserAccount(
+        public async Task<UserAccount> CreateNewLocalUserAccountAsync(
             string email,
             string password,
             string returnUrl = null)
@@ -54,7 +54,7 @@ namespace ServiceBase.IdentityServer.Services
             if (_applicationOptions.RequireLocalAccountVerification &&
                 !String.IsNullOrWhiteSpace(returnUrl))
             {
-                this.SetConfirmationVirificationKey(userAccount, returnUrl);
+                this.SetConfirmAccountVirificationKey(userAccount, returnUrl);
             }
 
             await _userAccountStore.WriteAsync(userAccount);
@@ -67,13 +67,19 @@ namespace ServiceBase.IdentityServer.Services
             return userAccount;
         }
 
-        public async Task SetAsVerified(UserAccount userAccount)
+        public async Task SetEmailVerifiedAsync(UserAccount userAccount)
         {
             var now = DateTime.UtcNow;
             userAccount.IsLoginAllowed = true;
             userAccount.IsEmailVerified = true;
             userAccount.EmailVerifiedAt = now;
             userAccount.UpdatedAt = now;
+
+            await ClearVerificationKeyAsync(userAccount);
+        }
+
+        public async Task ClearVerificationKeyAsync(UserAccount userAccount)
+        {
             userAccount.ClearVerification();
 
             // Update user account
@@ -84,7 +90,7 @@ namespace ServiceBase.IdentityServer.Services
                 userAccount.Id);
         }
 
-        public void SetConfirmationVirificationKey(
+        public void SetConfirmAccountVirificationKey(
             UserAccount userAccount,
             string returnUrl,
             DateTime? now = null)
@@ -95,7 +101,37 @@ namespace ServiceBase.IdentityServer.Services
                 VerificationKeyPurpose.ConfirmAccount,
                 returnUrl,
                 now);
-
         }
+
+        public async Task<VerificationResult> HandleVerificationKey(string key, VerificationKeyPurpose purpose)
+        {
+            var result = new VerificationResult();
+            var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
+            if (userAccount == null)
+            {
+                return result;
+            }
+
+            result.UserAccount = userAccount;
+            result.PurposeValid = userAccount.VerificationPurpose == (int)purpose;
+
+            if (userAccount.VerificationKeySentAt.HasValue)
+            {
+                var validTill = userAccount.VerificationKeySentAt.Value +
+                    TimeSpan.FromMinutes(_applicationOptions.VerificationKeyLifetime);
+                var now = DateTime.Now;
+
+                result.TokenExpired = now > validTill;
+            }
+
+            return result;
+        }
+    }
+
+    public class VerificationResult
+    {
+        public UserAccount UserAccount { get; set; }
+        public bool TokenExpired { get; set; }
+        public bool PurposeValid { get; set; }
     }
 }

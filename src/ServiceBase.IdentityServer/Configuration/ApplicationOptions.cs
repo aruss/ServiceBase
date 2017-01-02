@@ -51,9 +51,9 @@
         public bool LoginAfterAccountRecovery { get; set; } = true;
 
         /// <summary>
-        /// Timespan the confirmation and concelation links a valid
+        /// Timespan the confirmation and concelation links a valid in minutes
         /// </summary>
-        public int VerificationKeyLifetime { get; set; } = 86400; // 24 hours
+        public int VerificationKeyLifetime { get; set; } = 1440; // 24 hours
 
         /// <summary>
         /// Automatically merges third party accounts with local account if email matches

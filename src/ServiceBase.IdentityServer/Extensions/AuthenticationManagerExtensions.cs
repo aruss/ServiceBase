@@ -11,7 +11,7 @@ namespace ServiceBase.IdentityServer.Extensions
 {
     public static class AuthenticationManagerExtensions
     {
-        public static async Task IssueCookie(this AuthenticationManager manager, UserAccount userAccount,
+        public static async Task IssueCookieAsync(this AuthenticationManager manager, UserAccount userAccount,
             string identityProvider, string authenticationType, bool isPersistent = false)
         {
             var name = userAccount.Claims != null ? userAccount.Claims.Where(x => x.Type == JwtClaimTypes.Name)
