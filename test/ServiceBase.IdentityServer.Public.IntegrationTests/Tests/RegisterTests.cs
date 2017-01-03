@@ -578,7 +578,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
                     option.LoginAfterAccountCreation = false;
                     option.LoginAfterAccountConfirmation = true;
                     option.RequireLocalAccountVerification = true;
-                    option.MergeAccountsAutomatically = true;
+                    option.AutomaticAccountMerge = true;
                 });
             });
 

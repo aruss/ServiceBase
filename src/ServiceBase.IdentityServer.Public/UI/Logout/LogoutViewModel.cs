@@ -1,11 +1,7 @@
-﻿using IdentityServer4.Models;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace ServiceBase.IdentityServer.Public.UI.Logout
+﻿namespace ServiceBase.IdentityServer.Public.UI.Logout
 {
-    public class LogoutViewModel
+    public class LogoutViewModel : LogoutInputModel
     {
-        public string LogoutId { get; set; }
+        public bool ShowLogoutPrompt { get; set; }
     }
 }

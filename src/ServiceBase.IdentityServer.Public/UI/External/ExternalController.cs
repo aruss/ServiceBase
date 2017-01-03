@@ -138,7 +138,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                 }
                 else
                 {
-                    if (_applicationOptions.MergeAccountsAutomatically)
+                    if (_applicationOptions.AutomaticAccountMerge)
                     {
                         // join the accounts
                         var now = DateTime.UtcNow;

@@ -28,12 +28,12 @@
         /// <summary>
         /// If enabled user may delete his own account
         /// </summary>
-        public bool AllowAccountDeletion { get; set; } = true;
+        public bool EnableAccountDeletion { get; set; } = false;
 
         /// <summary>
         /// If user has trouble with login IdSrv will show all possible accounts which are
         /// </summary>
-        public bool DisplayLoginHints { get; set; } = false;
+        public bool EnableLoginHints { get; set; } = false;
 
         /// <summary>
         /// Login user automatically after he created a local account
@@ -58,9 +58,12 @@
         /// <summary>
         /// Automatically merges third party accounts with local account if email matches
         /// </summary>
-        public bool MergeAccountsAutomatically { get; set; } = true;
+        public bool AutomaticAccountMerge { get; set; } = true;
 
         public bool EnableRememberLogin { get; set; } = true;
         public bool EnableLocalLogin { get; set; } = true;
+
+        public bool ShowLogoutPrompt = false;
+        public bool AutomaticRedirectAfterSignOut = true;
     }
 }

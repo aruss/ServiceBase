@@ -29,16 +29,20 @@
     }
   },
   "App": {
-    "RequireAccountVerification": true,
-    "LoginAfterAccountCreation": false,
-    "LoginAfterAccountConfirmation": true,
-    "AllowAccountDeletion": false,
-    "VerificationKeyLifetime": 86400,
+    "PasswordHashingIterationCount": 0,
     "AccountLockoutFailedLoginAttempts": 5,
     "AccountLockoutDuration": 600,
-    "PasswordHashingIterationCount": 0,
-    "MergeAccountsAutomatically": true,
-    "DisplayLoginHints": false
+    "RequireLocalAccountVerification": true,
+    "RequireExternalAccountVerification": false,
+    "LoginAfterAccountCreation": true,
+    "LoginAfterAccountConfirmation": true,
+    "LoginAfterAccountRecovery": true,
+    "VerificationKeyLifetime": 1440,
+    "AutomaticAccountMerge": true,
+    "EnableAccountDeletion": false,
+    "EnableLoginHints": false,
+    "EnableRememberLogin": true,
+    "EnableLocalLogin": true
   },
   "SendGrid": {
     "User": "",

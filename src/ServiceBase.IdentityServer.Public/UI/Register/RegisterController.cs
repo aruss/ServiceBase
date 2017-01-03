@@ -133,7 +133,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             RegisterInputModel model)
         {
             // Merge accounts without user consent
-            if (_applicationOptions.MergeAccountsAutomatically)
+            if (_applicationOptions.AutomaticAccountMerge)
             {
                 var now = DateTime.UtcNow;
 
