@@ -70,7 +70,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Logout
                 try
                 {
                     // hack: try/catch to handle social providers that throw
-                    await HttpContext.Authentication.SignOutAsync(idp, new AuthenticationProperties { RedirectUri = url });
+                    await HttpContext.Authentication.SignOutAsync(idp,
+                        new AuthenticationProperties { RedirectUri = url });
                 }
                 catch (NotSupportedException)
                 {

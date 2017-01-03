@@ -1,19 +1,18 @@
-﻿using ServiceBase.IdentityServer.Configuration;
-using ServiceBase.IdentityServer.Extensions;
-using ServiceBase.IdentityServer.Models;
-using ServiceBase.IdentityServer.Services;
-using IdentityModel;
+﻿using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Services;
-using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ServiceBase.IdentityServer.Configuration;
+using ServiceBase.IdentityServer.Extensions;
+using ServiceBase.IdentityServer.Models;
+using ServiceBase.IdentityServer.Public.Extensions;
+using ServiceBase.IdentityServer.Services;
 using System;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using IdentityServer4;
 
 namespace ServiceBase.IdentityServer.Public.UI.Login
 {
@@ -23,37 +22,37 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         private readonly ILogger<ExternalController> _logger;
         private readonly IUserAccountStore _userAccountStore;
         private readonly IIdentityServerInteractionService _interaction;
-
+        private readonly UserAccountService _userAccountService;
 
         public ExternalController(
             IOptions<ApplicationOptions> applicationOptions,
             ILogger<ExternalController> logger,
             IUserAccountStore userAccountStore,
-            IIdentityServerInteractionService interaction)
+            IIdentityServerInteractionService interaction,
+            UserAccountService userAccountService)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
             _userAccountStore = userAccountStore;
             _interaction = interaction;
+            _userAccountService = userAccountService;
         }
 
         [HttpGet("external/{provider}", Name = "External")]
         public IActionResult Index(string provider, string returnUrl)
         {
-            return new ChallengeResult(provider, new AuthenticationProperties
-            {
-                RedirectUri = "external-callback?returnUrl=" + WebUtility.UrlEncode(returnUrl)
-            });
+            return this.ChallengeExternalLogin(provider, returnUrl);
         }
 
         [HttpGet("external-callback")]
         public async Task<IActionResult> Index(string returnUrl)
         {
-            var tempUser = await HttpContext.Authentication.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
+            var tempUser = await HttpContext.Authentication.AuthenticateAsync(
+                IdentityServerConstants.ExternalCookieAuthenticationScheme);
 
             if (tempUser == null)
             {
-                throw new Exception();
+                throw new Exception("User may not be null");
             }
 
             var claims = tempUser.Claims.ToList();
@@ -83,7 +82,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             var subject = subjectClaim.Value;
             var email = emailClaim.Value.ToLowerInvariant();
 
-            var userAccount = await this._userAccountStore.LoadByExternalProviderAsync(provider, subject);
+            var userAccount = await _userAccountStore.LoadByExternalProviderAsync(provider, subject);
             if (userAccount != null)
             {
                 await HttpContext.Authentication.IssueCookieAsync(
@@ -101,7 +100,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
             }
             else
             {
-                userAccount = await this._userAccountStore.LoadByEmailWithExternalAsync(email);
+                userAccount = await _userAccountStore.LoadByEmailWithExternalAsync(email);
                 if (userAccount == null)
                 {
                     // create new user

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServiceBase.IdentityServer.Configuration;
-using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.Models;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
@@ -20,7 +19,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
         private readonly IUserAccountStore _userAccountStore;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IEmailService _emailService;
-        private readonly ICrypto _crypto;
         private readonly ClientService _clientService;
         private readonly UserAccountService _userAccountService;
 
@@ -30,7 +28,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
             IUserAccountStore userAccountStore,
             IIdentityServerInteractionService interaction,
             IEmailService emailService,
-            ICrypto crypto,
             ClientService clientService,
             UserAccountService userAccountService)
         {
@@ -39,7 +36,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
             _userAccountStore = userAccountStore;
             _interaction = interaction;
             _emailService = emailService;
-            _crypto = crypto;
             _clientService = clientService;
             _userAccountService = userAccountService;
         }
@@ -57,9 +53,12 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
                     vm.Email = context.LoginHint;
                     vm.ReturnUrl = returnUrl;
 
-                    var client = await _clientService.FindEnabledClientByIdAsync(context.ClientId);
-                    vm.ExternalProviders = await _clientService.GetEnabledProvidersAsync(client);
-                    vm.EnableLocalLogin = client.EnableLocalLogin;
+                    if (!String.IsNullOrWhiteSpace(context.ClientId))
+                    {
+                        var client = await _clientService.FindEnabledClientByIdAsync(context.ClientId);
+                        vm.ExternalProviders = await _clientService.GetEnabledProvidersAsync(client);
+                        vm.EnableLocalLogin = client != null ? client.EnableLocalLogin : false;
+                    }
                 }
             }
 
@@ -88,7 +87,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
                 }
             );
         }
-
 
         [HttpPost("recover")]
         [ValidateAntiForgeryToken]

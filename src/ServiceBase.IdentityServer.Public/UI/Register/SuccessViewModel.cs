@@ -2,8 +2,6 @@
 {
     public class SuccessViewModel : SuccessInputModel
     {
-        public string Provider { get; set; }
-
         public SuccessViewModel()
         {
         }

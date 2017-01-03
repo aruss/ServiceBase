@@ -30,14 +30,27 @@ namespace ServiceBase.IdentityServer.Services
             _eventService = eventService;
         }
 
-        public async Task<bool> VerifyPasswordAsyc(UserAccount userAccount, string password)
+        public async Task<UserAccountVerificationResult> VerifyByEmailAndPasswordAsyc(string email, string password)
         {
-            var result = _crypto.VerifyPasswordHash(userAccount.PasswordHash, password,
+            if (String.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+
+            var result = new UserAccountVerificationResult();
+            var userAccount = await _userAccountStore.LoadByEmailAsync(email.ToLower());
+
+            if (userAccount == null)
+            {
+                return result;
+            }
+
+            result.IsPasswordValid = _crypto.VerifyPasswordHash(userAccount.PasswordHash, password,
                 _applicationOptions.PasswordHashingIterationCount);
 
             var now = DateTime.UtcNow;
 
-            if (result)
+            if (result.IsPasswordValid)
             {
                 userAccount.FailedLoginCount = 0;
                 userAccount.LastFailedLoginAt = null;
@@ -57,9 +70,13 @@ namespace ServiceBase.IdentityServer.Services
             userAccount.UpdatedAt = now;
             await _userAccountStore.WriteAsync(userAccount);
 
+            result.UserAccount = userAccount;
+            result.IsLoginAllowed = userAccount.IsLoginAllowed;
+            result.NeedChangePassword = false;
+            result.IsLocalAccount = userAccount.HasPassword();
+
             return result;
         }
-
 
         public async Task<UserAccount> CreateNewLocalUserAccountAsync(
             string email,
@@ -168,11 +185,11 @@ namespace ServiceBase.IdentityServer.Services
         /// <param name="key"></param>
         /// <param name="purpose"></param>
         /// <returns></returns>
-        public async Task<VerificationResult> HandleVerificationKey(
+        public async Task<TokenVerificationResult> HandleVerificationKey(
             string key,
             VerificationKeyPurpose purpose)
         {
-            var result = new VerificationResult();
+            var result = new TokenVerificationResult();
             var userAccount = await _userAccountStore.LoadByVerificationKeyAsync(key);
             if (userAccount == null)
             {
@@ -195,10 +212,19 @@ namespace ServiceBase.IdentityServer.Services
         }
     }
 
-    public class VerificationResult
+    public class TokenVerificationResult
     {
         public UserAccount UserAccount { get; set; }
         public bool TokenExpired { get; set; }
         public bool PurposeValid { get; set; }
+    }
+
+    public class UserAccountVerificationResult
+    {
+        public UserAccount UserAccount { get; set; }
+        public bool NeedChangePassword { get; set; }
+        public bool IsLoginAllowed { get; set; }
+        public bool IsLocalAccount { get; set; }
+        public bool IsPasswordValid { get; set; }
     }
 }

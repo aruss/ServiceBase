@@ -59,5 +59,8 @@
         /// Automatically merges third party accounts with local account if email matches
         /// </summary>
         public bool MergeAccountsAutomatically { get; set; } = true;
+
+        public bool EnableRememberLogin { get; set; } = true;
+        public bool EnableLocalLogin { get; set; } = true;
     }
 }

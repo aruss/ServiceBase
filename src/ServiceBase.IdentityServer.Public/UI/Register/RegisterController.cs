@@ -62,9 +62,12 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                     vm.Email = context.LoginHint;
                     vm.ReturnUrl = returnUrl;
 
-                    var client = await _clientService.FindEnabledClientByIdAsync(context.ClientId);
-                    vm.ExternalProviders = await _clientService.GetEnabledProvidersAsync(client);
-                    vm.EnableLocalLogin = client.EnableLocalLogin;
+                    if (!String.IsNullOrWhiteSpace(context.ClientId))
+                    {
+                        var client = await _clientService.FindEnabledClientByIdAsync(context.ClientId);
+                        vm.ExternalProviders = await _clientService.GetEnabledProvidersAsync(client);
+                        vm.EnableLocalLogin = client != null ? client.EnableLocalLogin : false;
+                    }
                 }
             }
 
@@ -113,7 +116,9 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             return await this.RedirectToSuccessAsync(userAccount, model.ReturnUrl);
         }
 
-        private async Task<IActionResult> RedirectToSuccessAsync(UserAccount userAccount, string returnUrl)
+        private async Task<IActionResult> RedirectToSuccessAsync(
+            UserAccount userAccount,
+            string returnUrl)
         {
             // Redirect to success page by preserving the email provider name
             return Redirect(Url.Action("Success", "Register", new
@@ -195,7 +200,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 else if (userAccount.HasPassword())
                 {
                     // User has to follow a link in confirmation mail
-                    if (_applicationOptions.RequireLocalAccountVerification && !userAccount.IsEmailVerified)
+                    if (_applicationOptions.RequireLocalAccountVerification
+                        && !userAccount.IsEmailVerified)
                     {
                         ModelState.AddModelError("", "Please confirm your email account");
                     }

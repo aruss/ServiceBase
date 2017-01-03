@@ -1,5 +1,6 @@
 ﻿using ServiceBase.IdentityServer.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ServiceBase.IdentityServer.Public.UI.Login
 {
@@ -20,6 +21,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         public string ErrorMessage { get; set; }
         public string InfoMessage { get; set; }
         public bool EnableLocalLogin { get; set; }
+        public bool EnableRememberLogin { get; set; }
+        public bool IsExternalLoginOnly => EnableLocalLogin == false && ExternalProviders?.Count() == 1;
         public IEnumerable<ExternalProvider> ExternalProviders { get; set; }
         public IEnumerable<string> LoginHints { get; set; }
     }
