@@ -85,18 +85,20 @@ namespace ServiceBase.IdentityServer.Public.UI.Logout
             var vm = await this.CreateLoggedOutViewModelAsync(model.LogoutId);
             if (vm.TriggerExternalSignout)
             {
-                string url = Url.Action("Logout", new { logoutId = vm.LogoutId });
+                var url = Url.Action("Logout", new { logoutId = vm.LogoutId });
                 try
                 {
-                    // hack: try/catch to handle social providers that throw
+                    // Hack: try/catch to handle social providers that throw
                     await HttpContext.Authentication.SignOutAsync(
                         vm.ExternalAuthenticationScheme,
                         new AuthenticationProperties { RedirectUri = url });
                 }
-                catch (NotSupportedException) // this is for the external providers that don't have signout
+                // This is for the external providers that don't have signout
+                catch (NotSupportedException)
                 {
                 }
-                catch (InvalidOperationException) // this is for Windows/Negotiate
+                // This is for Windows/Negotiate
+                catch (InvalidOperationException)
                 {
                 }
             }
@@ -110,12 +112,14 @@ namespace ServiceBase.IdentityServer.Public.UI.Logout
         private async Task<LoggedOutViewModel> CreateLoggedOutViewModelAsync(
             string logoutId)
         {
-            // Get context information (client name, post logout redirect URI and iframe for federated signout)
+            // Get context information (client name, post logout redirect URI
+            // and iframe for federated signout)
             var context = await _interaction.GetLogoutContextAsync(logoutId);
 
             var vm = new LoggedOutViewModel
             {
-                AutomaticRedirectAfterSignOut = _applicationOptions.AutomaticRedirectAfterSignOut,
+                AutomaticRedirectAfterSignOut =
+                    _applicationOptions.AutomaticRedirectAfterSignOut,
                 PostLogoutRedirectUri = context?.PostLogoutRedirectUri,
                 ClientName = context?.ClientId,
                 SignOutIframeUrl = context?.SignOutIFrameUrl,
