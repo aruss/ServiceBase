@@ -78,10 +78,7 @@ namespace ServiceBase.IdentityServer.Services
             return result;
         }
 
-        public async Task<UserAccount> CreateNewLocalUserAccountAsync(
-            string email,
-            string password,
-            string returnUrl = null)
+        public async Task<UserAccount> CreateNewLocalUserAccountAsync(string email, string password, string returnUrl = null)
         {
             var now = DateTime.UtcNow;
 
@@ -113,6 +110,88 @@ namespace ServiceBase.IdentityServer.Services
                 IdentityServerConstants.LocalIdentityProvider);
 
             return userAccount;
+        }
+
+        public async Task<UserAccount> CreateNewExternalUserAccountAsync(string email, string provider, string subject, string returnUrl = null)
+        {
+            var now = DateTime.UtcNow;
+
+            var userAccountId = Guid.NewGuid();
+
+            var userAccount = new UserAccount
+            {
+                Id = userAccountId,
+                Email = email,
+                PasswordHash = null,
+                FailedLoginCount = 0,
+                IsEmailVerified = false,
+                IsLoginAllowed = _applicationOptions.RequireExternalAccountVerification,
+                PasswordChangedAt = now,
+                CreatedAt = now,
+                UpdatedAt = now,
+                Accounts = new ExternalAccount[]
+                {
+                    new ExternalAccount
+                    {
+                        Email = email,
+                        UserAccountId = userAccountId,
+                        Provider = provider,
+                        Subject = subject,
+                        CreatedAt = now,
+                        UpdatedAt  = now,
+                        LastLoginAt = null,
+                        IsLoginAllowed = true
+                    }
+                }
+            };
+
+            if (_applicationOptions.RequireExternalAccountVerification &&
+                !String.IsNullOrWhiteSpace(returnUrl))
+            {
+                this.SetConfirmAccountVirificationKey(userAccount, returnUrl);
+            }
+
+            await _userAccountStore.WriteAsync(userAccount);
+
+            // Emit event
+            await _eventService.RaiseSuccessfulUserAccountCreatedEventAsync(
+                userAccount.Id,
+                provider);
+
+            return userAccount;
+        }
+
+        public async Task<ExternalAccount> AddExternalAccountAsync(Guid userAccountId, string email, string provider, string subject)
+        {
+            var now = DateTime.UtcNow;
+            var externalAccount = new ExternalAccount
+            {
+                UserAccountId = userAccountId,
+                Email = email,
+                Provider = provider,
+                Subject = subject,
+                CreatedAt = now,
+                UpdatedAt = now,
+                LastLoginAt = null,
+                IsLoginAllowed = true
+            };
+
+            await _userAccountStore.WriteExternalAccountAsync(externalAccount);
+
+            // Emit event
+            await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(userAccountId);
+
+            return externalAccount;
+        }
+
+        public async Task<UserAccount> LoadByEmailWithExternalAsync(string email)
+        {
+            return await _userAccountStore.LoadByEmailWithExternalAsync(email);
+        }
+
+        public async Task<UserAccount> LoadByExternalProviderAsync(string provider, string subject)
+        {
+            return await _userAccountStore.LoadByExternalProviderAsync(provider, subject);
         }
 
         public async Task SetAccountRecoverAsync(UserAccount userAccount, string returnUrl = null)
