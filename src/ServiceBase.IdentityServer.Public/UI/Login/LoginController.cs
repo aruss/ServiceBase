@@ -1,5 +1,6 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Services;
+using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -81,11 +82,19 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                         }
                         else
                         {
-                            await this.HttpContext.Authentication.IssueCookieAsync(
-                                result.UserAccount,
-                                IdentityServerConstants.LocalIdentityProvider,
-                                IdentityServerConstants.DefaultCookieAuthenticationScheme,
-                                model.RememberLogin && _applicationOptions.EnableRememberLogin);
+                            AuthenticationProperties props = null;
+
+                            if (_applicationOptions.EnableRememberLogin && model.RememberLogin)
+                            {
+                                props = new AuthenticationProperties
+                                {
+                                    IsPersistent = true,
+                                    ExpiresUtc = DateTimeOffset.UtcNow.Add(
+                                        TimeSpan.FromDays(_applicationOptions.RememberMeLoginDuration))
+                                };
+                            };
+
+                            await HttpContext.Authentication.SignInAsync(result.UserAccount, props);
 
                             // Make sure the returnUrl is still valid, and if yes -
                             // redirect back to authorize endpoint

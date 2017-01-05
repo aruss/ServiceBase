@@ -1,4 +1,6 @@
-﻿namespace ServiceBase.IdentityServer.Configuration
+﻿using System;
+
+namespace ServiceBase.IdentityServer.Configuration
 {
     /// <summary>
     /// IdentityBase application options
@@ -61,6 +63,12 @@
         public bool AutomaticAccountMerge { get; set; } = true;
 
         public bool EnableRememberLogin { get; set; } = true;
+
+        /// <summary>
+        /// How long should Remember Login last in days
+        /// </summary>
+        public int RememberMeLoginDuration { get; set; } = 30;
+
         public bool EnableLocalLogin { get; set; } = true;
 
         public bool ShowLogoutPrompt = false;

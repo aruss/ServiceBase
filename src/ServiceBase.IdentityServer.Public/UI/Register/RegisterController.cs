@@ -103,9 +103,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
 
             if (_applicationOptions.LoginAfterAccountCreation)
             {
-                await HttpContext.Authentication.IssueCookieAsync(userAccount,
-                    IdentityServerConstants.LocalIdentityProvider,
-                    IdentityBaseConstants.AuthenticationTypePassword);
+                await HttpContext.Authentication.SignInAsync(userAccount, null);
 
                 if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
                 {
@@ -149,9 +147,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
 
                 if (_applicationOptions.LoginAfterAccountCreation)
                 {
-                    await HttpContext.Authentication.IssueCookieAsync(userAccount,
-                        IdentityServerConstants.LocalIdentityProvider,
-                        IdentityBaseConstants.AuthenticationTypePassword);
+                    await HttpContext.Authentication.SignInAsync(userAccount, null);
 
                     if (model.ReturnUrl != null && _interaction.IsValidReturnUrl(model.ReturnUrl))
                     {
@@ -247,9 +243,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             // If applicatin settings provided login user after confirmation
             if (_applicationOptions.LoginAfterAccountConfirmation)
             {
-                await HttpContext.Authentication.IssueCookieAsync(result.UserAccount,
-                    IdentityServerConstants.LocalIdentityProvider,
-                    IdentityBaseConstants.AuthenticationTypePassword);
+                await HttpContext.Authentication.SignInAsync(result.UserAccount, null);
 
                 if (returnUrl != null && _interaction.IsValidReturnUrl(returnUrl))
                 {

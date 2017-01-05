@@ -125,7 +125,7 @@ namespace ServiceBase.IdentityServer.Services
                 PasswordHash = null,
                 FailedLoginCount = 0,
                 IsEmailVerified = false,
-                IsLoginAllowed = _applicationOptions.RequireExternalAccountVerification,
+                IsLoginAllowed = !_applicationOptions.RequireExternalAccountVerification,
                 PasswordChangedAt = now,
                 CreatedAt = now,
                 UpdatedAt = now,

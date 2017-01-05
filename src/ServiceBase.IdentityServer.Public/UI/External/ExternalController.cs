@@ -142,8 +142,16 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                     userAccount = await _userAccountService.CreateNewExternalUserAccountAsync(
                         email, provider, subject, returnUrl);
 
-                    return await IssueCookieAndRedirectAsync(userAccount,
-                        provider, returnUrl, info, claims);
+                    if (_applicationOptions.RequireExternalAccountVerification)
+                    {
+                        // TODO: send confirmation mail and redirect to success page
+                        throw new NotImplementedException();
+                    }
+                    else {
+
+                        return await IssueCookieAndRedirectAsync(userAccount,
+                            provider, returnUrl, info, claims);
+                    }
                 }
                 else
                 {
