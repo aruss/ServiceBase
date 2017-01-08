@@ -4,11 +4,24 @@ using System;
 
 namespace ServiceBase.Xunit
 {
-    public class NullLogger<TCategoryName> : ILogger<TCategoryName>
+    public class NullLogger<TCategoryName> :
+        NullLogger, ILogger<TCategoryName>
+    {
+        public static ILogger<TCategoryName> Create()
+        {
+            return new NullLogger<TCategoryName>();
+        }
+    }
+
+    public class NullLogger : ILogger, IDisposable
     {
         public IDisposable BeginScope<TState>(TState state)
         {
-            throw new NotImplementedException();
+            return this;
+        }
+
+        public void Dispose()
+        {
         }
 
         public bool IsEnabled(LogLevel logLevel)
@@ -16,26 +29,31 @@ namespace ServiceBase.Xunit
             return false;
         }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception exception,
+            Func<TState, Exception, string> formatter)
         {
-
         }
     }
 
-    public class Options<TOptions> : IOptions<TOptions> where TOptions : class, new()
+    public class Options<TOptions> :
+        IOptions<TOptions> where TOptions : class, new()
     {
-        TOptions _options; 
+        private TOptions _options;
 
         public Options(TOptions options)
         {
-            _options = options; 
+            _options = options;
         }
 
         public TOptions Value
         {
             get
             {
-                return _options; 
+                return _options;
             }
         }
     }

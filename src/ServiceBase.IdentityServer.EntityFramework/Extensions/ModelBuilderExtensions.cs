@@ -244,6 +244,8 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
             modelBuilder.Entity<UserAccountClaim>(claim =>
             {
                 claim.ToTable(storeOptions.UserAccountClaim);
+
+                claim.HasKey(x => new { x.Id });
                 claim.Property(x => x.Type).HasMaxLength(250).IsRequired();
                 claim.Property(x => x.Value).HasMaxLength(250).IsRequired();
                 claim.Property(x => x.ValueType).HasMaxLength(2000);
