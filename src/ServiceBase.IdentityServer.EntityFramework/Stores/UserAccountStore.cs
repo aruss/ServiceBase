@@ -42,7 +42,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
             if (existingExternalAccount == null)
             {
-                _logger.LogDebug("{0} {1} not found in database", existingExternalAccount.Provider, existingExternalAccount.Subject);
+                _logger.LogDebug("{0} {1} not found in database", externalAccount.Provider, externalAccount.Subject);
 
                 var persistedExternalAccount = externalAccount.ToEntity();
                 _context.ExternalAccounts.Add(persistedExternalAccount);
