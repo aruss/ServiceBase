@@ -70,6 +70,9 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
 
                 if (result.UserAccount != null)
                 {
+                    await _userAccountService.UpdateLastUsedLocalAccountAsync(
+                        result.UserAccount, result.IsPasswordValid);
+
                     if (!result.IsLoginAllowed)
                     {
                         ModelState.AddModelError("", "User account is diactivated");

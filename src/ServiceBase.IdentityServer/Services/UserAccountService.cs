@@ -8,6 +8,7 @@ using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Models;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ServiceBase.IdentityServer.Services
 {
@@ -47,28 +48,6 @@ namespace ServiceBase.IdentityServer.Services
 
             result.IsPasswordValid = _crypto.VerifyPasswordHash(userAccount.PasswordHash, password,
                 _applicationOptions.PasswordHashingIterationCount);
-
-            var now = DateTime.UtcNow;
-
-            if (result.IsPasswordValid)
-            {
-                userAccount.FailedLoginCount = 0;
-                userAccount.LastFailedLoginAt = null;
-                userAccount.LastLoginAt = now;
-            }
-            else
-            {
-                userAccount.FailedLoginCount++;
-                userAccount.LastFailedLoginAt = now;
-                if (userAccount.FailedLoginCount >= _applicationOptions.AccountLockoutFailedLoginAttempts)
-                {
-                    userAccount.IsLoginAllowed = false;
-                }
-            }
-
-            // Update user account
-            userAccount.UpdatedAt = now;
-            await _userAccountStore.WriteAsync(userAccount);
 
             result.UserAccount = userAccount;
             result.IsLoginAllowed = userAccount.IsLoginAllowed;
@@ -182,6 +161,56 @@ namespace ServiceBase.IdentityServer.Services
             await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(userAccountId);
 
             return externalAccount;
+        }
+
+        public async Task UpdateLastUsedExternalAccountAsync(UserAccount userAccount, string provider, string subject)
+        {
+            var externalAccount = userAccount.Accounts.FirstOrDefault(c => c.Provider.Equals(provider) && c.Subject.Equals(subject));
+
+            if (externalAccount != null)
+            {
+                await this.UpdateLastUsedExternalAccountAsync(externalAccount);
+            }
+        }
+
+        public async Task UpdateLastUsedExternalAccountAsync(ExternalAccount externalAccount)
+        {
+            var now = DateTime.UtcNow;
+
+            externalAccount.LastLoginAt = now;
+            externalAccount.UpdatedAt = now;
+
+            await _userAccountStore.WriteExternalAccountAsync(externalAccount);
+
+            // TODO: emit event
+        }
+
+        public async Task UpdateLastUsedLocalAccountAsync(UserAccount userAccount, bool success)
+        {
+            var now = DateTime.UtcNow;
+
+            if (success)
+            {
+                userAccount.FailedLoginCount = 0;
+                userAccount.LastFailedLoginAt = null;
+                userAccount.LastLoginAt = now;
+            }
+            else
+            {
+                userAccount.FailedLoginCount++;
+                userAccount.LastFailedLoginAt = now;
+                if (userAccount.FailedLoginCount >= _applicationOptions
+                    .AccountLockoutFailedLoginAttempts)
+                {
+                    userAccount.IsLoginAllowed = false;
+                }
+            }
+
+            // Update user account
+            userAccount.UpdatedAt = now;
+            await _userAccountStore.WriteAsync(userAccount);
+
+            // TODO: emit event
         }
 
         public async Task<UserAccount> LoadByEmailWithExternalAsync(string email)

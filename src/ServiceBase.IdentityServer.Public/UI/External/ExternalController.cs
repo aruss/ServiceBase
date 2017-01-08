@@ -131,6 +131,9 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                 provider, subject);
             if (userAccount != null)
             {
+                await _userAccountService.UpdateLastUsedExternalAccountAsync(
+                    userAccount, provider, subject);
+
                 return await IssueCookieAndRedirectAsync(userAccount, provider,
                     returnUrl, info, claims);
             }
@@ -147,10 +150,13 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                         // TODO: send confirmation mail and redirect to success page
                         throw new NotImplementedException();
                     }
-                    else {
+                    else
+                    {
+                        await _userAccountService.UpdateLastUsedExternalAccountAsync(
+                            userAccount, provider, subject);
 
                         return await IssueCookieAndRedirectAsync(userAccount,
-                            provider, returnUrl, info, claims);
+                            provider,  returnUrl, info, claims);
                     }
                 }
                 else
@@ -164,6 +170,9 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                             provider,
                             subject
                         );
+
+                        await _userAccountService.UpdateLastUsedExternalAccountAsync(
+                            userAccount, provider, subject);
 
                         return await IssueCookieAndRedirectAsync(userAccount,
                             provider, returnUrl, info, claims);
