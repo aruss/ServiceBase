@@ -13,9 +13,9 @@ namespace ServiceBase.IdentityServer.EntityFramework.DbContexts
 {
     public class ConfigurationDbContext : DbContext, IConfigurationDbContext
     {
-        private readonly ConfigurationStoreOptions storeOptions;
+        private readonly EntityFrameworkOptions storeOptions;
 
-        public ConfigurationDbContext(DbContextOptions<ConfigurationDbContext> options, ConfigurationStoreOptions storeOptions)
+        public ConfigurationDbContext(DbContextOptions<ConfigurationDbContext> options, EntityFrameworkOptions storeOptions)
             : base(options)
         {
             if (storeOptions == null) throw new ArgumentNullException(nameof(storeOptions));

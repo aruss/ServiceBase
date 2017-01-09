@@ -1,6 +1,6 @@
 ﻿namespace ServiceBase.IdentityServer.EntityFramework.Options
 {
-    public class UserAccountStoreOptions
+    public class UserAccountStoreOptionsXXX
     {
         /*public DefaultStoreOptions() { }
 

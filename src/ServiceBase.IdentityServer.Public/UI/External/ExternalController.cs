@@ -156,7 +156,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
                             userAccount, provider, subject);
 
                         return await IssueCookieAndRedirectAsync(userAccount,
-                            provider,  returnUrl, info, claims);
+                            provider, returnUrl, info, claims);
                     }
                 }
                 else

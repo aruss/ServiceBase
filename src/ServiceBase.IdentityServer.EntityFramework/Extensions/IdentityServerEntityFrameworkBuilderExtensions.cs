@@ -1,22 +1,9 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using ServiceBase.IdentityServer.EntityFramework;
-using ServiceBase.IdentityServer.EntityFramework.DbContexts;
-using ServiceBase.IdentityServer.EntityFramework.Interfaces;
-using ServiceBase.IdentityServer.EntityFramework.Options;
-using ServiceBase.IdentityServer.EntityFramework.Services;
-using ServiceBase.IdentityServer.EntityFramework.Stores;
-using System;
-
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class IdentityServerEntityFrameworkBuilderExtensions
+    /*public static class IdentityServerEntityFrameworkBuilderExtensions
     {
         public static IIdentityServerBuilder AddConfigurationStore(
             this IIdentityServerBuilder builder,
@@ -89,5 +76,5 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return app;
         }
-    }
+    }*/
 }

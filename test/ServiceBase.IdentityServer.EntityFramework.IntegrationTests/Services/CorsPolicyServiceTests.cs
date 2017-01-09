@@ -17,7 +17,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Services
 {
     public class CorsPolicyServiceTests : IClassFixture<DatabaseProviderFixture<ConfigurationDbContext>>
     {
-        private static readonly ConfigurationStoreOptions StoreOptions = new ConfigurationStoreOptions();
+        private static readonly EntityFrameworkOptions StoreOptions = new EntityFrameworkOptions();
 
         public static readonly TheoryData<DbContextOptions<ConfigurationDbContext>> TestDatabaseProviders = new TheoryData<DbContextOptions<ConfigurationDbContext>>
         {

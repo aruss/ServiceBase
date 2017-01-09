@@ -19,16 +19,16 @@ namespace ServiceBase.IdentityServer.EntityFramework
         private readonly TimeSpan _interval;
         private CancellationTokenSource _source;
 
-        public TokenCleanup(IServiceProvider serviceProvider, ILogger<TokenCleanup> logger, TokenCleanupOptions options)
+        public TokenCleanup(IServiceProvider serviceProvider, ILogger<TokenCleanup> logger, EntityFrameworkOptions options)
         {
             if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
             if (logger == null) throw new ArgumentNullException(nameof(logger));
             if (options == null) throw new ArgumentNullException(nameof(options));
-            if (options.Interval < 1) throw new ArgumentException("interval must be more than 1 second");
+            if (options.TokenCleanupInterval < 1) throw new ArgumentException("interval must be more than 1 second");
 
             _logger = logger;
             _serviceProvider = serviceProvider;
-            _interval = TimeSpan.FromSeconds(options.Interval);
+            _interval = TimeSpan.FromSeconds(options.TokenCleanupInterval);
         }
 
         public void Start()

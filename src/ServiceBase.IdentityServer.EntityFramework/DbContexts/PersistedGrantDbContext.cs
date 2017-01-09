@@ -13,9 +13,9 @@ namespace ServiceBase.IdentityServer.EntityFramework.DbContexts
 {
     public class PersistedGrantDbContext : DbContext, IPersistedGrantDbContext
     {
-        private readonly PersistentGrantStoreOptions _storeOptions;
+        private readonly EntityFrameworkOptions _storeOptions;
 
-        public PersistedGrantDbContext(DbContextOptions<PersistedGrantDbContext> options, PersistentGrantStoreOptions storeOptions)
+        public PersistedGrantDbContext(DbContextOptions<PersistedGrantDbContext> options, EntityFrameworkOptions storeOptions)
             : base(options)
         {
             if (storeOptions == null) throw new ArgumentNullException(nameof(storeOptions));

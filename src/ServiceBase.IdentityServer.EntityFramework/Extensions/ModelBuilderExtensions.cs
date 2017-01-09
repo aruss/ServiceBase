@@ -17,7 +17,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
             return string.IsNullOrWhiteSpace(configuration.Schema) ? entityTypeBuilder.ToTable(configuration.Name) : entityTypeBuilder.ToTable(configuration.Name, configuration.Schema);
         }
 
-        public static void ConfigureClientContext(this ModelBuilder modelBuilder, ConfigurationStoreOptions storeOptions)
+        public static void ConfigureClientContext(this ModelBuilder modelBuilder, EntityFrameworkOptions storeOptions)
         {
             if (!string.IsNullOrWhiteSpace(storeOptions.DefaultSchema)) modelBuilder.HasDefaultSchema(storeOptions.DefaultSchema);
 
@@ -95,7 +95,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
             });
         }
 
-        public static void PersistedGrantDbContext(this ModelBuilder modelBuilder, PersistentGrantStoreOptions storeOptions)
+        public static void PersistedGrantDbContext(this ModelBuilder modelBuilder, EntityFrameworkOptions storeOptions)
         {
             if (!string.IsNullOrWhiteSpace(storeOptions.DefaultSchema)) modelBuilder.HasDefaultSchema(storeOptions.DefaultSchema);
 
@@ -118,7 +118,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
             });
         }
 
-        public static void ConfigureResourcesContext(this ModelBuilder modelBuilder, ConfigurationStoreOptions storeOptions)
+        public static void ConfigureResourcesContext(this ModelBuilder modelBuilder, EntityFrameworkOptions storeOptions)
         {
             if (!string.IsNullOrWhiteSpace(storeOptions.DefaultSchema)) modelBuilder.HasDefaultSchema(storeOptions.DefaultSchema);
 
@@ -194,7 +194,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
             });
         }
 
-        public static void UserAccountDbContext(this ModelBuilder modelBuilder, UserAccountStoreOptions storeOptions)
+        public static void UserAccountDbContext(this ModelBuilder modelBuilder, EntityFrameworkOptions storeOptions)
         {
             if (!string.IsNullOrWhiteSpace(storeOptions.DefaultSchema)) modelBuilder.HasDefaultSchema(storeOptions.DefaultSchema);
 

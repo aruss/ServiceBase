@@ -56,10 +56,11 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ConfigureClientContext(new ConfigurationStoreOptions());
-            modelBuilder.ConfigureResourcesContext(new ConfigurationStoreOptions());
-            modelBuilder.PersistedGrantDbContext(new PersistentGrantStoreOptions());
-            modelBuilder.UserAccountDbContext(new UserAccountStoreOptions());
+            var options = new EntityFrameworkOptions();
+            modelBuilder.ConfigureClientContext(options);
+            modelBuilder.ConfigureResourcesContext(options);
+            modelBuilder.PersistedGrantDbContext(options);
+            modelBuilder.UserAccountDbContext(options);
 
             base.OnModelCreating(modelBuilder);
         }

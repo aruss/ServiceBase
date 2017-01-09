@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using ServiceBase.Events;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
-using FluentAssertions;
 
 namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
@@ -18,13 +16,11 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
         // before
         public EventServiceHelperTests()
         {
-
         }
 
         // after
         public void Dispose()
         {
-
         }
 
         [Fact]
@@ -67,7 +63,6 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
             eventOut.Context.ProcessId.Should().Be(procId);
             eventOut.Context.RemoteIpAddress.Should().Be(remoteIp);
             eventOut.Context.SubjectId.Should().Be(subjectId);
-
         }
     }
 

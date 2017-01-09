@@ -17,7 +17,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
 {
     public class PersistedGrantStoreTests : IClassFixture<DatabaseProviderFixture<PersistedGrantDbContext>>
     {
-        private static readonly PersistentGrantStoreOptions StoreOptions = new PersistentGrantStoreOptions();
+        private static readonly EntityFrameworkOptions StoreOptions = new EntityFrameworkOptions();
 
         public static readonly TheoryData<DbContextOptions<PersistedGrantDbContext>> TestDatabaseProviders = new TheoryData<DbContextOptions<PersistedGrantDbContext>>
         {

@@ -52,6 +52,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
 
         internal virtual void MigrateDatabase()
         {
+            // _defaultDbContext.Database.EnsureCreated();
             _defaultDbContext.Database.Migrate();
         }
 

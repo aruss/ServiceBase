@@ -11,6 +11,7 @@ using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServiceBase.IdentityServer.Public.IntegrationTests
 {
@@ -24,7 +25,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
         {
             services.AddOptions();
 
-            var builder = services.AddIdentityServer((options) =>
+            services.AddIdentityServer((options) =>
             {
                 //options.RequireSsl = false;
 
@@ -58,7 +59,7 @@ namespace ServiceBase.IdentityServer.Public.IntegrationTests
 
             #region Entity Framework Store Layer
 
-            services.AddEntityFrameworkStores((options) =>
+            services.AddEntityFrameworkInMemoryStores((options) =>
             {
                 options.MigrateDatabase = false;
                 options.SeedExampleData = false;

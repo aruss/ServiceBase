@@ -10,9 +10,9 @@ namespace ServiceBase.IdentityServer.EntityFramework.DbContexts
 {
     public class UserAccountDbContext : DbContext, IUserAccountDbContext
     {
-        private readonly UserAccountStoreOptions _options;
+        private readonly EntityFrameworkOptions _options;
 
-        public UserAccountDbContext(DbContextOptions<UserAccountDbContext> dbContextOptions, UserAccountStoreOptions options)
+        public UserAccountDbContext(DbContextOptions<UserAccountDbContext> dbContextOptions, EntityFrameworkOptions options)
             : base(dbContextOptions)
         {
             if (options == null) throw new ArgumentNullException(nameof(_options));

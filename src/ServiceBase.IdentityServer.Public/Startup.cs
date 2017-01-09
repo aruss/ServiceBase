@@ -15,6 +15,7 @@ using System;
 using System.IO;
 using ServiceBase.IdentityServer.EntityFramework;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServiceBase.IdentityServer.Public
 {
@@ -48,7 +49,7 @@ namespace ServiceBase.IdentityServer.Public
             var cert = new X509Certificate2(Path.Combine(
                 _environment.ContentRootPath, "idsvr3test.pfx"), "idsrv3test");
 
-            var builder = services.AddIdentityServer((options) =>
+            services.AddIdentityServer((options) =>
             {
                 //options.RequireSsl = false;
 
@@ -74,7 +75,14 @@ namespace ServiceBase.IdentityServer.Public
             #endregion Add IdentityServer
 
             // Add Data Layer
-            services.AddEntityFrameworkStores(_configuration.GetSection("EntityFramework"));
+            if (String.IsNullOrWhiteSpace(_configuration["EntityFramework"]))
+            {
+                services.AddEntityFrameworkSqlServerStores(_configuration.GetSection("EntityFramework"));
+            }
+            else
+            {
+                throw new Exception("Store configuration not present");
+            }
 
             #region Add Email Sender
 
