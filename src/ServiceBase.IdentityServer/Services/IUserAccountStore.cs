@@ -7,11 +7,11 @@ namespace ServiceBase.IdentityServer.Services
     public interface IUserAccountStore
     {
         /// <summary>
-        /// Writes a user account to database including all accounts and claims 
+        /// Writes a user account to database including all accounts and claims
         /// </summary>
         /// <param name="userAccount"></param>
         /// <returns></returns>
-        Task WriteAsync(UserAccount userAccount); 
+        Task<UserAccount> WriteAsync(UserAccount userAccount);
 
         /// <summary>
         /// Looks for the user by local email
@@ -21,7 +21,7 @@ namespace ServiceBase.IdentityServer.Services
         Task<UserAccount> LoadByEmailAsync(string email);
 
         /// <summary>
-        /// Looks for the user by email including all external accounts 
+        /// Looks for the user by email including all external accounts
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
@@ -53,7 +53,7 @@ namespace ServiceBase.IdentityServer.Services
 
         Task DeleteByIdAsync(Guid id);
 
-        Task WriteExternalAccountAsync(ExternalAccount externalAccount);
+        Task<ExternalAccount> WriteExternalAccountAsync(ExternalAccount externalAccount);
 
         Task DeleteExternalAccountAsync(Guid id);
     }

@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ServiceBase.IdentityServer.EntityFramework
+namespace ServiceBase.IdentityServer.EntityFramework.Stores
 {
     // TODO: make use of value type  System.Security.Claims.ClaimValueTypes while create UserClaim
     // http://www.npgsql.org/doc/faq.html
@@ -26,7 +26,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             _logger = logger;
         }
 
-        public Task WriteExternalAccountAsync(ExternalAccount externalAccount)
+        public Task<ExternalAccount> WriteExternalAccountAsync(ExternalAccount externalAccount)
         {
             var userAccountId = externalAccount.UserAccount != null ? externalAccount.UserAccount.Id : externalAccount.UserAccountId;
             var existingUserAccount = _context.UserAccounts.SingleOrDefault(x => x.Id == userAccountId);
@@ -34,7 +34,7 @@ namespace ServiceBase.IdentityServer.EntityFramework
             if (existingUserAccount == null)
             {
                 _logger.LogError("{existingUserAccountId} not found in database", userAccountId);
-                return Task.FromResult(0);
+                return null;
             }
 
             var existingExternalAccount = _context.ExternalAccounts.SingleOrDefault(x =>
@@ -57,16 +57,17 @@ namespace ServiceBase.IdentityServer.EntityFramework
             try
             {
                 _context.SaveChanges();
+                return Task.FromResult(existingExternalAccount.ToModel());
             }
             catch (Exception ex)
             {
                 _logger.LogError(0, ex, "Exception storing external account");
             }
 
-            return Task.FromResult(0);
+            return Task.FromResult<ExternalAccount>(null);
         }
 
-        public async Task DeleteByIdAsync(Guid id)
+        public Task DeleteByIdAsync(Guid id)
         {
             var userAccount = _context.UserAccounts
              //.Include(x => x.Accounts)
@@ -76,8 +77,10 @@ namespace ServiceBase.IdentityServer.EntityFramework
             if (userAccount != null)
             {
                 _context.Remove(userAccount);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
+
+            return Task.FromResult(0);
         }
 
         public Task DeleteExternalAccountAsync(Guid id)
@@ -159,35 +162,36 @@ namespace ServiceBase.IdentityServer.EntityFramework
             return Task.FromResult(model);
         }
 
-        public Task WriteAsync(UserAccount userAccount)
+        public Task<UserAccount> WriteAsync(UserAccount userAccount)
         {
             if (userAccount == null) throw new ArgumentNullException(nameof(userAccount));
 
-            var existing = _context.UserAccounts.SingleOrDefault(x => x.Id == userAccount.Id);
-            if (existing == null)
+            var existingUserAccount = _context.UserAccounts.SingleOrDefault(x => x.Id == userAccount.Id);
+            if (existingUserAccount == null)
             {
                 _logger.LogDebug("{userAccountId} not found in database", userAccount.Id);
 
-                var entity = userAccount.ToEntity();
-                _context.UserAccounts.Add(entity);
+                existingUserAccount = userAccount.ToEntity();
+                _context.UserAccounts.Add(existingUserAccount);
             }
             else
             {
                 _logger.LogDebug("{userAccountId} found in database", userAccount.Id);
 
-                userAccount.UpdateEntity(existing);
+                userAccount.UpdateEntity(existingUserAccount);
             }
 
             try
             {
                 _context.SaveChanges();
+                return Task.FromResult(existingUserAccount.ToModel());
             }
             catch (Exception ex)
             {
                 _logger.LogError(0, ex, "Exception storing user account");
             }
 
-            return Task.FromResult(0);
+            return Task.FromResult<UserAccount>(null);
         }
     }
 }

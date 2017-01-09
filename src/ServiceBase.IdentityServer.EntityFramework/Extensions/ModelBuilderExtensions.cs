@@ -236,9 +236,14 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
                 externalAccount.ToTable(storeOptions.ExternalAccount);
                 externalAccount.HasKey(x => new { x.Provider, x.Subject });
 
-                externalAccount.Property(x => x.Email).HasMaxLength(250);
+                externalAccount.Property(x => x.Provider).IsRequired();
+                externalAccount.Property(x => x.Subject).IsRequired();
+                externalAccount.Property(x => x.Email).IsRequired().HasMaxLength(254);
+                externalAccount.Property(x => x.IsLoginAllowed);
                 externalAccount.Property(x => x.LastLoginAt);
                 externalAccount.Property(x => x.CreatedAt).IsRequired();
+                externalAccount.Property(x => x.UpdatedAt).IsRequired();
+                externalAccount.Property(x => x.LastLoginAt);
             });
 
             modelBuilder.Entity<UserAccountClaim>(claim =>
