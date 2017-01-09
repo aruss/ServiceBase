@@ -61,7 +61,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
         {
             var testUserAccount = new UserAccount
             {
-                Email = "jim2@panse.de"
+                Email = "jim22@panse.de"
             };
 
             using (var context = new UserAccountDbContext(options, StoreOptions))
@@ -154,7 +154,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
             var testExternalAccount = new ExternalAccount
             {
                 Email = "jim4@panse.de",
-                Provider = "facebook",
+                Provider = "yahoo",
                 Subject = "123456789"
             };
 
