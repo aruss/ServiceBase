@@ -222,10 +222,14 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
                 userAccount.Property(x => x.CreatedAt);
                 userAccount.Property(x => x.UpdatedAt);
 
-                userAccount.HasMany(x => x.Accounts).WithOne(x => x.UserAccount)
+                userAccount.HasMany(x => x.Accounts)
+                    .WithOne(x => x.UserAccount)
+                    .HasForeignKey(x => x.UserAccountId)
                     .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
-                userAccount.HasMany(x => x.Claims).WithOne(x => x.UserAccount)
+                userAccount.HasMany(x => x.Claims)
+                    .WithOne(x => x.UserAccount)
+                    .HasForeignKey(x => x.UserAccountId)
                     .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
                 userAccount.HasIndex(x => x.Email).IsUnique();
@@ -235,6 +239,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
             {
                 externalAccount.ToTable(storeOptions.ExternalAccount);
                 externalAccount.HasKey(x => new { x.Provider, x.Subject });
+
 
                 externalAccount.Property(x => x.Provider).IsRequired();
                 externalAccount.Property(x => x.Subject).IsRequired();
