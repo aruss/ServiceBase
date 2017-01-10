@@ -8,18 +8,16 @@ using Microsoft.Extensions.Logging;
 using ServiceBase.Configuration;
 using ServiceBase.IdentityServer.Configuration;
 using ServiceBase.IdentityServer.Crypto;
+using ServiceBase.IdentityServer.EntityFramework;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Services;
 using ServiceBase.Notification.Email;
 using System;
 using System.IO;
-using ServiceBase.IdentityServer.EntityFramework;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.EntityFrameworkCore;
 
 namespace ServiceBase.IdentityServer.Public
 {
-
     public class Startup
     {
         private readonly ILogger _logger;
@@ -37,19 +35,29 @@ namespace ServiceBase.IdentityServer.Public
 
         public void ConfigureServices(IServiceCollection services)
         {
-            #region Add application configuration
-
             services.AddOptions();
             services.Configure<ApplicationOptions>(_configuration.GetSection("App"));
 
-            #endregion Add application configuration
+            ConfigureDataLayerServices(services);
+            ConfigureIdentityServerServices(services);
+            ConfigureEmailSenderServices(services);
+            ConfigureSmsSenderServices(services);
 
-            #region Add IdentityServer
+            services.AddTransient<ICrypto, DefaultCrypto>();
+            services.AddTransient<UserAccountService>();
+            services.AddTransient<ClientService>();
+            services.AddAntiforgery();
+            services
+                .AddMvc()
+                .AddRazorOptions(razor =>
+                {
+                    razor.ViewLocationExpanders.Add(new UI.CustomViewLocationExpander());
+                });
+        }
 
-            var cert = new X509Certificate2(Path.Combine(
-                _environment.ContentRootPath, "idsvr3test.pfx"), "idsrv3test");
-
-            services.AddIdentityServer((options) =>
+        internal void ConfigureIdentityServerServices(IServiceCollection services)
+        {
+            var builder = services.AddIdentityServer((options) =>
             {
                 //options.RequireSsl = false;
 
@@ -65,16 +73,30 @@ namespace ServiceBase.IdentityServer.Public
                 options.UserInteraction.ErrorUrl = "/error";
                 options.Authentication.FederatedSignOutPaths.Add("/signout-oidc");
             })
-                .AddTemporarySigningCredential()
-                //AddExtensionGrantValidator<Extensions.ExtensionGrantValidator>()
-                .AddProfileService<ProfileService>()
-                .AddSecretParser<ClientAssertionSecretParser>()
-                .AddSecretValidator<PrivateKeyJwtSecretValidator>()
-                .AddSigningCredential(cert);
+                 .AddProfileService<ProfileService>()
+                 .AddSecretParser<ClientAssertionSecretParser>()
+                 .AddSecretValidator<PrivateKeyJwtSecretValidator>();
 
-            #endregion Add IdentityServer
+            if (_environment.IsDevelopment())
+            {
+                builder.AddTemporarySigningCredential();
+            }
+            else
+            {
+                // TODO: look for operating system maybe ...
 
-            // Add Data Layer
+                var cert = new X509Certificate2(Path.Combine(
+                    _environment.ContentRootPath, "config/idsvr3test.pfx"), "idsrv3test");
+
+                builder.AddSigningCredential(cert);
+
+                /*builder.AddSigningCredential("98D3ACF057299C3745044BE918986AD7ED0AD4A2",
+                    StoreLocation.CurrentUser, nameType: NameType.Thumbprint);*/
+            }
+        }
+
+        internal void ConfigureDataLayerServices(IServiceCollection services)
+        {
             if (String.IsNullOrWhiteSpace(_configuration["EntityFramework"]))
             {
                 services.AddEntityFrameworkSqlServerStores(_configuration.GetSection("EntityFramework"));
@@ -83,9 +105,10 @@ namespace ServiceBase.IdentityServer.Public
             {
                 throw new Exception("Store configuration not present");
             }
+        }
 
-            #region Add Email Sender
-
+        internal void ConfigureEmailSenderServices(IServiceCollection services)
+        {
             services.AddTransient<IEmailService, DebugEmailService>();
             /*services.AddTransient<IEmailService, DefaultEmailService>();
             services.Configure<DefaultEmailServiceOptions>(opt =>
@@ -104,32 +127,15 @@ namespace ServiceBase.IdentityServer.Public
             // else default sender
 
             // services.AddTransient<IEmailFormatter, EmailFormatter>();
+        }
 
-            #endregion Add Email Sender
-
-            #region Add SMS Sender
-
+        internal void ConfigureSmsSenderServices(IServiceCollection services)
+        {
             /*if (String.IsNullOrWhiteSpace(_configuration["Twillio"]))
             {
                 services.Configure<TwillioOptions>(_configuration.GetSection("Twillio"));
                 services.AddTransient<ISmsSender, TwillioSmsSender>();
             }*/
-
-            #endregion Add SMS Sender
-
-            services.AddTransient<ICrypto, DefaultCrypto>();
-            services.AddTransient<UserAccountService>();
-            services.AddTransient<ClientService>();
-
-            // register event service
-            services.AddAntiforgery();
-
-            services
-                .AddMvc()
-                .AddRazorOptions(razor =>
-                {
-                    razor.ViewLocationExpanders.Add(new UI.CustomViewLocationExpander());
-                });
         }
 
         public void Configure(
@@ -146,8 +152,7 @@ namespace ServiceBase.IdentityServer.Public
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 
-            app.UseDeveloperExceptionPage();
-            /*if (env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 //app.UseBrowserLink();
@@ -155,7 +160,7 @@ namespace ServiceBase.IdentityServer.Public
             else
             {
                 app.UseExceptionHandler("/error");
-            }*/
+            }
 
             app.UseIdentityServer();
 
@@ -199,6 +204,18 @@ namespace ServiceBase.IdentityServer.Public
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
             app.UseMiddleware<RequestIdMiddleware>();
+
+            // TODO: if feature "user account api" is enabled
+            /*app.Map("/api", apiApp =>
+            {
+                apiApp.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
+                {
+                    Authority = "https://demo.identityserver.io",
+                    ApiName = "api"
+                });
+
+                apiApp.UseMvc();
+            });*/
 
             app.InitializeStores();
         }
