@@ -16,7 +16,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
     {
         private readonly ApplicationOptions _applicationOptions;
         private readonly ILogger<RecoverController> _logger;
-        private readonly IUserAccountStore _userAccountStore;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IEmailService _emailService;
         private readonly ClientService _clientService;
@@ -33,7 +32,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
-            _userAccountStore = userAccountStore;
             _interaction = interaction;
             _emailService = emailService;
             _clientService = clientService;
@@ -75,19 +73,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
             }));
         }
 
-        private async Task SendUserAccountRecoverAsync(UserAccount userAccount)
-        {
-            var args = new { Key = userAccount.VerificationKey };
-
-            await _emailService.SendEmailAsync(
-                IdentityBaseConstants.EmailTemplates.UserAccountRecover, userAccount.Email, new
-                {
-                    ConfirmUrl = Url.Action("Confirm", "Recover", args, Request.Scheme),
-                    CancelUrl = Url.Action("Cancel", "Recover", args, Request.Scheme)
-                }
-            );
-        }
-
         [HttpPost("recover")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(RecoverInputModel model)
@@ -98,12 +83,21 @@ namespace ServiceBase.IdentityServer.Public.UI.Recover
                 var email = model.Email.ToLower();
 
                 // Check if user with same email exists
-                var userAccount = await _userAccountStore.LoadByEmailAsync(email);
+                var userAccount = await _userAccountService.LoadByEmailAsync(email);
 
                 if (userAccount != null)
                 {
-                    await _userAccountService.SetAccountRecoverAsync(userAccount, model.ReturnUrl);
-                    await this.SendUserAccountRecoverAsync(userAccount);
+                    await _userAccountService.SetResetPasswordVirificationKey(userAccount, model.ReturnUrl);
+
+                    var args = new { Key = userAccount.VerificationKey };
+                    await _emailService.SendEmailAsync(
+                        IdentityBaseConstants.EmailTemplates.UserAccountRecover, userAccount.Email, new
+                        {
+                            ConfirmUrl = Url.Action("Confirm", "Recover", args, Request.Scheme),
+                            CancelUrl = Url.Action("Cancel", "Recover", args, Request.Scheme)
+                        }
+                    );
+
                     return await this.RedirectToSuccessAsync(userAccount, model.ReturnUrl);
                 }
                 else

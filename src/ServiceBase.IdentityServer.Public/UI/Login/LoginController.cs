@@ -1,5 +1,4 @@
-﻿using IdentityServer4;
-using IdentityServer4.Services;
+﻿using IdentityServer4.Services;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

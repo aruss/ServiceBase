@@ -7,8 +7,8 @@ using ServiceBase.IdentityServer.Events;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Models;
 using System;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ServiceBase.IdentityServer.Services
 {
@@ -31,6 +31,12 @@ namespace ServiceBase.IdentityServer.Services
             _eventService = eventService;
         }
 
+        /// <summary>
+        /// Used for local authentication
+        /// </summary>
+        /// <param name="email">Local user account email</param>
+        /// <param name="password">Password</param>
+        /// <returns></returns>
         public async Task<UserAccountVerificationResult> VerifyByEmailAndPasswordAsyc(string email, string password)
         {
             if (String.IsNullOrWhiteSpace(email))
@@ -57,6 +63,27 @@ namespace ServiceBase.IdentityServer.Services
             return result;
         }
 
+        #region Load UserAccounts
+
+        public async Task<UserAccount> LoadByEmailAsync(string email)
+        {
+            return await _userAccountStore.LoadByEmailAsync(email);
+        }
+
+        public async Task<UserAccount> LoadByEmailWithExternalAsync(string email)
+        {
+            return await _userAccountStore.LoadByEmailWithExternalAsync(email);
+        }
+
+        public async Task<UserAccount> LoadByExternalProviderAsync(string provider, string subject)
+        {
+            return await _userAccountStore.LoadByExternalProviderAsync(provider, subject);
+        }
+
+        #endregion
+
+        #region Create new UserAccount
+
         public async Task<UserAccount> CreateNewLocalUserAccountAsync(string email, string password, string returnUrl = null)
         {
             var now = DateTime.UtcNow;
@@ -78,7 +105,12 @@ namespace ServiceBase.IdentityServer.Services
             if (_applicationOptions.RequireLocalAccountVerification &&
                 !String.IsNullOrWhiteSpace(returnUrl))
             {
-                this.SetConfirmAccountVirificationKey(userAccount, returnUrl);
+                // Set verification key
+                userAccount.SetVerification(
+                    _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
+                    VerificationKeyPurpose.ConfirmAccount,
+                    returnUrl,
+                    now);
             }
 
             await _userAccountStore.WriteAsync(userAccount);
@@ -127,7 +159,12 @@ namespace ServiceBase.IdentityServer.Services
             if (_applicationOptions.RequireExternalAccountVerification &&
                 !String.IsNullOrWhiteSpace(returnUrl))
             {
-                this.SetConfirmAccountVirificationKey(userAccount, returnUrl);
+                // Set verification key
+                userAccount.SetVerification(
+                    _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
+                    VerificationKeyPurpose.ConfirmAccount,
+                    returnUrl,
+                    now);
             }
 
             await _userAccountStore.WriteAsync(userAccount);
@@ -140,9 +177,13 @@ namespace ServiceBase.IdentityServer.Services
             return userAccount;
         }
 
+        #endregion Create new UserAccount
+
+        #region Add Local/External Accounts to existing one
+
         public async Task<ExternalAccount> AddExternalAccountAsync(Guid userAccountId, string email, string provider, string subject)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.UtcNow; // TODO: user time service
             var externalAccount = new ExternalAccount
             {
                 UserAccountId = userAccountId,
@@ -163,6 +204,10 @@ namespace ServiceBase.IdentityServer.Services
             return externalAccount;
         }
 
+        #endregion
+
+        #region Update UserAccount in case user is authenticated
+
         public async Task UpdateLastUsedExternalAccountAsync(UserAccount userAccount, string provider, string subject)
         {
             var externalAccount = userAccount.Accounts.FirstOrDefault(c => c.Provider.Equals(provider) && c.Subject.Equals(subject));
@@ -175,6 +220,7 @@ namespace ServiceBase.IdentityServer.Services
 
         public async Task UpdateLastUsedExternalAccountAsync(ExternalAccount externalAccount)
         {
+            // TODO: user time service
             var now = DateTime.UtcNow;
 
             externalAccount.LastLoginAt = now;
@@ -182,7 +228,9 @@ namespace ServiceBase.IdentityServer.Services
 
             await _userAccountStore.WriteExternalAccountAsync(externalAccount);
 
-            // TODO: emit event
+            // Emit event
+            await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(
+                externalAccount.UserAccountId);
         }
 
         public async Task UpdateLastUsedLocalAccountAsync(UserAccount userAccount, bool success)
@@ -208,27 +256,32 @@ namespace ServiceBase.IdentityServer.Services
 
             // Update user account
             userAccount.UpdatedAt = now;
-            await _userAccountStore.WriteAsync(userAccount);
+            userAccount = await _userAccountStore.WriteAsync(userAccount);
 
-            // TODO: emit event
+            // Emit event
+            await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(
+                userAccount.Id);
         }
 
-        public async Task<UserAccount> LoadByEmailWithExternalAsync(string email)
-        {
-            return await _userAccountStore.LoadByEmailWithExternalAsync(email);
-        }
+        #endregion
 
-        public async Task<UserAccount> LoadByExternalProviderAsync(string provider, string subject)
-        {
-            return await _userAccountStore.LoadByExternalProviderAsync(provider, subject);
-        }
+        #region Recover UserAccount
 
-        public async Task SetAccountRecoverAsync(UserAccount userAccount, string returnUrl = null)
+        /// <summary>
+        /// Create verification key and updates the <see cref="UserAccount"/>.
+        /// Will also raise a event
+        /// </summary>
+        /// <param name="userAccount"></param>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
+        public async Task SetResetPasswordVirificationKey(UserAccount userAccount, string returnUrl = null)
         {
-            userAccount.VerificationKey = _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64();
-            userAccount.VerificationPurpose = (int)VerificationKeyPurpose.ResetPassword;
-            userAccount.VerificationKeySentAt = DateTime.UtcNow;
-            userAccount.VerificationStorage = returnUrl;
+            // Set verification key
+            userAccount.SetVerification(
+                _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
+                VerificationKeyPurpose.ResetPassword,
+                returnUrl,
+                DateTime.UtcNow); // TODO: use time service
 
             // Update user account
             await _userAccountStore.WriteAsync(userAccount);
@@ -237,6 +290,10 @@ namespace ServiceBase.IdentityServer.Services
             await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(
                 userAccount.Id);
         }
+
+        #endregion
+
+        #region Confirm UserAccount
 
         public async Task SetEmailVerifiedAsync(UserAccount userAccount)
         {
@@ -249,49 +306,13 @@ namespace ServiceBase.IdentityServer.Services
             await ClearVerificationKeyAsync(userAccount);
         }
 
-        public async Task ClearVerificationKeyAsync(UserAccount userAccount)
-        {
-            userAccount.ClearVerification();
-
-            // Update user account
-            await _userAccountStore.WriteAsync(userAccount);
-
-            // Emit event
-            await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(
-                userAccount.Id);
-        }
-
-        public void SetConfirmAccountVirificationKey(
-            UserAccount userAccount,
-            string returnUrl,
-            DateTime? now = null)
-        {
-            // Set verification key
-            userAccount.SetVerification(
-                _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
-                VerificationKeyPurpose.ConfirmAccount,
-                returnUrl,
-                now);
-        }
-
-        public void SetResetPasswordVirificationKey(
-          UserAccount userAccount,
-          string returnUrl,
-          DateTime? now = null)
-        {
-            // Set verification key
-            userAccount.SetVerification(
-                _crypto.Hash(_crypto.GenerateSalt()).StripUglyBase64(),
-                VerificationKeyPurpose.ResetPassword,
-                returnUrl,
-                now);
-        }
+        #endregion
 
         /// <summary>
-        /// Validate if verification key is valid, if yes it will load a corresponding user account
+        /// Validate if verification key is valid, if yes it will load a corresponding <see cref="UserAccount"/>
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="purpose"></param>
+        /// <param name="key">Verification key</param>
+        /// <param name="purpose"><see cref="VerificationKeyPurpose"/></param>
         /// <returns></returns>
         public async Task<TokenVerificationResult> HandleVerificationKey(
             string key,
@@ -317,6 +338,23 @@ namespace ServiceBase.IdentityServer.Services
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Clears all verification key data and saves the <see cref="UserAccount"/>
+        /// </summary>
+        /// <param name="userAccount"></param>
+        /// <returns></returns>
+        public async Task ClearVerificationKeyAsync(UserAccount userAccount)
+        {
+            userAccount.ClearVerification();
+
+            // Update user account
+            await _userAccountStore.WriteAsync(userAccount);
+
+            // Emit event
+            await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(
+                userAccount.Id);
         }
     }
 

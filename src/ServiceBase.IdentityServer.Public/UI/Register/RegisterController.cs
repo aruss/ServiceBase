@@ -132,6 +132,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             // Merge accounts without user consent
             if (_applicationOptions.AutomaticAccountMerge)
             {
+
+
                 var now = DateTime.UtcNow;
 
                 // Set user account password

@@ -29,7 +29,6 @@ namespace ServiceBase.IdentityServer.Public.UI.Login
         public ExternalController(
             IOptions<ApplicationOptions> applicationOptions,
             ILogger<ExternalController> logger,
-            IUserAccountStore userAccountStore,
             IIdentityServerInteractionService interaction,
             UserAccountService userAccountService)
         {
