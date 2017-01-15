@@ -5,10 +5,12 @@ namespace AspNetCoreWeb.Controllers
 {
     public class AccountController : Controller
     {
-        public async Task Logout()
+        public IActionResult Logout()
         {
-            await HttpContext.Authentication.SignOutAsync("Cookies");
-            await HttpContext.Authentication.SignOutAsync("oidc");
+            //await HttpContext.Authentication.SignOutAsync("Cookies");
+            //await HttpContext.Authentication.SignOutAsync("oidc");
+
+            return new SignOutResult(new[] { "Cookies", "oidc" });
         }
     }
 }
