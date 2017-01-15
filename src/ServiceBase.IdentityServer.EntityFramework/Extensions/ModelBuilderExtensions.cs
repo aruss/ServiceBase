@@ -238,7 +238,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.Extensions
             modelBuilder.Entity<ExternalAccount>(externalAccount =>
             {
                 externalAccount.ToTable(storeOptions.ExternalAccount);
-                externalAccount.HasKey(x => new { x.Provider, x.Subject });
+                externalAccount.HasKey(x => new { x.UserAccountId, x.Provider, x.Subject });
 
 
                 externalAccount.Property(x => x.Provider).IsRequired();

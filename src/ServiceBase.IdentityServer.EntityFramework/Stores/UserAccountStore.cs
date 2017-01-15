@@ -176,18 +176,24 @@ namespace ServiceBase.IdentityServer.EntityFramework.Stores
             {
                 _logger.LogDebug("{userAccountId} not found in database", userAccount.Id);
 
-                userAccountEntity = userAccount.ToEntity();
-                _context.UserAccounts.Add(userAccountEntity);
+                userAccountEntity = _context.UserAccounts.Add(userAccount.ToEntity()).Entity;
             }
             else
             {
                 _logger.LogDebug("{userAccountId} found in database", userAccount.Id);
 
                 userAccount.UpdateEntity(userAccountEntity);
+
+                // HACK:
+                // EF, Automapper exception, “Attaching an entity of type …
+                // failed because another entity of the same type already has
+                // the same primary key value”
+                userAccountEntity.Claims = null;
+                userAccountEntity.Accounts = null;
             }
 
             try
-            {
+           {
                 _context.SaveChanges();
                 return Task.FromResult(userAccountEntity.ToModel());
             }

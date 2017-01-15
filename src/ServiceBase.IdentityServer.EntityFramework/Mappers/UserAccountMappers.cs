@@ -7,40 +7,43 @@ namespace ServiceBase.IdentityServer.EntityFramework.Mappers
     {
         static UserAccountMappers()
         {
-            Mapper = new MapperConfiguration(cfg => cfg.AddProfile<UserAccountProfile>())
-                .CreateMapper();
+            Mapper = new MapperConfiguration(cfg =>
+                cfg.AddProfile<UserAccountProfile>())
+                    .CreateMapper();
         }
 
         internal static IMapper Mapper { get; }
 
-        public static Models.UserAccount ToModel(this UserAccount userAccount)
+        public static Models.UserAccount ToModel(this UserAccount entity)
         {
-            return userAccount == null ? null : Mapper.Map<Models.UserAccount>(userAccount);
+            return entity == null ? null : Mapper.Map<Models.UserAccount>(entity);
         }
 
-        public static UserAccount ToEntity(this Models.UserAccount userAccount)
+        public static UserAccount ToEntity(this Models.UserAccount model)
         {
-            return userAccount == null ? null : Mapper.Map<UserAccount>(userAccount);
+            return model == null ? null : Mapper.Map<UserAccount>(model);
         }
 
-        public static void UpdateEntity(this Models.UserAccount token, UserAccount target)
+        public static void UpdateEntity(
+            this Models.UserAccount model, UserAccount entity)
         {
-            Mapper.Map(token, target);
+            Mapper.Map(model, entity);
         }
 
-        public static Models.ExternalAccount ToModel(this ExternalAccount userAccount)
+        public static Models.ExternalAccount ToModel(this ExternalAccount entity)
         {
-            return userAccount == null ? null : Mapper.Map<Models.ExternalAccount>(userAccount);
+            return entity == null ? null : Mapper.Map<Models.ExternalAccount>(entity);
         }
 
-        public static ExternalAccount ToEntity(this Models.ExternalAccount userAccount)
+        public static ExternalAccount ToEntity(this Models.ExternalAccount model)
         {
-            return userAccount == null ? null : Mapper.Map<ExternalAccount>(userAccount);
+            return model == null ? null : Mapper.Map<ExternalAccount>(model);
         }
 
-        public static void UpdateEntity(this Models.ExternalAccount token, ExternalAccount target)
+        public static void UpdateEntity(
+            this Models.ExternalAccount model, ExternalAccount entity)
         {
-            Mapper.Map(token, target);
+            Mapper.Map(model, entity);
         }
     }
 }

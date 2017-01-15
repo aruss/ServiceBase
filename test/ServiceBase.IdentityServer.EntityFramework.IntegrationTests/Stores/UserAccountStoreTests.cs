@@ -86,6 +86,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
         {
             var testUserAccount = new UserAccount
             {
+                Id = Guid.NewGuid(),
                 Email = "jim2@panse.de",
                 Accounts = new List<ExternalAccount>
                 {
@@ -127,6 +128,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
         {
             var testUserAccount = new UserAccount
             {
+                Id = Guid.NewGuid(),
                 Email = "jim3@panse.de",
                 VerificationKey = Guid.NewGuid().ToString()
             };
@@ -160,6 +162,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
 
             var testUserAccount = new UserAccount
             {
+                Id = Guid.NewGuid(),
                 Email = "jim4@panse.de",
                 Accounts = new List<ExternalAccount>
                 {
@@ -187,16 +190,55 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
         }
 
         [Theory, MemberData(nameof(TestDatabaseProviders))]
-        public void WriteAsync_WhenUserAccountExists_ExpectUserAccountRetured(DbContextOptions<UserAccountDbContext> options)
+        public void WriteAsync_NewUserAccount_ExpectUserAccountRetured(DbContextOptions<UserAccountDbContext> options)
         {
             var testUserAccount1 = new UserAccount
             {
-                Email = "foo@localhost",
+                Id = Guid.NewGuid(),
+                Email = "foo2@localhost",
                 Accounts = new List<ExternalAccount>
                 {
                     new ExternalAccount
                     {
-                        Email = "foo@provider",
+                        Email = "foo2@provider",
+                        Provider = "facebook",
+                        Subject = "123456712",
+                    },
+                    new ExternalAccount
+                    {
+                        Email = "bar2@provider",
+                        Provider = "google",
+                        Subject = "789456111",
+                    }
+                },
+                Claims = new List<UserAccountClaim>
+                {
+                    new UserAccountClaim("name", "foo2"),
+                    new UserAccountClaim("email", "foo2@localhost"),
+                }
+            };
+
+            using (var context = new UserAccountDbContext(options, StoreOptions))
+            {
+                var store = new UserAccountStore(context, NullLogger<UserAccountStore>.Create());
+
+                var userAccount = store.WriteAsync(testUserAccount1).Result;
+                Assert.NotNull(userAccount);
+            }
+        }
+
+        [Theory, MemberData(nameof(TestDatabaseProviders))]
+        public void WriteAsync_UpdateUserAccount_ExpectUserAccountRetured(DbContextOptions<UserAccountDbContext> options)
+        {
+            var testUserAccount1 = new UserAccount
+            {
+                Id = Guid.NewGuid(),
+                Email = "foox@localhost",
+                Accounts = new List<ExternalAccount>
+                {
+                    new ExternalAccount
+                    {
+                        Email = "foox@provider",
                         Provider = "facebook",
                         Subject = "123456789",
                     },
@@ -211,31 +253,7 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
                 {
                     new UserAccountClaim("name", "foo"),
                     new UserAccountClaim("email", "foo@localhost"),
-                }
-            };
-
-            var testUserAccount2 = new UserAccount
-            {
-                Email = "bar@localhost",
-                Accounts = new List<ExternalAccount>
-                {
-                    new ExternalAccount
-                    {
-                        Email = "baz@provider",
-                        Provider = "facebook",
-                        Subject = "465462131",
-                    },
-                    new ExternalAccount
-                    {
-                        Email = "butz@provider",
-                        Provider = "hotmail",
-                        Subject = "798756136",
-                    }
-                },
-                Claims = new List<UserAccountClaim>
-                {
-                    new UserAccountClaim("name", "bar"),
-                    new UserAccountClaim("email", "bar@localhost"),
+                    new UserAccountClaim("w00t", "some junk"),
                 }
             };
 
@@ -243,6 +261,8 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
             {
                 context.UserAccounts.Add(testUserAccount1.ToEntity());
                 context.SaveChanges();
+                testUserAccount1 = context.UserAccounts.AsNoTracking()
+                    .FirstOrDefault(c => c.Id == testUserAccount1.Id).ToModel();
             }
 
             UserAccount userAccount;
@@ -250,10 +270,27 @@ namespace ServiceBase.IdentityServer.EntityFramework.IntegrationTests.Stores
             {
                 var store = new UserAccountStore(context, NullLogger<UserAccountStore>.Create());
 
-                userAccount = store.WriteAsync(testUserAccount2).Result;
+                testUserAccount1.VerificationKeySentAt = DateTime.Now;
+                testUserAccount1.VerificationPurpose = 1;
+                testUserAccount1.VerificationStorage = "hallo welt";
+
+                userAccount = store.WriteAsync(testUserAccount1).Result;
+
+                Assert.NotNull(userAccount);
             }
 
-            Assert.NotNull(userAccount);
+            using (var context = new UserAccountDbContext(options, StoreOptions))
+            {
+                var updatedAccount = testUserAccount1 = context.UserAccounts
+                    .Include(c => c.Accounts)
+                    .Include(c => c.Claims)
+                   .FirstOrDefault(c => c.Id == testUserAccount1.Id).ToModel();
+
+                Assert.NotNull(updatedAccount);
+                Assert.Equal(updatedAccount.VerificationStorage, userAccount.VerificationStorage);
+                Assert.Equal(2, updatedAccount.Accounts.Count());
+                Assert.Equal(3, updatedAccount.Claims.Count());
+            }
         }
     }
 }
