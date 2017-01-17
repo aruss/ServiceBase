@@ -12,7 +12,6 @@
   "dependencies": {
     "xunit": "2.2.0-beta4-build3444",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
-    "Microsoft.DotNet.InternalAbstractions": "1.0.500-preview2-1-003177",
     "Moq": "4.6.38-alpha",
     "AngleSharp": "0.9.9",
     "HtmlAgilityPack.NetCore": "1.5.0.1",

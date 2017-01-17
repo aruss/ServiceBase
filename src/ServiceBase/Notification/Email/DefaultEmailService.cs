@@ -9,7 +9,7 @@ namespace ServiceBase.Notification.Email
 {
     public class DefaultEmailService : IEmailService
     {
-        private readonly IEmailSender _emailSender; 
+        private readonly IEmailSender _emailSender;
         private readonly DefaultEmailServiceOptions _options;
         private readonly ILogger<DefaultEmailService> _logger;
         private readonly TextFormatter _textFormatter;
@@ -22,7 +22,7 @@ namespace ServiceBase.Notification.Email
             _logger = logger;
             _options = options.Value;
             _emailSender = emailSender;
-            _textFormatter = new TextFormatter(); 
+            _textFormatter = new TextFormatter();
         }
 
         public async Task SendEmailAsync(string templateName, string email, object viewData)
@@ -30,12 +30,12 @@ namespace ServiceBase.Notification.Email
             IDictionary<string, object> dict = viewData as Dictionary<string, object>;
             if (dict == null)
             {
-                dict = viewData.ToDictionary(); 
+                dict = viewData.ToDictionary();
             }
-            
+
             var emailMessage = new EmailMessage();
 
-            emailMessage.Email = email;            
+            emailMessage.EmailTo = email;
 
             emailMessage.Subject = _textFormatter.Format(
                 Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
