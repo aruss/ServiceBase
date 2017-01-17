@@ -11,8 +11,10 @@ using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.EntityFramework;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Services;
-using ServiceBase.Notification.Sms;
 using ServiceBase.Notification.Email;
+using ServiceBase.Notification.SendGrid;
+using ServiceBase.Notification.Sms;
+using ServiceBase.Notification.Smtp;
 using ServiceBase.Notification.Twilio;
 using System;
 using System.IO;
@@ -111,24 +113,25 @@ namespace ServiceBase.IdentityServer.Public
 
         internal void ConfigureEmailSenderServices(IServiceCollection services)
         {
-            services.AddTransient<IEmailService, DebugEmailService>();
-            /*services.AddTransient<IEmailService, DefaultEmailService>();
-            services.Configure<DefaultEmailServiceOptions>(opt =>
-            {
-                opt.TemplateDirectoryPath = Path.Combine(_environment.ContentRootPath, "EmailTemplates");
-            });
-
             if (String.IsNullOrWhiteSpace(_configuration["SendGrid"]))
             {
+                services.AddTransient<IEmailService, DefaultEmailService>();
                 services.Configure<SendGridOptions>(_configuration.GetSection("SendGrid"));
                 services.AddTransient<IEmailSender, SendGridEmailSender>();
-            }*/
+            }
+            else if (String.IsNullOrWhiteSpace(_configuration["Smtp"]))
+            {
+                services.AddTransient<IEmailService, DefaultEmailService>();
+                services.Configure<SmtpOptions>(_configuration.GetSection("Smtp"));
+                services.AddTransient<IEmailSender, SmtpEmailSender>();
+            }
             // else if o360
             // else if MailGun
-            // else if SMTP
-            // else default sender
-
-            // services.AddTransient<IEmailFormatter, EmailFormatter>();
+            else
+            {
+                _logger.LogError("Email Service configuration not present");
+                services.AddTransient<IEmailService, DebugEmailService>();
+            }
         }
 
         internal void ConfigureSmsSenderServices(IServiceCollection services)

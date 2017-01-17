@@ -1,6 +1,6 @@
 ﻿namespace ServiceBase.Notification.Smtp
 {
-    public class SmptOptions
+    public class SmtpOptions
     {
         public string EmailFrom { get; set; }
         public string Host { get; set; }

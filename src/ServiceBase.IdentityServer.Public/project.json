@@ -33,6 +33,12 @@
 
     "ServiceBase.Notification.Twilio": {
       "target": "project"
+    },
+    "ServiceBase.Notification.SendGrid": {
+      "target": "project"
+    },
+    "ServiceBase.Notification.Smtp": {
+      "target": "project"
     }
   },
 

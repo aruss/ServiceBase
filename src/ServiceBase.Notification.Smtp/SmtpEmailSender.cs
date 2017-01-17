@@ -11,11 +11,11 @@ namespace ServiceBase.Notification.Smtp
 {
     public class SmtpEmailSender : IEmailSender
     {
-        private readonly SmptOptions _options;
+        private readonly SmtpOptions _options;
         private readonly ILogger<SmtpEmailSender> _logger;
 
         public SmtpEmailSender(
-            IOptions<SmptOptions> options,
+            IOptions<SmtpOptions> options,
             ILogger<SmtpEmailSender> logger)
         {
             _logger = logger;
