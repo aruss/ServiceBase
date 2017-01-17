@@ -80,6 +80,11 @@ namespace ServiceBase.IdentityServer.Services
             return await _userAccountStore.LoadByExternalProviderAsync(provider, subject);
         }
 
+        public async Task DeleteByIdAsync(Guid id)
+        {
+            await _userAccountStore.DeleteByIdAsync(id);
+        }
+
         #endregion
 
         #region Create new UserAccount
@@ -202,6 +207,29 @@ namespace ServiceBase.IdentityServer.Services
             await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(userAccountId);
 
             return externalAccount;
+        }
+
+        public async Task<UserAccount> AddLocalCredentialsAsync(Guid userAccountId, string password)
+        {
+            var userAccount = await _userAccountStore.LoadByIdAsync(userAccountId);
+            return await AddLocalCredentialsAsync(userAccount, password);
+        }
+
+        public async Task<UserAccount> AddLocalCredentialsAsync(UserAccount userAccount, string password)
+        {
+            var now = DateTime.UtcNow; // TODO: user time service
+
+            // Set user account password
+            userAccount.PasswordHash = _crypto.HashPassword(password,
+                _applicationOptions.PasswordHashingIterationCount);
+
+            userAccount.UpdatedAt = now;
+            userAccount = await _userAccountStore.WriteAsync(userAccount);
+
+            // Emit event
+            await _eventService.RaiseSuccessfulUserAccountUpdatedEventAsync(userAccount.Id);
+
+            return userAccount;
         }
 
         #endregion

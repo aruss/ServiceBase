@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServiceBase.IdentityServer.Configuration;
-using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Models;
 using ServiceBase.IdentityServer.Services;
@@ -19,10 +18,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
         private readonly ApplicationOptions _applicationOptions;
         private readonly ILogger<RegisterController> _logger;
         private readonly IIdentityServerInteractionService _interaction;
-        private readonly IUserAccountStore _userAccountStore;
-        private readonly ICrypto _crypto;
         private readonly IEmailService _emailService;
-        private readonly IEventService _eventService;
         private readonly UserAccountService _userAccountService;
         private readonly ClientService _clientService;
 
@@ -30,20 +26,14 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             IOptions<ApplicationOptions> applicationOptions,
             ILogger<RegisterController> logger,
             IIdentityServerInteractionService interaction,
-            IUserAccountStore userAccountStore,
-            ICrypto crypto,
             IEmailService emailService,
-            IEventService eventService,
             UserAccountService userAccountService,
             ClientService clientService)
         {
             _applicationOptions = applicationOptions.Value;
             _logger = logger;
             _interaction = interaction;
-            _userAccountStore = userAccountStore;
             _emailService = emailService;
-            _crypto = crypto;
-            _eventService = eventService;
             _userAccountService = userAccountService;
             _clientService = clientService;
         }
@@ -121,6 +111,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             return Redirect(Url.Action("Success", "Register", new
             {
                 returnUrl = returnUrl,
+                // TODO: load provider info
                 provider = userAccount.Email.Split('@').LastOrDefault()
             }));
         }
@@ -132,19 +123,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             // Merge accounts without user consent
             if (_applicationOptions.AutomaticAccountMerge)
             {
-
-
-                var now = DateTime.UtcNow;
-
-                // Set user account password
-                userAccount.PasswordHash = _crypto.HashPassword(model.Password,
-                    _applicationOptions.PasswordHashingIterationCount);
-
-                // If application settings require account verification a verification token will be generated
-                //SetConfirmationVirificationKey(userAccount, model.ReturnUrl, now);
-
-                // Send email
-                //await SendConfirmationMail(userAccount);
+                await _userAccountService.AddLocalCredentialsAsync(userAccount, model.Password);
 
                 if (_applicationOptions.LoginAfterAccountCreation)
                 {
@@ -181,7 +160,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                 var email = model.Email.ToLower();
 
                 // Check if user with same email exists
-                var userAccount = await _userAccountStore.LoadByEmailWithExternalAsync(email);
+                var userAccount = await _userAccountService.LoadByEmailWithExternalAsync(email);
 
                 // If user dont exists create a new one
                 if (userAccount == null)
@@ -201,6 +180,8 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
                         && !userAccount.IsEmailVerified)
                     {
                         ModelState.AddModelError("", "Please confirm your email account");
+
+                        // TODO: show link for resent confirmation link
                     }
 
                     // If user has a password then its a local account
@@ -268,7 +249,7 @@ namespace ServiceBase.IdentityServer.Public.UI.Register
             }
 
             var returnUrl = result.UserAccount.VerificationStorage;
-            await _userAccountStore.DeleteByIdAsync(result.UserAccount.Id);
+            await _userAccountService.DeleteByIdAsync(result.UserAccount.Id);
             return Redirect(Url.Action("Login", "Login", new { returnUrl = returnUrl }));
         }
     }
