@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ServiceBase.Notification.SMS;
+using ServiceBase.Notification.Sms;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -23,6 +23,14 @@ namespace ServiceBase.Notification.Twilio
             _options = options.Value;
         }
 
+        public TwillioSmsSender(
+            TwillioOptions options,
+            ILogger<TwillioSmsSender> logger)
+        {
+            _logger = logger;
+            _options = options;
+
+        }
         public async Task SendSmsAsync(string number, string message)
         {
             _logger.LogInformation($"Send SMS to {number} \"{message}\"");
@@ -35,12 +43,17 @@ namespace ServiceBase.Notification.Twilio
                 var content = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string, string>("To", number),
-                    //new KeyValuePair<string, string>("From", _options.From),
+                    new KeyValuePair<string, string>("From", _options.From),
                     new KeyValuePair<string, string>("Body", message)
                 });
 
                 var url = $"https://api.twilio.com/2010-04-01/Accounts/{_options.Sid}/Messages.json";
-                await client.PostAsync(url, content).ConfigureAwait(false);
+                var result = await client.PostAsync(url, content).ConfigureAwait(false);
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    _logger.LogError(result);
+                }
             }
         }
     }

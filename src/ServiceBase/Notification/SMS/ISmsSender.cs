@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ServiceBase.Notification.SMS
+namespace ServiceBase.Notification.Sms
 {
     public interface ISmsSender
     {

@@ -11,7 +11,9 @@ using ServiceBase.IdentityServer.Crypto;
 using ServiceBase.IdentityServer.EntityFramework;
 using ServiceBase.IdentityServer.Extensions;
 using ServiceBase.IdentityServer.Services;
+using ServiceBase.Notification.Sms;
 using ServiceBase.Notification.Email;
+using ServiceBase.Notification.Twilio;
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
@@ -131,11 +133,18 @@ namespace ServiceBase.IdentityServer.Public
 
         internal void ConfigureSmsSenderServices(IServiceCollection services)
         {
-            /*if (String.IsNullOrWhiteSpace(_configuration["Twillio"]))
+            if (String.IsNullOrWhiteSpace(_configuration["Twillio"]))
             {
+                services.AddTransient<ISmsService, DefaultSmsService>();
                 services.Configure<TwillioOptions>(_configuration.GetSection("Twillio"));
                 services.AddTransient<ISmsSender, TwillioSmsSender>();
-            }*/
+            }
+            // TODO: Add additional services here
+            else
+            {
+                _logger.LogError("SMS Service configuration not present");
+                services.AddTransient<ISmsService, DebugSmsService>();
+            }
         }
 
         public void Configure(

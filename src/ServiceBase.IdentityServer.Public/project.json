@@ -29,7 +29,11 @@
       "target": "project"
     },
     "Microsoft.AspNetCore.Hosting": "1.1.0",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.1.0"
+    "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
+
+    "ServiceBase.Notification.Twilio": {
+      "target": "project"
+    }
   },
 
   "tools": {
