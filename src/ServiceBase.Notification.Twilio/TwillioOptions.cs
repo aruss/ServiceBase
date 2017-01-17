@@ -2,7 +2,8 @@
 {
     public class TwillioOptions
     {
-        public string User { get; set; }
-        public string Key { get; set; }
+        public string Sid { get; set; }
+        public string Token { get; set; }
+        public string From { get; set; }
     }
 }
