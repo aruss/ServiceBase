@@ -30,11 +30,6 @@ rm -rf $COVERAGE_DIR
 mkdir $COVERAGE_DIR
 
 PROJECTS=(\
-"ServiceBase.IdentityServer.EntityFramework.IntegrationTests" \
-"ServiceBase.IdentityServer.EntityFramework.UnitTests" \
-"ServiceBase.IdentityServer.Public.IntegrationTests" \
-"ServiceBase.IdentityServer.Public.UnitTests" \
-"ServiceBase.IdentityServer.UnitTests" \
 "ServiceBase.UnitTests")
 
 for PROJECT in "${PROJECTS[@]}"

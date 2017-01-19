@@ -29,12 +29,7 @@ mkdir $COVERAGE_DIR
 echo "Calculating coverage with OpenCover"
 
 PROJECTS=(\
-#"ServiceBase.IdentityServer.EntityFramework.IntegrationTests" \
-#"ServiceBase.IdentityServer.EntityFramework.UnitTests" \
-"ServiceBase.IdentityServer.Public.IntegrationTests" \
-#"ServiceBase.IdentityServer.Public.UnitTests" \
-#"ServiceBase.IdentityServer.UnitTests" \
-#"ServiceBase.UnitTests"\
+"ServiceBase.UnitTests"\
 )
 
 for PROJECT in "${PROJECTS[@]}"
