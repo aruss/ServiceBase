@@ -38,11 +38,11 @@ namespace ServiceBase.Notification.Email
             emailMessage.EmailTo = email;
 
             emailMessage.Subject = _textFormatter.Format(
-                Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
+                Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Subject.txt"),
                 dict);
 
             emailMessage.Text = _textFormatter.Format(
-                Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Subject.txt"),
+                Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
                 dict);
 
             await _emailSender.SendEmailAsync(emailMessage);
