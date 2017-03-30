@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ServiceBase.IdentityServer.UnitTests.Events
+namespace ServiceBase.UnitTests
 {
     [Collection("ServiceBase")]
     public class InflectorTests

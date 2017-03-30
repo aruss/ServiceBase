@@ -31,6 +31,7 @@ namespace ServiceBase.Notification.Twilio
             _options = options;
 
         }
+
         public async Task SendSmsAsync(string number, string message)
         {
             _logger.LogInformation($"Send SMS to {number} \"{message}\"");

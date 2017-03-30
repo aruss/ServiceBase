@@ -201,7 +201,7 @@ namespace ServiceBase.Extensions
             return url + query;
         }
 
-        [DebuggerStepThrough]
+        /*[DebuggerStepThrough]
         public static NameValueCollection ReadQueryStringAsNameValueCollection(this string url)
         {
             if (url != null)
@@ -219,7 +219,7 @@ namespace ServiceBase.Extensions
             }
 
             return new NameValueCollection();
-        }
+        }*/
 
         [DebuggerStepThrough]
         public static string GetOrigin(this string url)

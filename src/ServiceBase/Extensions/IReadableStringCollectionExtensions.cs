@@ -10,7 +10,7 @@ namespace Microsoft.AspNetCore.Http
 {
     public static class IReadableStringCollectionExtensions
     {
-        public static NameValueCollection AsNameValueCollection(this IEnumerable<KeyValuePair<string, StringValues>> collection)
+        /*public static NameValueCollection AsNameValueCollection(this IEnumerable<KeyValuePair<string, StringValues>> collection)
         {
             var nv = new NameValueCollection();
 
@@ -32,6 +32,6 @@ namespace Microsoft.AspNetCore.Http
             }
 
             return nv;
-        }
+        }*/
     }
 }
