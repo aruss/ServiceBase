@@ -12,7 +12,7 @@ COVERAGE_DIR=./coverage/report
 COVERAGE_HISTORY_DIR=./coverage/history
 
 rm -rf $COVERAGE_DIR
-mkdir $COVERAGE_DIR
+mkdir -p $COVERAGE_DIR
 
 PROJECTS=(\
 "ServiceBase.UnitTests\ServiceBase.UnitTests.csproj")
