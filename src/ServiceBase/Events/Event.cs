@@ -3,16 +3,17 @@
 
 using ServiceBase.Extensions;
 using System;
+using System.Threading.Tasks;
 
 namespace ServiceBase.Events
 {
     /// <summary>
     /// Models base class for events raised from IdentityServer.
     /// </summary>
-    public class Event<T>
+    public abstract class Event
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Event{T}" /> class.
+        /// Initializes a new instance of the <see cref="Event" /> class.
         /// </summary>
         /// <param name="category">The category.</param>
         /// <param name="name">The name.</param>
@@ -22,72 +23,30 @@ namespace ServiceBase.Events
         /// <exception cref="System.ArgumentNullException">category</exception>
         public Event(string category, string name, EventTypes type, int id, string message = null)
         {
-            if (category.IsMissing()) throw new ArgumentNullException(nameof(category));
+            Category = category ?? throw new ArgumentNullException(nameof(category));
+            Name = name ?? throw new ArgumentNullException(nameof(name));
 
-            Category = category;
-            Name = name;
             EventType = type;
             Id = id;
             Message = message;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Event{T}" /> class.
+        /// Allows implementing custom initialization logic.
         /// </summary>
-        /// <param name="category">The category.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="type">The type.</param>
-        /// <param name="id">The identifier.</param>
-        /// <param name="details">The details.</param>
-        /// <param name="message">The message.</param>
-        public Event(string category, string name, EventTypes type, int id, T details, string message = null)
-            : this(category, name, type, id, message)
+        /// <returns></returns>
+        protected internal virtual Task PrepareAsync()
         {
-            Details = details;
-        }
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Event{T}" /> class.
-        /// </summary>
-        /// <param name="category">The category.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="type">The type.</param>
-        /// <param name="id">The identifier.</param>
-        /// <param name="detailsFunc">The details function.</param>
-        /// <param name="message">The message.</param>
-        public Event(string category, string name, EventTypes type, int id, Func<T> detailsFunc, string message = null)
-            : this(category, name, type, id, message)
-        {
-            DetailsFunc = detailsFunc;
+            return Task.FromResult(0);
         }
 
         /// <summary>
-        /// Gets or sets the details function.
-        /// </summary>
-        /// <value>
-        /// The details function.
-        /// </value>
-        [Newtonsoft.Json.JsonIgnore]
-        public Func<T> DetailsFunc { get; set; }
-
-        /// <summary>
-        /// Allows event to defer data initialization until the event will be raised.
-        /// </summary>
-        internal void Prepare()
-        {
-            if (DetailsFunc != null)
-            {
-                Details = DetailsFunc();
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the event category. <see cref="EventConstants.Categories"/> for a list of the defined categories.
+        /// Gets or sets the category.
         /// </summary>
         /// <value>
         /// The category.
         /// </value>
+        [Newtonsoft.Json.JsonProperty(Order = -99)]
         public string Category { get; set; }
 
         /// <summary>
@@ -96,6 +55,7 @@ namespace ServiceBase.Events
         /// <value>
         /// The name.
         /// </value>
+        [Newtonsoft.Json.JsonProperty(Order = -100)]
         public string Name { get; set; }
 
         /// <summary>
@@ -104,14 +64,16 @@ namespace ServiceBase.Events
         /// <value>
         /// The type of the event.
         /// </value>
+        [Newtonsoft.Json.JsonProperty(Order = -98)]
         public EventTypes EventType { get; set; }
 
         /// <summary>
-        /// Gets or sets the event identifier. <see cref="EventConstants.Ids"/> for the list of the defined identifiers.
+        /// Gets or sets the identifier.
         /// </summary>
         /// <value>
         /// The identifier.
         /// </value>
+        [Newtonsoft.Json.JsonProperty(Order = -97)]
         public int Id { get; set; }
 
         /// <summary>
@@ -123,20 +85,60 @@ namespace ServiceBase.Events
         public string Message { get; set; }
 
         /// <summary>
-        /// Gets or sets the event details.
+        /// Gets or sets the per-request activity identifier.
         /// </summary>
         /// <value>
-        /// The details.
+        /// The activity identifier.
         /// </value>
-        public T Details { get; set; }
+        public string ActivityId { get; set; }
 
         /// <summary>
-        /// Gets or sets the event context.
+        /// Gets or sets the time stamp when the event was raised.
         /// </summary>
         /// <value>
-        /// The context.
+        /// The time stamp.
         /// </value>
-        public EventContext Context { get; set; }
+        public DateTime TimeStamp { get; set; }
+
+        /// <summary>
+        /// Gets or sets the server process identifier.
+        /// </summary>
+        /// <value>
+        /// The process identifier.
+        /// </value>
+        public int ProcessId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the local ip address of the current request.
+        /// </summary>
+        /// <value>
+        /// The local ip address.
+        /// </value>
+        public string LocalIpAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the remote ip address of the current request.
+        /// </summary>
+        /// <value>
+        /// The remote ip address.
+        /// </value>
+        public string RemoteIpAddress { get; set; }
+
+        /// <summary>
+        /// Obfuscates a token.
+        /// </summary>
+        /// <param name="value">The token.</param>
+        /// <returns></returns>
+        protected static string Obfuscate(string value)
+        {
+            string last4chars = "****";
+            if (value.IsPresent() && value.Length > 4)
+            {
+                last4chars = value.Substring(value.Length - 4);
+            }
+
+            return "****" + last4chars;
+        }
     }
 }
 
