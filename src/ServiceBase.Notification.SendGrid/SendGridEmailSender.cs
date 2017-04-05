@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using ServiceBase.Notification.Email;
 using System.Threading.Tasks;
 
@@ -21,8 +23,18 @@ namespace ServiceBase.Notification.SendGrid
 
         public async Task SendEmailAsync(EmailMessage message)
         {
+            var client = new SendGridClient(_options.Key);
+            var msg = new SendGridMessage
+            {
+                From = new EmailAddress(message.EmailFrom),
+                Subject = message.Subject,
+                PlainTextContent = message.Text,
+                HtmlContent = message.Html
+            };
+            msg.AddTo(new EmailAddress(message.EmailTo));
+            var result = await client.SendEmailAsync(msg);
+
             _logger.LogInformation(JsonConvert.SerializeObject(message));
-            await Task.FromResult(0);
         }
     }
 }
