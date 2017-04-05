@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.1" />
+    <PackageReference Include="Sendgrid" Version="9.1.0" />
   </ItemGroup>
 
   <ItemGroup>
