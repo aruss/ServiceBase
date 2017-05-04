@@ -16,7 +16,6 @@ build_script:
   - dotnet build .\ServiceBase.sln --configuration Release --version-suffix %APPVEYOR_BUILD_NUMBER%
 
 test_script:
-  - bash coverage.sh
   - bash coveralls.sh
 
 deploy: off
