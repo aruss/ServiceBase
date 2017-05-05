@@ -9,10 +9,15 @@ namespace ServiceBase.Configuration
     {
         public static IConfigurationRoot Configure(IHostingEnvironment environment, Action<IConfigurationBuilder> configAction = null)
         {
+            return Configure(environment.ContentRootPath, environment.EnvironmentName, configAction); 
+        }
+
+        public static IConfigurationRoot Configure(string contentRootPath, string environmentName, Action<IConfigurationBuilder> configAction = null)
+        {
             var builder = new ConfigurationBuilder()
-               .SetBasePath(environment.ContentRootPath)
+               .SetBasePath(contentRootPath)
                .AddJsonFile(Path.Combine("Config", "config.json"), optional: false, reloadOnChange: true)
-               .AddJsonFile(Path.Combine("Config", $"config.{environment.EnvironmentName}.json"), optional: true, reloadOnChange: true);
+               .AddJsonFile(Path.Combine("Config", $"config.{environmentName}.json"), optional: true, reloadOnChange: true);
                         
             builder.AddEnvironmentVariables();
 
