@@ -20,7 +20,7 @@ namespace ServiceBase.Extensions
         [DebuggerStepThrough]
         public static bool ToBoolean(this string value, bool defaultValue = false)
         {
-            if (String.IsNullOrWhiteSpace(value))
+            if (!string.IsNullOrWhiteSpace(value))
             {
                 return Booleans.Contains(value.ToString().ToLower());
             }
