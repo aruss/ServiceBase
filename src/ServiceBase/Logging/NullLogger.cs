@@ -2,10 +2,9 @@
 using Microsoft.Extensions.Options;
 using System;
 
-namespace ServiceBase.Xunit
+namespace ServiceBase.Logging
 {
-    public class NullLogger<TCategoryName> :
-        NullLogger, ILogger<TCategoryName>
+    public class NullLogger<TCategoryName> : NullLogger, ILogger<TCategoryName>
     {
         public static ILogger<TCategoryName> Create()
         {

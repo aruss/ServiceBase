@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using ServiceBase.Logging;
+﻿using ServiceBase.Logging;
 
 namespace Microsoft.Extensions.Logging
 {
