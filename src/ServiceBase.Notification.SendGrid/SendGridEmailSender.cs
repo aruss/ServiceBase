@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -13,12 +12,10 @@ namespace ServiceBase.Notification.SendGrid
         private readonly SendGridOptions _options;
         private readonly ILogger<SendGridEmailSender> _logger;
 
-        public SendGridEmailSender(
-            IOptions<SendGridOptions> options,
-            ILogger<SendGridEmailSender> logger)
+        public SendGridEmailSender(SendGridOptions options, ILogger<SendGridEmailSender> logger)
         {
             _logger = logger;
-            _options = options.Value;
+            _options = options; 
         }
 
         public async Task SendEmailAsync(EmailMessage message)

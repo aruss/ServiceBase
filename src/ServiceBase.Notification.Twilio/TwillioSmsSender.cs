@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ServiceBase.Notification.Sms;
 using System;
 using System.Collections.Generic;
@@ -15,21 +14,10 @@ namespace ServiceBase.Notification.Twilio
         private readonly TwillioOptions _options;
         private readonly ILogger<TwillioSmsSender> _logger;
 
-        public TwillioSmsSender(
-            IOptions<TwillioOptions> options,
-            ILogger<TwillioSmsSender> logger)
-        {
-            _logger = logger;
-            _options = options.Value;
-        }
-
-        public TwillioSmsSender(
-            TwillioOptions options,
-            ILogger<TwillioSmsSender> logger)
+        public TwillioSmsSender(TwillioOptions options, ILogger<TwillioSmsSender> logger)
         {
             _logger = logger;
             _options = options;
-
         }
 
         public async Task SendSmsAsync(string number, string message)

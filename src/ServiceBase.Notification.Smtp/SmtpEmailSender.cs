@@ -1,6 +1,5 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using ServiceBase.Notification.Email;
@@ -14,12 +13,10 @@ namespace ServiceBase.Notification.Smtp
         private readonly SmtpOptions _options;
         private readonly ILogger<SmtpEmailSender> _logger;
 
-        public SmtpEmailSender(
-            IOptions<SmtpOptions> options,
-            ILogger<SmtpEmailSender> logger)
+        public SmtpEmailSender(SmtpOptions options, ILogger<SmtpEmailSender> logger)
         {
             _logger = logger;
-            _options = options.Value;
+            _options = options;
         }
 
         public async Task SendEmailAsync(EmailMessage message)
