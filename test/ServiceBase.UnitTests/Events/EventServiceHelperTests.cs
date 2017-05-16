@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace ServiceBase.IdentityServer.Public.IntegrationTests
+namespace IdentityBase.Public.IntegrationTests
 {
     [Collection("ServiceBase")]
     public class EventServiceHelperTests : IDisposable
