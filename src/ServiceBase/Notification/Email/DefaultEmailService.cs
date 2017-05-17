@@ -15,12 +15,12 @@ namespace ServiceBase.Notification.Email
         private readonly TextFormatter _textFormatter;
 
         public DefaultEmailService(
-            IOptions<DefaultEmailServiceOptions> options,
+            DefaultEmailServiceOptions options,
             ILogger<DefaultEmailService> logger,
             IEmailSender emailSender)
         {
             _logger = logger;
-            _options = options.Value;
+            _options = options;
             _emailSender = emailSender;
             _textFormatter = new TextFormatter();
         }

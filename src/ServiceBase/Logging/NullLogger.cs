@@ -38,8 +38,7 @@ namespace ServiceBase.Logging
         }
     }
 
-    public class Options<TOptions> :
-        IOptions<TOptions> where TOptions : class, new()
+    public class Options<TOptions> : IOptions<TOptions> where TOptions : class, new()
     {
         private TOptions _options;
 

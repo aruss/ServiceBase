@@ -16,12 +16,12 @@ namespace ServiceBase.Notification.Sms
         private readonly TextFormatter _textFormatter;
 
         public DefaultSmsService(
-            IOptions<DefaultSmsServiceOptions> options,
+            DefaultSmsServiceOptions options,
             ILogger<DefaultSmsService> logger,
             ISmsSender smsSender)
         {
             _logger = logger;
-            _options = options.Value;
+            _options = options;
             _smsSender = smsSender;
             _textFormatter = new TextFormatter();
         }
