@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>SMTP notification email sender for ServiceBase.Notification.Email</Description>
+    <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
+    <PackageTags>dotnet dotnet-core smtp</PackageTags>
+    <Company />
+    <Authors>Russlan Akiev</Authors>
   </PropertyGroup>
 
   <ItemGroup>

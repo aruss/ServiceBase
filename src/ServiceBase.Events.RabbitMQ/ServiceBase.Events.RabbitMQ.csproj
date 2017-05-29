@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Russlan Akiev</Authors>
+    <Company />
+    <Product>ServiceBase.Events.RabbitMQ</Product>
+    <Description>RabbitMQ event sink for ServiceBase.Events</Description>
+    <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
+    <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
+    <PackageTags>dotnet dotnet-core rabbitmq</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

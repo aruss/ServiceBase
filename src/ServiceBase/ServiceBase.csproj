@@ -2,12 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <PackageId>ServiceBase</PackageId>
+    <PackageVersion>$(VersionSuffix)</PackageVersion>
+    <Authors>Russlan Akiev</Authors>
+    <Description>Common bits and parts for building web services</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
+    <PackageTags>dotnet dotnet-core</PackageTags>
+    <RepositoryUrl></RepositoryUrl>
+    <RepositoryType></RepositoryType>
+    <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Company />
+    <Product>ServiceBase</Product>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Events\EventContext.cs" />
-    <Compile Remove="Events\EventServiceHelper.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.2" />

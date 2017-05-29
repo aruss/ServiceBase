@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <Authors>Russlan Akiev</Authors>
+    <Company />
+    <Description>Twillio notification sms sender for ServiceBase.Notification.Sms</Description>
+    <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
+    <PackageTags>dotnet dotnet-core twillio</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
