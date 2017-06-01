@@ -1,48 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace ServiceBase.Authorization
 {
-    public class ScopeAuthorizeAttribute : AuthorizeAttribute
-    {
-        public string Issuer { get; set; }
-        public string Scope {  get { return this.Policy; } }
-
-        public ScopeAuthorizeAttribute(string scope) : base(scope)
-        {
-            
-        }
-
-        public ScopeAuthorizeAttribute(string scope, string issuer) : base(scope)
-        {
-            this.Issuer = issuer; 
-        }
-    }
-    
-    public static class ScopeAuthorizeIServiceCollectionExtensions
-    {
-        public static IServiceCollection AddScopeAuthorization(this IServiceCollection services)
-        {
-            services.AddAuthorization(options =>
-            {
-                //options.AddScopePolicy("useraccount:read", issuer);
-                //options.AddScopePolicy("useraccount:write", issuer);
-                //options.AddScopePolicy("useraccount:delete", issuer);
-            });
-
-            return services;
-        }
-
-
-        private static void AddScopePolicy(this AuthorizationOptions options, string scope, string issuer)
-        {
-            options.AddPolicy(scope, policy => policy.Requirements.Add(new HasScopeRequirement(scope, issuer)));
-        }
-    }
-
     public class HasScopeRequirement : AuthorizationHandler<HasScopeRequirement>, IAuthorizationRequirement
     {
         private readonly string issuer;
