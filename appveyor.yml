@@ -17,5 +17,3 @@ build_script:
 
 test_script:
   - bash coveralls.sh
-
-deploy: off
