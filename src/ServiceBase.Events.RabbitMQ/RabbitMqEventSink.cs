@@ -23,9 +23,7 @@ namespace ServiceBase.Events.RabbitMQ
         /// <param name="logger">The logger.</param>
         public RabbitMqEventSink(ILogger<RabbitMqEventSink> logger)
         {
-            _logger = logger;
-
-           
+            _logger = logger;          
         }
 
         /// <summary>
@@ -52,12 +50,9 @@ namespace ServiceBase.Events.RabbitMQ
                                      routingKey: "",
                                      basicProperties: null,
                                      body: body);
-
-
                 
                 _logger.LogInformation(message);
             }
-
 
             return Task.FromResult(0);
         }

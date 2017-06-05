@@ -1,7 +1,9 @@
 version: 1.0.{build}
 skip_tags: true
 image: Visual Studio 2017
-clone_depth: 1
+deploy: off
+configuration: Release
+platform: Any CPU
 
 branches:
   only:
@@ -9,11 +11,9 @@ branches:
     - release
     - /^(.*\/)?ci-.*$/
 
-configuration: Release
 build_script:
-  - dotnet --info
-  - dotnet restore --no-cache
-  - dotnet build .\ServiceBase.sln --configuration Release --version-suffix %APPVEYOR_BUILD_NUMBER%
+  - bash build.sh
+  - bash pack.sh
 
 test_script:
   - bash coveralls.sh

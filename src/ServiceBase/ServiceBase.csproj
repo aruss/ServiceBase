@@ -14,7 +14,7 @@
     <RepositoryType></RepositoryType>
     <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Company />
     <Product>ServiceBase</Product>
   </PropertyGroup>

@@ -19,6 +19,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin/Release/netcoreapp1.1/ServiceBase.Events.RabbitMQ.dll" target="lib/netcoreapp1.1/ServiceBase.Events.RabbitMQ.dll" />
+    <file src="bin\Release\netcoreapp1.1\ServiceBase.Events.RabbitMQ.dll" target="lib\netcoreapp1.1\ServiceBase.Events.RabbitMQ.dll" />
   </files>
 </package>
