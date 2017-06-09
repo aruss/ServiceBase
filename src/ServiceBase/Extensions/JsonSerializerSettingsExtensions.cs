@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 namespace ServiceBase.Extensions
@@ -12,6 +13,8 @@ namespace ServiceBase.Extensions
             settings.Formatting = Formatting.None;
             settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             settings.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
+
+            settings.Converters.Add(new StringEnumConverter { CamelCaseText = true });
 
             return settings; 
         }

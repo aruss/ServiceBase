@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Formatters;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using ServiceBase.Extensions;
 using System;
 using System.Buffers;
 using System.Linq;
@@ -16,12 +16,10 @@ namespace ServiceBase.Api
             {
                 outputFormatters.Remove(outputFormatter);
             }
-
-            outputFormatters.Add(new JsonOutputFormatter(new JsonSerializerSettings()
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                NullValueHandling = NullValueHandling.Ignore
-            }, ArrayPool<Char>.Shared));
+            
+            outputFormatters.Add(new JsonOutputFormatter(
+                new JsonSerializerSettings().ConfigureCommon(),
+                ArrayPool<Char>.Shared));
         }
     }
 }
