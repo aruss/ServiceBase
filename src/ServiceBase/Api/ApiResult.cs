@@ -40,7 +40,7 @@ namespace ServiceBase.Api
             {
                 foreach (var err in ms.Value.Errors)
                 {
-                    this.AddMessage(err.ErrorMessage, ResponseMessageKind.Error, ms.Key);
+                    this.AddMessage(err.ErrorMessage, ResponseMessageKind.Error, ms.Key.Camelize());
                 }
             }
 
