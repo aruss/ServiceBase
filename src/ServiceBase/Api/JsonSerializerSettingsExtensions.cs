@@ -2,13 +2,14 @@
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace ServiceBase.Extensions
+namespace ServiceBase.Api
 {
     public static class JsonSerializerSettingsExtensions
     {
         public static JsonSerializerSettings ConfigureCommon(this JsonSerializerSettings settings)
         {
             settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            //settings.ContractResolver = new UnderscorePropertyNamesContractResolver(); 
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.Formatting = Formatting.None;
             settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;

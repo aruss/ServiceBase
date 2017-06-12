@@ -1,4 +1,4 @@
-namespace ServiceBase.Api
+namespace ServiceBase.Collections
 {
     public enum SortDirection
     {

@@ -24,10 +24,10 @@ namespace ServiceBase.Notification.Email
                 dict = viewData.ToDictionary(); 
             }
 
-            var sb = new StringBuilder();
+            var sb = new StringBuilder("Sending EMail\n");
 
-            sb.AppendLine(String.Format("Template:\t{0}", templateName)); 
-            sb.AppendLine(String.Format("To:\t{0}", email)); 
+            sb.AppendLine(String.Format("\tTemplate:\t{0}", templateName)); 
+            sb.AppendLine(String.Format("\tTo:\t{0}", email)); 
 
             foreach (var item in dict)
             {

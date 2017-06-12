@@ -18,7 +18,7 @@ namespace ServiceBase.Api
             apiResult.Messages.Add(new ResponseMessage
             {
                 Kind = kind,
-                Field = fieldName,
+                Field = fieldName.Camelize(),
                 Message = message
             });
         }

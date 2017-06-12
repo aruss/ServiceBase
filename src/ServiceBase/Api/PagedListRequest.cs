@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ServiceBase.Collections; 
 
 namespace ServiceBase.Api
 {
@@ -6,6 +7,6 @@ namespace ServiceBase.Api
     {
         public int Skip { get; set; } = 0;
         public int Take { get; set; } = 50;
-        public List<SortInfo> Sort { get; set; }
+        public IEnumerable<SortInfo> Sort { get; set; }
     }
 }
