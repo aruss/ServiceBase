@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace ServiceBase.Api
 {
@@ -14,9 +14,9 @@ namespace ServiceBase.Api
     {
         public bool Success { get; set; } = true;
         public List<ResponseMessage> Messages { get; set; }
-        
+
     }
-    
+
     public class ExceptionApiResult : ApiResult
     {
         public ExceptionApiResult(Exception ex)
@@ -44,6 +44,17 @@ namespace ServiceBase.Api
                 }
             }
 
+            this.Success = false;
+        }
+
+        public InvalidStateApiResult(string message, ResponseMessageKind kind = ResponseMessageKind.Info, string fieldName = null)
+        {
+            this.Success = false;
+            this.AddMessage(message, kind, fieldName.Camelize());
+        }
+
+        public InvalidStateApiResult()
+        {
             this.Success = false;
         }
     }
