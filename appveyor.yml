@@ -17,7 +17,7 @@ before_build:
   - appveyor-retry dotnet restore -v Minimal
 
 build_script:
-  - dotnet build ./ServiceBase.sln -c Release /property:Version=$APPVEYOR_BUILD_VERSION
+  - dotnet build ./ServiceBase.sln -c Release /property:Version=%APPVEYOR_BUILD_VERSION%
   
 test_script:
   - bash coveralls.sh
