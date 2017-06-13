@@ -19,7 +19,7 @@ before_build:
 build_script:
   - dotnet build ./ServiceBase.sln -c Release /property:Version=%APPVEYOR_BUILD_VERSION%
 
- after_build:
+after_build:
   - nuget pack ./src/ServiceBase/ServiceBase.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
   - nuget pack ./src/ServiceBase.Events.RabbitMQ/ServiceBase.Events.RabbitMQ.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
   - nuget pack ./src/ServiceBase.Notification.SendGrid/ServiceBase.Notification.SendGrid.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
