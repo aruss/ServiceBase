@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ServiceBase.Extensions;
 using System.Collections.Generic;
 using System.IO;
@@ -24,8 +23,8 @@ namespace ServiceBase.Notification.Email
             _emailSender = emailSender;
             _textFormatter = new TextFormatter();
         }
-
-        public async Task SendEmailAsync(string templateName, string email, object viewData)
+        
+        public async Task SendEmailAsync(string templateName, string email, object viewData, bool sendHtml)
         {
             IDictionary<string, object> dict = viewData as Dictionary<string, object>;
             if (dict == null)
@@ -37,13 +36,20 @@ namespace ServiceBase.Notification.Email
 
             emailMessage.EmailTo = email;
 
+            // TODO: implement caching 
             emailMessage.Subject = _textFormatter.Format(
                 Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Subject.txt"),
                 dict);
 
-            emailMessage.Text = _textFormatter.Format(
+            // TODO: implement caching 
+            emailMessage.Html = _textFormatter.Format(
+               Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
+               dict);
+
+            // TODO: implement razor HTML templates
+            /*emailMessage.Text = _textFormatter.Format(
                 Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
-                dict);
+                dict);*/
 
             await _emailSender.SendEmailAsync(emailMessage);
         }

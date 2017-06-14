@@ -16,7 +16,7 @@ namespace ServiceBase.Notification.Email
             _logger = logger;
         }
 
-        public async Task SendEmailAsync(string templateName, string email, object viewData)
+        public async Task SendEmailAsync(string templateName, string email, object viewData, bool sendHtml)
         {
             IDictionary<string, object> dict = viewData as Dictionary<string, object>;
             if (dict == null)

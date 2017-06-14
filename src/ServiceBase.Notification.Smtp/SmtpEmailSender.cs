@@ -21,8 +21,6 @@ namespace ServiceBase.Notification.Smtp
 
         public async Task SendEmailAsync(EmailMessage message)
         {
-            // _logger.LogInformation(JsonConvert.SerializeObject(message));
-
             var mimeMsg = new MimeMessage();
             mimeMsg.From.Add(new MailboxAddress(
                  String.IsNullOrWhiteSpace(message.EmailFrom) ?
@@ -32,18 +30,18 @@ namespace ServiceBase.Notification.Smtp
             mimeMsg.To.Add(new MailboxAddress(message.EmailTo));
             mimeMsg.Subject = message.Subject;
 
-            if (!String.IsNullOrWhiteSpace(message.Text))
-            {
-                mimeMsg.Body = new TextPart(TextFormat.Text)
-                {
-                    Text = message.Text
-                };
-            }
-            else if (!String.IsNullOrWhiteSpace(message.Html))
+            if (!String.IsNullOrWhiteSpace(message.Html))
             {
                 mimeMsg.Body = new TextPart(TextFormat.Html)
                 {
                     Text = message.Html
+                };
+            }
+            else if (!String.IsNullOrWhiteSpace(message.Text))
+            {
+                mimeMsg.Body = new TextPart(TextFormat.Text)
+                {
+                    Text = message.Text
                 };
             }
 
