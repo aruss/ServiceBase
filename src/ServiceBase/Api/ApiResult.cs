@@ -15,6 +15,16 @@ namespace ServiceBase.Api
         public bool Success { get; set; } = true;
         public List<ResponseMessage> Messages { get; set; }
 
+        public ApiResult()
+        {
+
+        }
+
+        public ApiResult(string message, ResponseMessageKind kind = ResponseMessageKind.Info, string fieldName = null)
+        {
+            this.AddMessage(message, kind, fieldName.Camelize());
+            this.Success = kind != ResponseMessageKind.Error; 
+        }
     }
 
     public class ExceptionApiResult : ApiResult
@@ -47,11 +57,8 @@ namespace ServiceBase.Api
             this.Success = false;
         }
 
-        public InvalidStateApiResult(string message, ResponseMessageKind kind = ResponseMessageKind.Info, string fieldName = null)
-        {
-            this.Success = false;
-            this.AddMessage(message, kind, fieldName.Camelize());
-        }
+        public InvalidStateApiResult(string message, ResponseMessageKind kind = ResponseMessageKind.Info, string fieldName = null) 
+            : base(message, kind, fieldName) { }
 
         public InvalidStateApiResult()
         {
