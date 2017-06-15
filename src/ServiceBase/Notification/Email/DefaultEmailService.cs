@@ -23,7 +23,7 @@ namespace ServiceBase.Notification.Email
             _emailSender = emailSender;
             _textFormatter = new TextFormatter();
         }
-        
+
         public async Task SendEmailAsync(string templateName, string email, object viewData, bool sendHtml)
         {
             IDictionary<string, object> dict = viewData as Dictionary<string, object>;
@@ -41,15 +41,19 @@ namespace ServiceBase.Notification.Email
                 Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Subject.txt"),
                 dict);
 
-            // TODO: implement caching 
-            emailMessage.Html = _textFormatter.Format(
-               Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
-               dict);
-
-            // TODO: implement razor HTML templates
-            /*emailMessage.Text = _textFormatter.Format(
-                Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
-                dict);*/
+            if (sendHtml)
+            {
+                // TODO: implement razor parsing 
+                emailMessage.Html = _textFormatter.Format(
+                   Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.cshtml"),
+                   dict);
+            }
+            else
+            {
+                emailMessage.Text = _textFormatter.Format(
+                    Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
+                    dict);
+            }
 
             await _emailSender.SendEmailAsync(emailMessage);
         }
