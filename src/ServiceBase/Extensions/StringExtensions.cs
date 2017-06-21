@@ -1,15 +1,13 @@
 ﻿// Parts of the code are borrowed from Brock Allen & Dominick Baier. 
 
-using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Collections.Specialized;
-using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography;
 
 namespace ServiceBase.Extensions
 {
@@ -61,7 +59,8 @@ namespace ServiceBase.Extensions
             }
 
             scopes = scopes.Trim();
-            var parsedScopes = scopes.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
+            var parsedScopes = scopes.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                .Distinct().ToList();
 
             if (parsedScopes.Any())
             {
@@ -223,7 +222,7 @@ namespace ServiceBase.Extensions
 
         [DebuggerStepThrough]
         public static string GetOrigin(this string url)
-        { 
+        {
             if (url != null && (url.StartsWith("http://") || url.StartsWith("https://")))
             {
                 var idx = url.IndexOf("//", StringComparison.Ordinal);
@@ -263,6 +262,35 @@ namespace ServiceBase.Extensions
                 // Return the hexadecimal string.
                 return sBuilder.ToString();
             }
+        }
+
+        [DebuggerStepThrough]
+        public static string GetFullPath(this string path, string rootPath)
+        {
+            if (!Path.IsPathRooted(path))
+            {
+                return Path.GetFullPath(
+                    Path.Combine(rootPath.RemoveTrailingSlash(), path.RemoveLeadingSlash()));
+            }
+
+            return Path.GetFullPath(path);
+        }
+
+        static readonly string[] UglyBase64 = { "+", "/", "=" };
+        [DebuggerStepThrough]
+        public static string StripUglyBase64(this string s)
+        {
+            if (String.IsNullOrWhiteSpace(s))
+            {
+                return s;
+            }
+
+            foreach (var ugly in UglyBase64)
+            {
+                s = s.Replace(ugly, String.Empty);
+            }
+
+            return s;
         }
     }
 }
