@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace ServiceBase.Configuration
 {
@@ -11,7 +11,8 @@ namespace ServiceBase.Configuration
             IHostingEnvironment environment,
             Action<IConfigurationBuilder> configAction = null)
         {
-            return Configure(environment.ContentRootPath, environment.EnvironmentName, configAction);
+            return Configure(environment.ContentRootPath, 
+                environment.EnvironmentName, configAction);
         }
 
         public static IConfigurationRoot Configure(
@@ -27,7 +28,8 @@ namespace ServiceBase.Configuration
             string subPath = null,
             Action<IConfigurationBuilder> configAction = null)
         {
-            return Configure(environment.ContentRootPath, environment.EnvironmentName, "Config", configAction);
+            return Configure(environment.ContentRootPath, 
+                environment.EnvironmentName, "Config", configAction);
         }
 
         public static IConfigurationRoot Configure(
@@ -38,8 +40,10 @@ namespace ServiceBase.Configuration
         {
             var builder = new ConfigurationBuilder()
                .SetBasePath(contentRootPath)
-               .AddJsonFile(Path.Combine(subPath, "config.json"), optional: false, reloadOnChange: true)
-               .AddJsonFile(Path.Combine(subPath, $"config.{environmentName}.json"), optional: true, reloadOnChange: true);
+               .AddJsonFile(Path.Combine(subPath, "config.json"),
+                    optional: false, reloadOnChange: true)
+               .AddJsonFile(Path.Combine(subPath, $"config.{environmentName}.json"), 
+                    optional: true, reloadOnChange: true);
 
             builder.AddEnvironmentVariables();
 
