@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ServiceBase.Api
 {
@@ -20,7 +19,10 @@ namespace ServiceBase.Api
 
         }
 
-        public ApiResult(string message, ResponseMessageKind kind = ResponseMessageKind.Info, string fieldName = null)
+        public ApiResult(
+            string message,
+            ResponseMessageKind kind = ResponseMessageKind.Info,
+            string fieldName = null)
         {
             this.AddMessage(message, kind, fieldName.Camelize());
             this.Success = kind != ResponseMessageKind.Error; 
@@ -50,14 +52,18 @@ namespace ServiceBase.Api
             {
                 foreach (var err in ms.Value.Errors)
                 {
-                    this.AddMessage(err.ErrorMessage, ResponseMessageKind.Error, ms.Key.Camelize());
+                    this.AddMessage(err.ErrorMessage, 
+                        ResponseMessageKind.Error, ms.Key.Camelize());
                 }
             }
 
             this.Success = false;
         }
 
-        public InvalidStateApiResult(string message, ResponseMessageKind kind = ResponseMessageKind.Info, string fieldName = null) 
+        public InvalidStateApiResult(
+            string message, 
+            ResponseMessageKind kind = ResponseMessageKind.Info,
+            string fieldName = null) 
             : base(message, kind, fieldName) { }
 
         public InvalidStateApiResult()

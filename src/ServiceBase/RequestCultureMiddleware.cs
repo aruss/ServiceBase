@@ -1,18 +1,20 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace ServiceBase
 {
     public static class RequestCultureMiddlewareExtensions
     {
-        public static IApplicationBuilder UseRequestCulture(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseRequestCulture(
+            this IApplicationBuilder builder)
         {
             return builder.UseRequestCulture(new RequestCultureOptions());
         }
 
-        public static IApplicationBuilder UseRequestCulture(this IApplicationBuilder builder, RequestCultureOptions options)
+        public static IApplicationBuilder UseRequestCulture(
+            this IApplicationBuilder builder, RequestCultureOptions options)
         {
             return builder.UseMiddleware<RequestCultureMiddleware>(options);
         }

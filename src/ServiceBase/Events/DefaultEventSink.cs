@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using ServiceBase.Logging;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using ServiceBase.Logging;
 
 namespace ServiceBase.Events
 {

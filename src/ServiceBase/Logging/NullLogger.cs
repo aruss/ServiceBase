@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 
 namespace ServiceBase.Logging
 {
@@ -36,23 +36,5 @@ namespace ServiceBase.Logging
             Func<TState, Exception, string> formatter)
         {
         }
-    }
-
-    public class Options<TOptions> : IOptions<TOptions> where TOptions : class, new()
-    {
-        private TOptions _options;
-
-        public Options(TOptions options)
-        {
-            _options = options;
-        }
-
-        public TOptions Value
-        {
-            get
-            {
-                return _options;
-            }
-        }
-    }
+    }    
 }

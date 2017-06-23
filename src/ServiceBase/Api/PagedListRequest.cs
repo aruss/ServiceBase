@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using ServiceBase.Collections; 
+using ServiceBase.Collections;
 
 namespace ServiceBase.Api
 {

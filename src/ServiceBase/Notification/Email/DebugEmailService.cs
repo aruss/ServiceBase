@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using ServiceBase.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using ServiceBase.Extensions;
 
 namespace ServiceBase.Notification.Email
 {
@@ -16,7 +16,8 @@ namespace ServiceBase.Notification.Email
             _logger = logger;
         }
 
-        public async Task SendEmailAsync(string templateName, string email, object viewData, bool sendHtml)
+        public async Task SendEmailAsync(
+            string templateName, string email, object viewData, bool sendHtml)
         {
             IDictionary<string, object> dict = viewData as Dictionary<string, object>;
             if (dict == null)

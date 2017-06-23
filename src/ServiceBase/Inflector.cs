@@ -92,14 +92,19 @@ namespace ServiceBase
 
             public string Apply(string word)
             {
-                return !this.regex.IsMatch(word) ? null : this.regex.Replace(word, this.replacement);
+                return !this.regex.IsMatch(word) ?
+                    null :
+                    this.regex.Replace(word, this.replacement);
             }
         }
 
         private static void AddIrregular(string singular, string plural)
         {
-            AddPlural("(" + singular[0] + ")" + singular.Substring(1) + "$", "$1" + plural.Substring(1));
-            AddSingular("(" + plural[0] + ")" + plural.Substring(1) + "$", "$1" + singular.Substring(1));
+            AddPlural("(" + singular[0] + ")" + singular
+                .Substring(1) + "$", "$1" + plural.Substring(1));
+
+            AddSingular("(" + plural[0] + ")" + plural
+                .Substring(1) + "$", "$1" + singular.Substring(1));
         }
 
         private static void AddUncountable(string word)
@@ -174,7 +179,8 @@ namespace ServiceBase
         {
             return Regex.Replace(
                 Regex.Replace(
-                    Regex.Replace(pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2"), @"([a-z\d])([A-Z])",
+                    Regex.Replace(pascalCasedWord, 
+                    @"([A-Z]+)([A-Z][a-z])", "$1_$2"), @"([a-z\d])([A-Z])",
                     "$1_$2"), @"[-\s]", "_").ToLower();
         }
 

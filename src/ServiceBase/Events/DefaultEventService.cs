@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace ServiceBase.Events
 {
@@ -35,7 +35,8 @@ namespace ServiceBase.Events
         /// <param name="options">The options.</param>
         /// <param name="context">The context.</param>
         /// <param name="sink">The sink.</param>
-        public DefaultEventService(EventOptions options, IHttpContextAccessor context, IEventSink sink)
+        public DefaultEventService(
+            EventOptions options, IHttpContextAccessor context, IEventSink sink)
         {
             Options = options;
             Context = context;
@@ -107,7 +108,8 @@ namespace ServiceBase.Events
 
             if (Context.HttpContext.Connection.LocalIpAddress != null)
             {
-                evt.LocalIpAddress = Context.HttpContext.Connection.LocalIpAddress.ToString() + ":" + Context.HttpContext.Connection.LocalPort;
+                evt.LocalIpAddress = Context.HttpContext.Connection
+                    .LocalIpAddress.ToString() + ":" + Context.HttpContext.Connection.LocalPort;
             }
             else
             {
