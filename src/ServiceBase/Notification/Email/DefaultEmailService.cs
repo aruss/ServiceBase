@@ -55,7 +55,7 @@ namespace ServiceBase.Notification.Email
                     Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
                     dict);
             }
-
+            
             await _emailSender.SendEmailAsync(emailMessage);
         }
     }
