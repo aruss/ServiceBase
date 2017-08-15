@@ -8,11 +8,11 @@ ServiceBase is my personal library with all common used bits & parts I use for b
 
 ### Platform
 
-IdentityBase is built against ASP.NET Core 1.1 using the RTM tooling that ships with Visual Studio 2017. This is the only configuration we support on the issue tracker.
+IdentityBase is built against ASP.NET Core 2.0 using the RTM tooling that ships with Visual Studio 2017. This is the only configuration we support on the issue tracker.
 
 ### How to build
 
-* [Install](https://www.microsoft.com/net/download/core#/current) .NET Core 1.1 
+* [Install](https://www.microsoft.com/net/download/core#/current) .NET Core 2.0 
 * Run build.ps1 from Powershell
 
 ### Acknowledgements
