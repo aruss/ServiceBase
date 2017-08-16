@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>ServiceBase.Notification.Smtp</id>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <authors>Russlan Akiev</authors>
     <owners>Russlan Akiev</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,16 +11,14 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core smtp</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp1.1">
-        <dependency id="ServiceBase" version="1.0.0" exclude="Build,Analyzers" />
-        <dependency id="MailKit" version="1.16.1" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.NETCore.App" version="1.1.1" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Logging" version="1.1.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Configuration.Binder" version="1.1.2" exclude="Build,Analyzers" />
+      <group targetFramework=".NETCoreApp2.0">
+        <dependency id="MailKit" version="1.18.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration.Bind	er" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Logging" version="2.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp1.1\ServiceBase.Notification.Smtp.dll" target="lib\netcoreapp1.1\ServiceBase.Notification.Smtp.dll" />
+    <file src="bin\Release\netcoreapp2.0\ServiceBase.Notification.Smtp.dll" target="lib\netcoreapp2.0\ServiceBase.Notification.Smtp.dll" />
   </files>
 </package>

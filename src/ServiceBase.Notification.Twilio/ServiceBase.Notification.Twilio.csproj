@@ -9,6 +9,7 @@
     <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
     <PackageTags>dotnet dotnet-core twillio</PackageTags>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

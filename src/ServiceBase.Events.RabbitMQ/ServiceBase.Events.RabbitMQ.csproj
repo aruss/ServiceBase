@@ -10,6 +10,7 @@
     <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
     <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
     <PackageTags>dotnet dotnet-core rabbitmq</PackageTags>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

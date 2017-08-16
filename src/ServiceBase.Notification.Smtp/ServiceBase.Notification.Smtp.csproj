@@ -9,6 +9,7 @@
     <PackageTags>dotnet dotnet-core smtp</PackageTags>
     <Company />
     <Authors>Russlan Akiev</Authors>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

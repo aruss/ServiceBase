@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>ServiceBase</id>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <authors>Russlan Akiev</authors>
     <owners>Russlan Akiev</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,21 +11,23 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp1.1">
-        <dependency id="Microsoft.Extensions.Configuration.EnvironmentVariables" version="1.1.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.AspNetCore.WebUtilities" version="1.1.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Configuration.FileExtensions" version="1.1.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Configuration.Json" version="1.1.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Configuration" version="1.1.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.NETCore.App" version="1.1.1" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Configuration.UserSecrets" version="1.1.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Options" version="1.1.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.AspNetCore.Hosting.Abstractions" version="1.1.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.AspNetCore.Authorization" version="1.1.2" exclude="Build,Analyzers" />
+      <group targetFramework=".NETCoreApp2.0">
+        <dependency id="Microsoft.AspNetCore.Authorization" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.AspNetCore.Hosting.Abstractions" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.AspNetCore.Mvc.Core" version="2.0.0" />
+		<dependency id="Microsoft.AspNetCore.Mvc.Formatters.Json" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.AspNetCore.Mvc.Razor" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.AspNetCore.WebUtilities" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration.EnvironmentVariables" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration.FileExtensions" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration.Json" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Configuration.UserSecrets" version="2.0.0" exclude="Build,Analyzers" />
+		<dependency id="Microsoft.Extensions.Options" version="2.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp1.1\ServiceBase.dll" target="lib\netcoreapp1.1\ServiceBase.dll" />
+    <file src="bin\Release\netcoreapp2.0\ServiceBase.dll" target="lib\netcoreapp2.0\ServiceBase.dll" />
   </files>
 </package>

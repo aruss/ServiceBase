@@ -9,6 +9,7 @@
     <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
     <PackageTags>dotnet dotnet-core sendgrid</PackageTags>
     <Description>SendGrid notification email sender for ServiceBase.Notification.Email</Description>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
