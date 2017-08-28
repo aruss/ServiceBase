@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 
 namespace ServiceBase.Notification.Twilio
 {
-    public class TwillioSmsSender : ISmsSender
+    public class TwilioSmsSender : ISmsSender
     {
-        private readonly TwillioOptions _options;
-        private readonly ILogger<TwillioSmsSender> _logger;
+        private readonly TwilioOptions _options;
+        private readonly ILogger<TwilioSmsSender> _logger;
 
-        public TwillioSmsSender(TwillioOptions options, ILogger<TwillioSmsSender> logger)
+        public TwilioSmsSender(
+            TwilioOptions options,
+            ILogger<TwilioSmsSender> logger)
         {
             _logger = logger;
             _options = options;
@@ -26,8 +28,10 @@ namespace ServiceBase.Notification.Twilio
 
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                    Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_options.Sid}:{_options.Token}")));
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Basic",
+                    Convert.ToBase64String(Encoding.ASCII.GetBytes(
+                        $"{_options.Sid}:{_options.Token}")));
 
                 var content = new FormUrlEncodedContent(new[]
                 {
@@ -37,7 +41,8 @@ namespace ServiceBase.Notification.Twilio
                 });
 
                 var url = $"https://api.twilio.com/2010-04-01/Accounts/{_options.Sid}/Messages.json";
-                var result = await client.PostAsync(url, content).ConfigureAwait(false);
+                var result = await client.PostAsync(url, content)
+                    .ConfigureAwait(false);
 
                 if (!result.IsSuccessStatusCode)
                 {

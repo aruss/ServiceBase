@@ -1,6 +1,6 @@
 ﻿namespace ServiceBase.Notification.Twilio
 {
-    public class TwillioOptions
+    public class TwilioOptions
     {
         public string Sid { get; set; }
         public string Token { get; set; }
