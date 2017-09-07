@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
+using ServiceBase;
 
 namespace IdentityBase.Public.IntegrationTests
 {
@@ -55,7 +56,12 @@ namespace IdentityBase.Public.IntegrationTests
 
             var mockEventSink = new Mock<IEventSink>();
       
-            var eventService = new DefaultEventService(options, mockHttpContextAccessor.Object, mockEventSink.Object);
+            var eventService = new DefaultEventService(
+                options,
+                mockHttpContextAccessor.Object,
+                new DateTimeAccessor(),
+                mockEventSink.Object);
+
             await eventService.RaiseAsync(fooEvent);
 
             

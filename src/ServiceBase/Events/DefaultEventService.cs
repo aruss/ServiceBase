@@ -1,7 +1,4 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -9,38 +6,48 @@ using Microsoft.AspNetCore.Http;
 namespace ServiceBase.Events
 {
     /// <summary>
-    /// Default implementation of the event service. Write events raised to the log.
+    /// Default implementation of the event service.
+    /// Write events raised to the log.
     /// </summary>
-
     public class DefaultEventService : IEventService
     {
         /// <summary>
         /// The options
         /// </summary>
-        protected readonly EventOptions Options;
+        private readonly EventOptions _eventOptions;
 
         /// <summary>
-        /// The context
+        /// The <see cref="IHttpContextAccessor"/>
         /// </summary>
-        protected readonly IHttpContextAccessor Context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        /// <summary>
+        /// The <see cref="IDateTimeAccessor"/>
+        /// </summary>
+        private readonly IDateTimeAccessor _dateTimeAccessor;
 
         /// <summary>
         /// The sink
         /// </summary>
-        protected readonly IEventSink Sink;
+        private readonly IEventSink _eventSink;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultEventService"/> class.
+        /// Initializes a new instance of the
+        /// <see cref="DefaultEventService"/> class.
         /// </summary>
         /// <param name="options">The options.</param>
         /// <param name="context">The context.</param>
         /// <param name="sink">The sink.</param>
         public DefaultEventService(
-            EventOptions options, IHttpContextAccessor context, IEventSink sink)
+            EventOptions eventOptions,
+            IHttpContextAccessor httpContextAccessor,
+            IDateTimeAccessor dateTimeAccessor,
+            IEventSink eventSink)
         {
-            Options = options;
-            Context = context;
-            Sink = sink;
+            this._eventOptions = eventOptions;
+            this._httpContextAccessor = httpContextAccessor;
+            this._dateTimeAccessor = dateTimeAccessor;
+            this._eventSink = eventSink;
         }
 
         /// <summary>
@@ -53,10 +60,10 @@ namespace ServiceBase.Events
         {
             if (evt == null) throw new ArgumentNullException("evt");
 
-            if (CanRaiseEvent(evt))
+            if (this.CanRaiseEvent(evt))
             {
-                await PrepareEventAsync(evt);
-                await Sink.PersistAsync(evt);
+                await this.PrepareEventAsync(evt);
+                await this._eventSink.PersistAsync(evt);
             }
         }
 
@@ -71,13 +78,13 @@ namespace ServiceBase.Events
             switch (evtType)
             {
                 case EventTypes.Failure:
-                    return Options.RaiseFailureEvents;
+                    return this._eventOptions.RaiseFailureEvents;
                 case EventTypes.Information:
-                    return Options.RaiseInformationEvents;
+                    return this._eventOptions.RaiseInformationEvents;
                 case EventTypes.Success:
-                    return Options.RaiseSuccessEvents;
+                    return this._eventOptions.RaiseSuccessEvents;
                 case EventTypes.Error:
-                    return Options.RaiseErrorEvents;
+                    return this._eventOptions.RaiseErrorEvents;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -88,11 +95,12 @@ namespace ServiceBase.Events
         /// </summary>
         /// <param name="evt">The evt.</param>
         /// <returns>
-        ///   <c>true</c> if this event would be persisted; otherwise, <c>false</c>.
+        ///   <c>true</c> if this event would be persisted; otherwise,
+        ///   <c>false</c>.
         /// </returns>
         protected virtual bool CanRaiseEvent(Event evt)
         {
-            return CanRaiseEventType(evt.EventType);
+            return this.CanRaiseEventType(evt.EventType);
         }
 
         /// <summary>
@@ -102,23 +110,28 @@ namespace ServiceBase.Events
         /// <returns></returns>
         protected virtual async Task PrepareEventAsync(Event evt)
         {
-            evt.ActivityId = Context.HttpContext.TraceIdentifier;
-            evt.TimeStamp = DateTimeHelper.UtcNow;
+            var httpContext = this._httpContextAccessor.HttpContext;
+
+            evt.ActivityId = httpContext.TraceIdentifier;
+
+            evt.TimeStamp = this._dateTimeAccessor.UtcNow;
             evt.ProcessId = Process.GetCurrentProcess().Id;
 
-            if (Context.HttpContext.Connection.LocalIpAddress != null)
+            if (httpContext.Connection.LocalIpAddress != null)
             {
-                evt.LocalIpAddress = Context.HttpContext.Connection
-                    .LocalIpAddress.ToString() + ":" + Context.HttpContext.Connection.LocalPort;
+                evt.LocalIpAddress = httpContext.Connection
+                    .LocalIpAddress.ToString() + ":" +
+                    httpContext.Connection.LocalPort;
             }
             else
             {
                 evt.LocalIpAddress = "unknown";
             }
 
-            if (Context.HttpContext.Connection.RemoteIpAddress != null)
+            if (httpContext.Connection.RemoteIpAddress != null)
             {
-                evt.RemoteIpAddress = Context.HttpContext.Connection.RemoteIpAddress.ToString();
+                evt.RemoteIpAddress = httpContext.Connection
+                    .RemoteIpAddress.ToString();
             }
             else
             {
