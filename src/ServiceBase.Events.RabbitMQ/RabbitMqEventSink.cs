@@ -1,14 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
-using ServiceBase.Logging;
-using System;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ServiceBase.Events.RabbitMQ
+﻿namespace ServiceBase.Events.RabbitMQ
 {
+    using System;
+    using System.Text;
+    using System.Threading.Tasks;
+    using global::RabbitMQ.Client;
+    using Microsoft.Extensions.Logging;
+    using ServiceBase.Logging;
+
     /// <summary>
-    /// Default implementation of the event service. Write events raised to the log.
+    /// Default implementation of the event service. Write events raised to the
+    /// log.
     /// </summary>
     public class RabbitMqEventSink : IEventSink
     {
@@ -18,12 +19,21 @@ namespace ServiceBase.Events.RabbitMQ
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RabbitMqEventSink"/> class.
+        /// Options
+        /// </summary>
+        private readonly RabbitMqOptions _options;
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RabbitMqEventSink"/>
+        /// class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        public RabbitMqEventSink(ILogger<RabbitMqEventSink> logger)
+        public RabbitMqEventSink(
+            ILogger<RabbitMqEventSink> logger,
+            RabbitMqOptions options)
         {
-            _logger = logger;          
+            this._logger = logger;
+            this._options = options;
         }
 
         /// <summary>
@@ -38,11 +48,17 @@ namespace ServiceBase.Events.RabbitMQ
                 throw new ArgumentNullException(nameof(evt));
             }
 
-            var factory = new ConnectionFactory() { HostName = "localhost" };
+            var factory = new ConnectionFactory()
+            {
+                Uri = this._options.Uri                
+            };
+
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.ExchangeDeclare(exchange: "logs", type: "fanout");
+                channel.ExchangeDeclare(
+                    exchange: "logs",
+                    type: "fanout");
 
                 var message = LogSerializer.Serialize(evt);
                 var body = Encoding.UTF8.GetBytes(message);
@@ -50,8 +66,6 @@ namespace ServiceBase.Events.RabbitMQ
                                      routingKey: "",
                                      basicProperties: null,
                                      body: body);
-                
-                _logger.LogInformation(message);
             }
 
             return Task.FromResult(0);
