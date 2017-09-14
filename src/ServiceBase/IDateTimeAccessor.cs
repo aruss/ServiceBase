@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ServiceBase
+﻿namespace ServiceBase
 {
+    using System;
+
     /// <summary>
     /// Datetime helper for abstracting UtcNow for unit tests and stuff 
     /// </summary>

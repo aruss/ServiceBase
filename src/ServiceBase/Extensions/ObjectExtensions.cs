@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-namespace ServiceBase.Extensions
+﻿namespace ServiceBase.Extensions
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    
     public static class ObjectExtensions
     {
-        public static IDictionary<string, object> ToDictionary(this object source,
+        /// <summary>
+        /// Converts object to dictionary
+        /// </summary>
+        public static IDictionary<string, object> ToDictionary(
+            this object source,
             BindingFlags bindingAttr = BindingFlags.DeclaredOnly | 
                 BindingFlags.Public |
                 BindingFlags.Instance)

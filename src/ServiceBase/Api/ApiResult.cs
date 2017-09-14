@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-
 namespace ServiceBase.Api
 {
+    using System;
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
+
     public class ApiResult<TResult> : ApiResult
     {
         public TResult Result { get; set; }

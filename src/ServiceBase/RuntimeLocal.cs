@@ -1,8 +1,8 @@
-﻿using System.Threading;
-using Microsoft.AspNetCore.Http;
-
-namespace ServiceBase
+﻿namespace ServiceBase
 {
+    using System.Threading;
+    using Microsoft.AspNetCore.Http;
+
     /// <summary>
     /// Local data wraps <see cref="RequestLocal{T}"/> and
     /// <see cref="ThreadLocal{T}"/> and makes it easier to use them both.

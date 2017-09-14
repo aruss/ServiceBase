@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using Microsoft.AspNetCore.Http;
-
-namespace ServiceBase
+﻿namespace ServiceBase
 {
+    using System;
+    using System.Threading;
+    using Microsoft.AspNetCore.Http;
+
     /// <summary>
     /// Represents a wrapper like <see cref="ThreadLocal{T}" /> but instead
     /// being limited to threads its scope is the current http request.

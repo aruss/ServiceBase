@@ -1,9 +1,10 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-
+﻿
 namespace ServiceBase.Logging
 {
+    using System;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+
     public class NullLogger<TCategoryName> : NullLogger, ILogger<TCategoryName>
     {
         public static ILogger<TCategoryName> Create()
@@ -38,7 +39,9 @@ namespace ServiceBase.Logging
         }
     }
 
-    public class Options<TOptions> : IOptions<TOptions> where TOptions : class, new()
+    [Obsolete("I have no clue what purpuse is this for")]
+    public class Options<TOptions> :
+        IOptions<TOptions> where TOptions : class, new()
     {
         private TOptions _options;
 

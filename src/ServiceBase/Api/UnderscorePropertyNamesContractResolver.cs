@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json.Serialization;
-
-namespace ServiceBase.Api
+﻿namespace ServiceBase.Api
 {
-    public class UnderscorePropertyNamesContractResolver : DefaultContractResolver
+    using Newtonsoft.Json.Serialization;
+
+    public class UnderscorePropertyNamesContractResolver :
+        DefaultContractResolver
     {
         public UnderscorePropertyNamesContractResolver() : base()
         {

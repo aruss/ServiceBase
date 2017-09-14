@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace ServiceBase.Multitenancy
+﻿namespace ServiceBase.Multitenancy
 {
+    using Microsoft.AspNetCore.Http;
+
     public static class MultitenancyHttpContextExtensions
     {
         public static string GetTenantId(this HttpContext context)

@@ -11,12 +11,13 @@ namespace ServiceBase.Logging
     /// </summary>
     public static class LogSerializer
     {
-        static readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore,
-            DateFormatHandling = DateFormatHandling.IsoDateFormat,
-            Formatting = Formatting.Indented
-        };
+        static readonly JsonSerializerSettings jsonSettings =
+            new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                Formatting = Formatting.Indented
+            };
 
         static LogSerializer()
         {

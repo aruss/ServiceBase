@@ -1,22 +1,25 @@
 ﻿// Parts of the code are borrowed from Brock Allen & Dominick Baier. 
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Encodings.Web;
 
 namespace ServiceBase.Extensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using System.Text;
+    using System.Text.Encodings.Web;
+
     public static class StringExtensions
     {
-        private static readonly string[] Booleans = new string[] { "true", "yes", "on", "1" };
+        private static readonly string[] Booleans =
+            new string[] { "true", "yes", "on", "1" };
 
         [DebuggerStepThrough]
-        public static bool ToBoolean(this string value, bool defaultValue = false)
+        public static bool ToBoolean(
+            this string value, bool defaultValue = false)
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
@@ -27,7 +30,8 @@ namespace ServiceBase.Extensions
         }
 
         [DebuggerStepThrough]
-        public static string ToSpaceSeparatedString(this IEnumerable<string> list)
+        public static string ToSpaceSeparatedString(
+            this IEnumerable<string> list)
         {
             if (list == null)
             {
@@ -45,10 +49,13 @@ namespace ServiceBase.Extensions
         }
 
         [DebuggerStepThrough]
-        public static IEnumerable<string> FromSpaceSeparatedString(this string input)
+        public static IEnumerable<string> FromSpaceSeparatedString(
+            this string input)
         {
             input = input.Trim();
-            return input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            return input
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                .ToList();
         }
 
         public static List<string> ParseScopesString(this string scopes)
@@ -59,8 +66,10 @@ namespace ServiceBase.Extensions
             }
 
             scopes = scopes.Trim();
-            var parsedScopes = scopes.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                .Distinct().ToList();
+            var parsedScopes = scopes
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                .Distinct()
+                .ToList();
 
             if (parsedScopes.Any())
             {
@@ -162,7 +171,8 @@ namespace ServiceBase.Extensions
                 !String.IsNullOrEmpty(url) &&
 
                 // Allows "/" or "/foo" but not "//" or "/\".
-                ((url[0] == '/' && (url.Length == 1 || (url[1] != '/' && url[1] != '\\'))) ||
+                ((url[0] == '/' && (url.Length == 1 ||
+                    (url[1] != '/' && url[1] != '\\'))) ||
 
                 // Allows "~/" or "~/foo".
                 (url.Length > 1 && url[0] == '~' && url[1] == '/'));
@@ -184,9 +194,11 @@ namespace ServiceBase.Extensions
         }
 
         [DebuggerStepThrough]
-        public static string AddQueryString(this string url, string name, string value)
+        public static string AddQueryString(
+            this string url, string name, string value)
         {
-            return url.AddQueryString(name + "=" + UrlEncoder.Default.Encode(value));
+            return url.AddQueryString(name + "=" +
+                UrlEncoder.Default.Encode(value));
         }
 
         [DebuggerStepThrough]
@@ -223,7 +235,8 @@ namespace ServiceBase.Extensions
         [DebuggerStepThrough]
         public static string GetOrigin(this string url)
         {
-            if (url != null && (url.StartsWith("http://") || url.StartsWith("https://")))
+            if (url != null && (url.StartsWith("http://") ||
+                url.StartsWith("https://")))
             {
                 var idx = url.IndexOf("//", StringComparison.Ordinal);
                 if (idx > 0)
@@ -246,7 +259,8 @@ namespace ServiceBase.Extensions
             using (var md5Hash = MD5.Create())
             {
                 // Convert the input string to a byte array and compute the hash.
-                byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+                byte[] data = md5Hash.ComputeHash(
+                    Encoding.UTF8.GetBytes(input));
 
                 // Create a new Stringbuilder to collect the bytes
                 // and create a string.
@@ -270,7 +284,9 @@ namespace ServiceBase.Extensions
             if (!Path.IsPathRooted(path))
             {
                 return Path.GetFullPath(
-                    Path.Combine(rootPath.RemoveTrailingSlash(), path.RemoveLeadingSlash()));
+                    Path.Combine(rootPath.RemoveTrailingSlash(),
+                    path.RemoveLeadingSlash())
+                );
             }
 
             return Path.GetFullPath(path);

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-
-namespace ServiceBase
+﻿namespace ServiceBase
 {
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
+
     public class RequestIdMiddleware
     {
         private const string headerName = "X-Request-ID";
@@ -16,7 +16,8 @@ namespace ServiceBase
 
         public async Task Invoke(HttpContext context)
         {
-            if (!String.IsNullOrWhiteSpace(context.Request.Headers[headerName]))
+            if (!String.IsNullOrWhiteSpace(
+                context.Request.Headers[headerName]))
             {
                 context.TraceIdentifier = context.Request.Headers[headerName];
             }

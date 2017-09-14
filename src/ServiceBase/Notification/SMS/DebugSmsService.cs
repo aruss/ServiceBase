@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using ServiceBase.Extensions;
-
-namespace ServiceBase.Notification.Sms
+﻿namespace ServiceBase.Notification.Sms
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using ServiceBase.Extensions;
+
     public class DebugSmsService : ISmsService
     {
         private readonly ILogger<DebugSmsService> _logger;
@@ -16,9 +16,12 @@ namespace ServiceBase.Notification.Sms
             _logger = logger;
         }
 
-        public async Task SendSmsAsync(string templateName, string number, object viewData)
+        public async Task SendSmsAsync(
+            string templateName, string number, object viewData)
         {
-            IDictionary<string, object> dict = viewData as Dictionary<string, object>;
+            IDictionary<string, object> dict =
+                viewData as Dictionary<string, object>;
+
             if (dict == null)
             {
                 dict = viewData.ToDictionary();
@@ -31,7 +34,8 @@ namespace ServiceBase.Notification.Sms
 
             foreach (var item in dict)
             {
-                sb.AppendLine(String.Format("\t{0}:\t{1}", item.Key, item.Value));
+                sb.AppendLine(
+                    String.Format("\t{0}:\t{1}", item.Key, item.Value));
             }
 
             _logger.LogInformation(sb.ToString());

@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-using System;
-using System.Threading.Tasks;
-using ServiceBase.Extensions;
-
 namespace ServiceBase.Events
 {
+    using System;
+    using System.Threading.Tasks;
+    using ServiceBase.Extensions;
+
     /// <summary>
     /// Models base class for events raised from IdentityServer.
     /// </summary>
@@ -21,10 +21,18 @@ namespace ServiceBase.Events
         /// <param name="id">The identifier.</param>
         /// <param name="message">The message.</param>
         /// <exception cref="System.ArgumentNullException">category</exception>
-        public Event(string category, string name, EventTypes type, int id, string message = null)
+        public Event(
+            string category,
+            string name,
+            EventTypes type,
+            int id,
+            string message = null)
         {
-            Category = category ?? throw new ArgumentNullException(nameof(category));
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Category = category ??
+                throw new ArgumentNullException(nameof(category));
+
+            Name = name ??
+                throw new ArgumentNullException(nameof(name));
 
             EventType = type;
             Id = id;

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-
-namespace ServiceBase.Events
+﻿namespace ServiceBase.Events
 {
+    using System;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
+
     /// <summary>
     /// Default implementation of the event service.
     /// Write events raised to the log.

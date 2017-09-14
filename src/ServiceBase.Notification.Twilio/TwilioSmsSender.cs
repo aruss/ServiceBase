@@ -1,14 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using ServiceBase.Notification.Sms;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace ServiceBase.Notification.Twilio
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using ServiceBase.Notification.Sms;
+
     public class TwilioSmsSender : ISmsSender
     {
         private readonly TwilioOptions _options;
@@ -40,7 +41,9 @@ namespace ServiceBase.Notification.Twilio
                     new KeyValuePair<string, string>("Body", message)
                 });
 
-                var url = $"https://api.twilio.com/2010-04-01/Accounts/{_options.Sid}/Messages.json";
+                var url = $"https://api.twilio.com/2010-04-01/Accounts/" +
+                    $"{_options.Sid}/Messages.json";
+
                 var result = await client.PostAsync(url, content)
                     .ConfigureAwait(false);
 

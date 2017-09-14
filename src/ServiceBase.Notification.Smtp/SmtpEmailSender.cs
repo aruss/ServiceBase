@@ -1,19 +1,20 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.Extensions.Logging;
-using MimeKit;
-using MimeKit.Text;
-using ServiceBase.Notification.Email;
-using System;
-using System.Threading.Tasks;
-
-namespace ServiceBase.Notification.Smtp
+﻿namespace ServiceBase.Notification.Smtp
 {
+    using System;
+    using System.Threading.Tasks;
+    using MailKit.Net.Smtp;
+    using Microsoft.Extensions.Logging;
+    using MimeKit;
+    using MimeKit.Text;
+    using ServiceBase.Notification.Email;
+
     public class SmtpEmailSender : IEmailSender
     {
         private readonly SmtpOptions _options;
         private readonly ILogger<SmtpEmailSender> _logger;
 
-        public SmtpEmailSender(SmtpOptions options, ILogger<SmtpEmailSender> logger)
+        public SmtpEmailSender(
+            SmtpOptions options, ILogger<SmtpEmailSender> logger)
         {
             _logger = logger;
             _options = options;
@@ -47,8 +48,12 @@ namespace ServiceBase.Notification.Smtp
 
             using (var client = new SmtpClient())
             {
-                // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
-                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+#if DEBUG
+                // For demo-purposes, accept all SSL certificates (in case
+                // the server supports STARTTLS)
+                client.ServerCertificateValidationCallback =
+                    (s, c, h, e) => true;
+#endif
 
                 client.Connect(_options.Host, _options.Port, _options.UseSsl);
 

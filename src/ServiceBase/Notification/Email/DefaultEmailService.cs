@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using ServiceBase.Extensions;
-
-namespace ServiceBase.Notification.Email
+﻿namespace ServiceBase.Notification.Email
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using ServiceBase.Extensions;
+
     public class DefaultEmailService : IEmailService
     {
         private readonly IEmailSender _emailSender;
@@ -27,7 +27,9 @@ namespace ServiceBase.Notification.Email
         public async Task SendEmailAsync(
             string templateName, string email, object viewData, bool sendHtml)
         {
-            IDictionary<string, object> dict = viewData as Dictionary<string, object>;
+            IDictionary<string, object> dict =
+                viewData as Dictionary<string, object>;
+
             if (dict == null)
             {
                 dict = viewData.ToDictionary();
@@ -39,20 +41,23 @@ namespace ServiceBase.Notification.Email
 
             // TODO: implement caching 
             emailMessage.Subject = _textFormatter.Format(
-                Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Subject.txt"),
+                Path.Combine(_options.TemplateDirectoryPath,
+                $"{templateName}_Subject.txt"),
                 dict);
 
             if (sendHtml)
             {
                 // TODO: implement razor parsing 
                 emailMessage.Html = _textFormatter.Format(
-                   Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.cshtml"),
+                   Path.Combine(_options.TemplateDirectoryPath,
+                   $"{templateName}_Body.cshtml"),
                    dict);
             }
             else
             {
                 emailMessage.Text = _textFormatter.Format(
-                    Path.Combine(_options.TemplateDirectoryPath, $"{templateName}_Body.txt"),
+                    Path.Combine(_options.TemplateDirectoryPath,
+                    $"{templateName}_Body.txt"),
                     dict);
             }
             

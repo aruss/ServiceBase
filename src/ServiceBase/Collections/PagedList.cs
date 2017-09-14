@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
 namespace ServiceBase.Collections
 {
+    using System.Collections.Generic;
+
     public class PagedList<TItem> : IPagedList
     {
         public int Total { get; set; }

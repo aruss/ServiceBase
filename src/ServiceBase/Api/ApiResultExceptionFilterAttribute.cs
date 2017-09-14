@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-
-namespace ServiceBase.Api
+﻿namespace ServiceBase.Api
 {
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Filters;
+
     public class ApiResultExceptionFilterAttribute : ExceptionFilterAttribute
     {
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public ApiResultExceptionFilterAttribute(IHostingEnvironment hostingEnvironment)
+        public ApiResultExceptionFilterAttribute(
+            IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }
@@ -21,10 +22,11 @@ namespace ServiceBase.Api
                 return;
             }
 
-            context.Result = new JsonResult(new ExceptionApiResult(context.Exception))
-            {
-                StatusCode = 500
-            };
+            context.Result = new JsonResult(
+                new ExceptionApiResult(context.Exception))
+                {
+                    StatusCode = 500
+                };
         }
     }
 }

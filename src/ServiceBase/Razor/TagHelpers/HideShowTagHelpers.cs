@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Razor.TagHelpers;
-
+﻿
 namespace ServiceBase.Razor.TagHelpers
 {
+    using Microsoft.AspNetCore.Razor.TagHelpers;
+
     [HtmlTargetElement(Attributes = "hide-if")]
     public class HideIfTagHelper : TagHelper
     {
         [HtmlAttributeName("hide-if")]
         public bool HideIf { get; set; }
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
+        public override void Process(
+            TagHelperContext context, TagHelperOutput output)
         {
             if (HideIf)
             {
@@ -23,7 +25,8 @@ namespace ServiceBase.Razor.TagHelpers
         [HtmlAttributeName("show-if")]
         public bool ShowIf { get; set; }
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
+        public override void Process(
+            TagHelperContext context, TagHelperOutput output)
         {
             if (ShowIf == false)
             {
@@ -38,7 +41,8 @@ namespace ServiceBase.Razor.TagHelpers
         [HtmlAttributeName("hide-if-null")]
         public object HideIfNull { get; set; }
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
+        public override void Process(
+            TagHelperContext context, TagHelperOutput output)
         {
             if (HideIfNull == null)
             {
@@ -53,7 +57,8 @@ namespace ServiceBase.Razor.TagHelpers
         [HtmlAttributeName("show-if-null")]
         public object ShowIfNull { get; set; }
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
+        public override void Process(
+            TagHelperContext context, TagHelperOutput output)
         {
             if (ShowIfNull != null)
             {

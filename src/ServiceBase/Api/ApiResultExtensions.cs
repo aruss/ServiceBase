@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace ServiceBase.Api
+﻿namespace ServiceBase.Api
 {
+    using System.Collections.Generic;
+
     public static class ApiResultExtensions
     {
         public static void AddMessage(

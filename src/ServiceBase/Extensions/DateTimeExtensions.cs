@@ -1,8 +1,8 @@
-﻿using System;
-using System.Globalization;
-
-namespace ServiceBase.Extensions
+﻿namespace ServiceBase.Extensions
 {
+    using System;
+    using System.Globalization;
+
     public static class DateTimeExtensions
     {
         private static readonly GregorianCalendar gc = new GregorianCalendar();

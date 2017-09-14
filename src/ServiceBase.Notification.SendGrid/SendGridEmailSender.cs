@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using ServiceBase.Notification.Email;
-using System.Threading.Tasks;
-
-namespace ServiceBase.Notification.SendGrid
+﻿namespace ServiceBase.Notification.SendGrid
 {
+    using System.Threading.Tasks;
+    using global::SendGrid;
+    using global::SendGrid.Helpers.Mail;
+    using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
+    using ServiceBase.Notification.Email;
+
     public class SendGridEmailSender : IEmailSender
     {
         private readonly SendGridOptions _options;

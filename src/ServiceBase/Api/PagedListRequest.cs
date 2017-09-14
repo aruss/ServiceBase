@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using ServiceBase.Collections;
-
 namespace ServiceBase.Api
 {
+    using System.Collections.Generic;
+    using ServiceBase.Collections;
+
     public class PagedListRequest
     {
         public int Skip { get; set; } = 0;

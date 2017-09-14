@@ -1,12 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using ServiceBase.Logging;
-
-namespace ServiceBase.Events
+﻿namespace ServiceBase.Events
 {
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using ServiceBase.Logging;
+
     /// <summary>
-    /// Default implementation of the event service. Write events raised to the log.
+    /// Default implementation of the event service. Write events raised to
+    /// the log.
     /// </summary>
     public class DefaultEventSink : IEventSink
     {
@@ -16,7 +17,8 @@ namespace ServiceBase.Events
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultEventSink"/> class.
+        /// Initializes a new instance of the <see cref="DefaultEventSink"/>
+        ///  class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         public DefaultEventSink(ILogger<DefaultEventService> logger)

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
-namespace ServiceBase
+﻿namespace ServiceBase
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+
     public static class Inflector
     {
         private static readonly List<Rule> Plurals = new List<Rule>();
@@ -161,7 +161,8 @@ namespace ServiceBase
 
         public static string Humanize(this string lowercaseAndUnderscoredWord)
         {
-            return Capitalize(Regex.Replace(lowercaseAndUnderscoredWord, @"_", " "));
+            return Capitalize(
+                Regex.Replace(lowercaseAndUnderscoredWord, @"_", " "));
         }
 
         public static string Pascalize(this string lowercaseAndUnderscoredWord)
@@ -186,7 +187,8 @@ namespace ServiceBase
 
         public static string Capitalize(this string word)
         {
-            return word.Substring(0, 1).ToUpper() + word.Substring(1).ToLower();
+            return word.Substring(0, 1).ToUpper() +
+                word.Substring(1).ToLower();
         }
 
         public static string Uncapitalize(this string word)
