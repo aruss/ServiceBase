@@ -25,11 +25,38 @@
             _textFormatter = new TextFormatter();
         }
 
+        /// <summary>
+        /// Sends SMS by creating a message from provided template 
+        /// </summary>
+        /// <param name="templateName">Template name.</param>
+        /// <param name="numberTo">The destination phone number. Format with a
+        /// '+' and country code e.g., +16175551212 (E.164 format).</param>
+        /// <param name="viewData">Instance of the view model.</param>
         public async Task SendSmsAsync(
-            string templateName, string number, object viewData)
+            string templateName,
+            string numberTo,
+            object viewData)
+        {
+            this.SendSmsAsync(templateName, numberTo, viewData); 
+        }
+
+        /// <summary>
+        /// Sends SMS by creating a message from provided template 
+        /// </summary>
+        /// <param name="templateName">Template name.</param>
+        /// <param name="numberTo">The destination phone number. Format with a
+        /// '+' and country code e.g., +16175551212 (E.164 format).</param>
+        /// <param name="numberFrom">The source phone number. Format with a
+        /// '+' and country code e.g., +16175551212 (E.164 format).</param>
+        /// <param name="viewData">Instance of the view model.</param>
+        public async Task SendSmsAsync(
+            string templateName,
+            string numberTo,
+            string numberFrom,
+            object viewData)
         {
             IDictionary<string, object> dict =
-                viewData as Dictionary<string, object>;
+                 viewData as Dictionary<string, object>;
 
             if (dict == null)
             {
@@ -38,10 +65,13 @@
 
             var message = _textFormatter.Format(
                 Path.Combine(
-                    _options.TemplateDirectoryPath, $"{templateName}.txt"),
-                dict);
+                    _options.TemplateDirectoryPath,
+                    $"{templateName}.txt"
+                ),
+                dict
+            );
 
-            await _smsSender.SendSmsAsync(number, message);
+            await _smsSender.SendSmsAsync(numberTo, numberFrom, message);
         }
     }
 }
