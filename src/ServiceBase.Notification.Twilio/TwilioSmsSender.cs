@@ -50,7 +50,7 @@ namespace ServiceBase.Notification.Twilio
             string message)
         {
             _logger.LogInformation(
-                $"Send SMS tó {numberTo} from {numberFrom} \"{message}\"");
+                $"Send SMS to {numberTo} from {numberFrom} \"{message}\"");
 
             if (String.IsNullOrEmpty(numberTo))
             {
