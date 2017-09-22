@@ -1,7 +1,7 @@
-﻿using ServiceBase.Logging;
-
-namespace Microsoft.Extensions.Logging
+﻿namespace Microsoft.Extensions.Logging
 {
+    using ServiceBase.Logging;
+    
     public static class ILoggerExtensions
     {
         public static void LogCritical(this ILogger logger, object obj)

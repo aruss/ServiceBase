@@ -12,7 +12,8 @@
     <tags>dotnet dotnet-core rabbitmq</tags>
     <dependencies>
       <group targetFramework=".NETCoreApp2.0">
-        <dependency id="RabbitMQ.Client" version="5.0.1" exclude="Build,Analyzers" />
+        <dependency id="MessagePack" version="1.6.1.1" exclude="Build,Analyzers" />
+		<dependency id="RabbitMQ.Client" version="5.0.1" exclude="Build,Analyzers" />
 		<dependency id="Newtonsoft.Json.Bson" version="1.0.1" exclude="Build,Analyzers" />
 		
 		<!--
