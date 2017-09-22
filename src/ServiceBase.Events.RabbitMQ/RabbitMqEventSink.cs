@@ -3,23 +3,15 @@
     using System;
     using System.Threading.Tasks;
     using global::RabbitMQ.Client;
-    using MessagePack;
     using Microsoft.Extensions.Logging;
-    using ServiceBase.Logging;
 
     /// <summary>
     /// Write events to RabbitMQ by using MessagePack serializer.
     /// </summary>
     public class RabbitMqEventSink : IEventSink
     {
-        /// <summary>
-        /// The logger
-        /// </summary>
         private readonly ILogger _logger;
-
-        /// <summary>
-        /// Options
-        /// </summary>
+        private readonly IBinarySerializer _serializer;
         private readonly RabbitMqOptions _options;
 
         /// <summary>
@@ -29,9 +21,11 @@
         /// <param name="logger">The logger.</param>
         public RabbitMqEventSink(
             ILogger<RabbitMqEventSink> logger,
+            IBinarySerializer serializer,
             RabbitMqOptions options)
         {
             this._logger = logger;
+            this._serializer = serializer;
             this._options = options;
         }
 
@@ -59,13 +53,14 @@
                     exchange: this._options.ExchangeName,
                     type: ExchangeType.Fanout);
 
-                channel.BasicPublish(exchange: this._options.ExchangeName,
-                                     routingKey: String.Empty,
-                                     basicProperties: null,
-                                     body: MessagePackSerializer
-                                        .Serialize(evnt));
+                byte[] body = this._serializer.Serialize(evnt);
 
-                this._logger.LogInformation(LogSerializer.Serialize(evnt));
+                channel.BasicPublish(
+                    exchange: this._options.ExchangeName,
+                    routingKey: String.Empty,
+                    basicProperties: null,
+                    body: body
+                );
             }
 
             return Task.CompletedTask;

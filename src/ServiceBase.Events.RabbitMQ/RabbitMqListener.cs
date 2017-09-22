@@ -14,9 +14,12 @@
     public class RabbitMqListener : IDisposable
     {
         private readonly RabbitMqOptions _options;
+        private readonly IBinarySerializer _serializer;
+        private readonly ILogger<RabbitMqListener> _logger;
+
         private IConnection _connection;
         private List<IModel> _models;
-        private readonly ILogger<RabbitMqListener> _logger;
+
 
         /// <summary>
         /// Default constructor for <see cref="RabbitMqListener"/>
@@ -27,10 +30,12 @@
         /// <see cref="ILogger{RabbitMqListener}"/></param>
         public RabbitMqListener(
             RabbitMqOptions options,
+            IBinarySerializer serializer,
             ILogger<RabbitMqListener> logger)
         {
             this._options = options;
             this._logger = logger;
+            this._serializer = serializer;
             this._models = new List<IModel>();
 
             ConnectionFactory factory = new ConnectionFactory()
@@ -56,11 +61,21 @@
             string queueName,
             Action<TMessage> action)
         {
+            if (String.IsNullOrWhiteSpace(queueName))
+            {
+                throw new ArgumentNullException(nameof(queueName));
+            }
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action)); 
+            }
+
             // TODO: Handle DLX config
             // http://www.rabbitmq.com/dlx.html
 
             IModel model = this._connection.CreateModel();
-             
+
             EventingBasicConsumer consumer =
                 new EventingBasicConsumer(model);
 
@@ -70,14 +85,14 @@
             model.QueueDeclare(queueName, false, false, false, null);
 
             model.QueueBind(queueName,
-                this._options.ExchangeName, String.Empty, null); 
+                this._options.ExchangeName, String.Empty, null);
 
             consumer.Received += (ch, ea) =>
             {
                 try
                 {
-                    action.Invoke(MessagePackSerializer
-                        .Deserialize<TMessage>(ea.Body));
+                    var obj = this._serializer.Deserialize<TMessage>(ea.Body);
+                    action.Invoke(obj);
                 }
                 catch (Exception ex)
                 {
@@ -113,7 +128,7 @@
         {
             throw new NotImplementedException();
         }
-        
+
         /// <summary>
         /// Disposes all open channels and connection
         /// </summary>

@@ -6,7 +6,7 @@
     <Authors>Russlan Akiev</Authors>
     <Company />
     <Product>ServiceBase.Events.RabbitMQ</Product>
-    <Description>RabbitMQ event sink for ServiceBase.Events</Description>
+    <Description>RabbitMQ event sink and listener for ServiceBase.Events</Description>
     <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
     <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
     <PackageTags>dotnet dotnet-core rabbitmq</PackageTags>
@@ -18,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MessagePack" Version="1.6.1.1" />
+    <PackageReference Include="MessagePack" Version="1.6.1.2" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.1" />
     <PackageReference Include="RabbitMQ.Client" Version="5.0.1" />
   </ItemGroup>
 

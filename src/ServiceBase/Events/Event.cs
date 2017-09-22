@@ -10,6 +10,7 @@ namespace ServiceBase.Events
     /// <summary>
     /// Models base class for events raised from IdentityServer.
     /// </summary>
+    [Serializable]
     public abstract class Event
     {
         /// <summary>
