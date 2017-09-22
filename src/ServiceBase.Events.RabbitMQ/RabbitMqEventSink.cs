@@ -1,17 +1,14 @@
 ﻿namespace ServiceBase.Events.RabbitMQ
 {
     using System;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using System.Text;
     using System.Threading.Tasks;
     using global::RabbitMQ.Client;
+    using MessagePack;
     using Microsoft.Extensions.Logging;
     using ServiceBase.Logging;
 
     /// <summary>
-    /// Default implementation of the event service. Write events raised to the
-    /// log.
+    /// Write events to RabbitMQ by using MessagePack serializer.
     /// </summary>
     public class RabbitMqEventSink : IEventSink
     {
@@ -41,7 +38,7 @@
         /// <summary>
         /// Raises the specified event.
         /// </summary>
-        /// <param name="evnt">The event.</param>
+        /// <param name="evnt">Instance of <see cref="Event"/></param>
         /// <exception cref="System.ArgumentNullException">evt</exception>
         public virtual Task PersistAsync(Event evnt)
         {
@@ -65,27 +62,13 @@
                 channel.BasicPublish(exchange: this._options.ExchangeName,
                                      routingKey: String.Empty,
                                      basicProperties: null,
-                                     body: ToByteArray(evnt));
+                                     body: MessagePackSerializer
+                                        .Serialize(evnt));
 
                 this._logger.LogInformation(LogSerializer.Serialize(evnt));
             }
 
-            return Task.FromResult(0);
-        }
-
-        /// <summary>
-        /// Converts objec to binary array
-        /// </summary>
-        /// <param name="obj">Object to convert</param>
-        /// <returns>Byte array</returns>
-        public byte[] ToByteArray<TObject>(TObject obj) where TObject : class
-        {
-            var bf = new BinaryFormatter();
-            using (var ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
+            return Task.CompletedTask;
         }
     }
 }

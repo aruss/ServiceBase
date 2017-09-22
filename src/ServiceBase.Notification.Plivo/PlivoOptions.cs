@@ -1,14 +1,14 @@
-﻿namespace ServiceBase.Notification.Twilio
+﻿namespace ServiceBase.Notification.Plivo
 {
-    public class TwilioOptions
+    public class PlivoOptions
     {
         /// <summary>
-        /// Twilio session identity.
+        /// Plivo authentication identity.
         /// </summary>
-        public string Sid { get; set; }
+        public string AuthId { get; set; }
 
         /// <summary>
-        /// Twilio authorization token.
+        /// Plivo authorization token.
         /// </summary>
         public string Token { get; set; }
 

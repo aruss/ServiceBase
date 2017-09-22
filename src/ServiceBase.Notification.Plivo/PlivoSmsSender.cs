@@ -1,5 +1,5 @@
 ﻿
-namespace ServiceBase.Notification.Twilio
+namespace ServiceBase.Notification.Plivo
 {
     using System;
     using System.Collections.Generic;
@@ -11,31 +11,31 @@ namespace ServiceBase.Notification.Twilio
     using ServiceBase.Notification.Sms;
 
     /// <summary>
-    /// Twilio SMS sender 
+    /// Plivo SMS sender 
     /// </summary>
-    public class TwilioSmsSender : ISmsSender
+    public class PlivoSmsSender : ISmsSender
     {
-        private readonly TwilioOptions _options;
-        private readonly ILogger<TwilioSmsSender> _logger;
+        private readonly PlivoOptions _options;
+        private readonly ILogger<PlivoSmsSender> _logger;
 
         /// <summary>
-        /// Creates an instance of TwilioSmsSender
+        /// Creates an instance of PlivoSmsSender
         /// </summary>
         /// <param name="options">Instance of
         /// <see cref="TwilioOptions"/></param>
         /// <param name="logger">Instance of
         /// <see cref="ILogger{TwilioSmsSender}"/></param>
-        public TwilioSmsSender(
-            TwilioOptions options,
-            ILogger<TwilioSmsSender> logger)
+        public PlivoSmsSender(
+            PlivoOptions options,
+            ILogger<PlivoSmsSender> logger)
         {
             _logger = logger;
             _options = options;
         }
 
         /// <summary>
-        /// Sends SMS via Twilio service
-        /// <see href="https://www.twilio.com/docs/api/messaging/send-messages"></see>
+        /// Sends SMS via Plivo service
+        /// <see href="https://www.plivo.com/docs/api/message/"></see>
         /// </summary>
         /// <param name="numberTo">The destination phone number. Format with a
         /// '+' and country code e.g., +16175551212 (E.164 format).</param>
@@ -78,7 +78,7 @@ namespace ServiceBase.Notification.Twilio
             if (String.IsNullOrEmpty(numberFrom))
             {
                 throw new ArgumentNullException(nameof(numberTo),
-                    "Invalid phone number from in TwilioOptions");
+                    "Invalid phone number from in PlivoOptions");
             }
 
             using (var client = new HttpClient())
@@ -86,17 +86,17 @@ namespace ServiceBase.Notification.Twilio
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Basic",
                     Convert.ToBase64String(Encoding.ASCII.GetBytes(
-                        $"{_options.Sid}:{_options.Token}")));
+                        $"{_options.AuthId}:{_options.Token}")));
 
                 var content = new FormUrlEncodedContent(new[]
                 {
-                    new KeyValuePair<string, string>("To", numberTo),
-                    new KeyValuePair<string, string>("From", numberFrom),
-                    new KeyValuePair<string, string>("Body", message)
+                    new KeyValuePair<string, string>("dst", numberTo),
+                    new KeyValuePair<string, string>("src", numberFrom),
+                    new KeyValuePair<string, string>("text", message)
                 });
-
-                var url = $"https://api.twilio.com/2010-04-01/Accounts/" +
-                    $"{_options.Sid}/Messages.json";
+                
+                var url = "https://api.plivo.com/v1/Account" +
+                    $"{_options.AuthId}/Message";
 
                 var result = await client.PostAsync(url, content)
                     .ConfigureAwait(false);
