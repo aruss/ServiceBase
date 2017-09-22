@@ -37,7 +37,7 @@
             string numberTo,
             object viewData)
         {
-            this.SendSmsAsync(templateName, numberTo, viewData); 
+            await this.SendSmsAsync(templateName, numberTo, null, viewData); 
         }
 
         /// <summary>

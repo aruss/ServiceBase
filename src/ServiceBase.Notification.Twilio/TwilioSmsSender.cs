@@ -49,9 +49,6 @@ namespace ServiceBase.Notification.Twilio
             string numberFrom,
             string message)
         {
-            _logger.LogInformation(
-                $"Send SMS to {numberTo} from {numberFrom} \"{message}\"");
-
             if (String.IsNullOrEmpty(numberTo))
             {
                 throw new ArgumentNullException(nameof(numberTo));
