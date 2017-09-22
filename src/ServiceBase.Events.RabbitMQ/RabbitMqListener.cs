@@ -2,10 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
     using global::RabbitMQ.Client;
     using global::RabbitMQ.Client.Events;
+    using MessagePack;
     using Microsoft.Extensions.Logging;
 
     /// <summary>
@@ -57,8 +56,11 @@
             string queueName,
             Action<TMessage> action)
         {
-            IModel model = this._connection.CreateModel();
+            // TODO: Handle DLX config
+            // http://www.rabbitmq.com/dlx.html
 
+            IModel model = this._connection.CreateModel();
+             
             EventingBasicConsumer consumer =
                 new EventingBasicConsumer(model);
 
@@ -68,17 +70,18 @@
             model.QueueDeclare(queueName, false, false, false, null);
 
             model.QueueBind(queueName,
-                this._options.ExchangeName, String.Empty, null);
+                this._options.ExchangeName, String.Empty, null); 
 
             consumer.Received += (ch, ea) =>
             {
                 try
                 {
-                    TMessage message = this.Parse<TMessage>(ea.Body);
-                    action.Invoke(message);
+                    action.Invoke(MessagePackSerializer
+                        .Deserialize<TMessage>(ea.Body));
                 }
                 catch (Exception ex)
                 {
+                    model.BasicNack(ea.DeliveryTag, false, true);
                     this._logger.LogError(ex, ex.Message);
                 }
                 finally
@@ -110,24 +113,7 @@
         {
             throw new NotImplementedException();
         }
-
-        /// <summary>
-        /// Parses byte array to <typeparamref name="TMessage"/> 
-        /// </summary>
-        /// <typeparam name="TMessage">The object to parse</typeparam>
-        /// <param name="data">Data received from the bus</param>
-        /// <returns>Instance of <typeparamref name="TMessage"/></returns>
-        private TMessage Parse<TMessage>(byte[] data)
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-
-            using (MemoryStream ms = new MemoryStream(data))
-            {
-                object obj = bf.Deserialize(ms);
-                return (TMessage)obj;
-            }
-        }
-
+        
         /// <summary>
         /// Disposes all open channels and connection
         /// </summary>
