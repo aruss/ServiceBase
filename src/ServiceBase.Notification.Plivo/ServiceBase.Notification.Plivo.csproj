@@ -4,10 +4,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <Authors>Russlan Akiev</Authors>
     <Company />
-    <Description>Twillio notification sms sender for ServiceBase.Notification.Sms</Description>
+    <Description>Plivo SMS sender for ServiceBase.Notification.Sms</Description>
     <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
     <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
-    <PackageTags>dotnet dotnet-core twillio</PackageTags>
+    <PackageTags>dotnet dotnet-core plivo sms</PackageTags>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Version>1.1.0</Version>
     <ApplicationIcon />
@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <None Remove="ServiceBase.Notification.Plivo.nuspec" />
-    <None Remove="ServiceBase.Notification.Twilio.nuspec" />
   </ItemGroup>
 
   <ItemGroup>
