@@ -13,19 +13,21 @@
     <dependencies>
       <group targetFramework=".NETCoreApp2.0">
         <dependency id="Microsoft.AspNetCore.Authorization" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.AspNetCore.Hosting.Abstractions" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.AspNetCore.Mvc.Core" version="2.0.0" />
-		<dependency id="Microsoft.AspNetCore.Mvc.Formatters.Json" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.AspNetCore.Mvc.Razor" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.AspNetCore.WebUtilities" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.Extensions.Configuration" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.Extensions.Configuration.EnvironmentVariables" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.Extensions.Configuration.FileExtensions" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.Extensions.Configuration.Json" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.Extensions.Configuration.UserSecrets" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Microsoft.Extensions.Options" version="2.0.0" exclude="Build,Analyzers" />
-		<dependency id="Serilog.Extensions.Logging" version="2.0.2" exclude="Build,Analyzers" />
-		<dependency id="Serilog.Settings.Configuration" version="2.4.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Hosting.Abstractions" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Mvc.Core" version="2.0.0" />
+        <dependency id="Microsoft.AspNetCore.Mvc.Formatters.Json" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Mvc.Razor" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.WebUtilities" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.EnvironmentVariables" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.FileExtensions" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Json" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.UserSecrets" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Options" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog" version="2.5.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog.Extensions.Logging" version="2.0.2" exclude="Build,Analyzers" />
+        <dependency id="Serilog.Settings.Configuration" version="2.4.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
