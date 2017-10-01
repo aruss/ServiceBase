@@ -2,7 +2,7 @@
 namespace ServiceBase.Razor.TagHelpers
 {
     using Microsoft.AspNetCore.Razor.TagHelpers;
-
+    
     [HtmlTargetElement(Attributes = "hide-if")]
     public class HideIfTagHelper : TagHelper
     {

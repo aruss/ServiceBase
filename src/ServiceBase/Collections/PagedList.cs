@@ -38,7 +38,7 @@ namespace ServiceBase.Collections
             this.Total = total;
             this.Skip = skip;
 
-            this.Take = take.HasValue ? take.Value : items.Count();
+            this.Take = take ?? items.Count();
             this.Sort = sort; 
         }
         
