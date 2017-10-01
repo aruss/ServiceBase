@@ -1,6 +1,7 @@
 ﻿
 namespace ServiceBase.Extensions
 {
+    using System;
     using System.Linq;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -32,7 +33,39 @@ namespace ServiceBase.Extensions
             );
 
             services.Add(descriptorToAdd);
-            
+
+            return services;
+        }
+
+        /// <summary>
+        /// Replaces registerd <typeparamref name="TService"/>
+        /// </summary>
+        /// <typeparam name="TService"></typeparam>
+        /// <typeparam name="TImplementation"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="implementationFactory"></param>
+        /// <param name="lifetime"></param>
+        /// <returns></returns>
+        public static IServiceCollection Replace<TService, TImplementation>(
+             this IServiceCollection services,
+             Func<IServiceProvider, object> implementationFactory, 
+             ServiceLifetime lifetime)
+             where TService : class
+             where TImplementation : class, TService
+        {
+            ServiceDescriptor descriptorToRemove = services
+                .FirstOrDefault(d => d.ServiceType == typeof(TService));
+
+            services.Remove(descriptorToRemove);
+
+            ServiceDescriptor descriptorToAdd = new ServiceDescriptor(
+                typeof(TService),
+                implementationFactory,
+                lifetime
+            );
+
+            services.Add(descriptorToAdd);
+
             return services;
         }
     }
