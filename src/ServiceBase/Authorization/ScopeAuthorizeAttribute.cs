@@ -4,11 +4,17 @@
 
     public class ScopeAuthorizeAttribute : AuthorizeAttribute
     {
-        public string Scope {  get { return this.Policy; } }
+        public string Scope
+        {
+            get
+            {
+                return this.Policy;
+            }
+        }
 
         public ScopeAuthorizeAttribute(string scope) : base(scope)
         {
-            
+
         }
     }
 }
