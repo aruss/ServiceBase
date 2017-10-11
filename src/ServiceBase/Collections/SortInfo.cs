@@ -7,7 +7,6 @@ namespace ServiceBase.Collections
 
         public SortInfo()
         {
-
         }
 
         public SortInfo(string field, SortDirection direction)

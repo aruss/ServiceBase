@@ -1,9 +1,7 @@
-﻿
-namespace ServiceBase.Logging
+﻿namespace ServiceBase.Logging
 {
     using System;
     using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
 
     public class NullLogger<TCategoryName> : NullLogger, ILogger<TCategoryName>
     {
@@ -36,26 +34,6 @@ namespace ServiceBase.Logging
             Exception exception,
             Func<TState, Exception, string> formatter)
         {
-        }
-    }
-
-    [Obsolete("I have no clue what purpuse is this for")]
-    public class Options<TOptions> :
-        IOptions<TOptions> where TOptions : class, new()
-    {
-        private TOptions _options;
-
-        public Options(TOptions options)
-        {
-            _options = options;
-        }
-
-        public TOptions Value
-        {
-            get
-            {
-                return _options;
-            }
         }
     }
 }

@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using global::RabbitMQ.Client;
     using global::RabbitMQ.Client.Events;
-    using MessagePack;
     using Microsoft.Extensions.Logging;
 
     /// <summary>
@@ -20,13 +19,12 @@
         private IConnection _connection;
         private List<IModel> _models;
 
-
         /// <summary>
         /// Default constructor for <see cref="RabbitMqListener"/>
         /// </summary>
-        /// <param name="options">Instance of 
+        /// <param name="options">Instance of
         /// <see cref="RabbitMqOptions"/></param>
-        /// <param name="logger">Instance of 
+        /// <param name="logger">Instance of
         /// <see cref="ILogger{RabbitMqListener}"/></param>
         public RabbitMqListener(
             RabbitMqOptions options,
@@ -48,14 +46,14 @@
 
         /// <summary>
         /// Creates an event based consumer and connects to exchange provided
-        /// via options. Will call <paramref name="action"/> as soon a message 
-        /// arrives 
+        /// via options. Will call <paramref name="action"/> as soon a message
+        /// arrives
         /// </summary>
-        /// <typeparam name="TMessage">Type of the message that will be passed 
+        /// <typeparam name="TMessage">Type of the message that will be passed
         /// to <paramref name="action"/> action</typeparam>
         /// <param name="queueName">Name of the queue that will be created and
         /// attached to exchange provided via </param>
-        /// <param name="action">Action will be called if message can be 
+        /// <param name="action">Action will be called if message can be
         /// successfully parsed to <typeparamref name="TMessage"/> type</param>
         public void ReceiveEventBased<TMessage>(
             string queueName,
@@ -68,7 +66,7 @@
 
             if (action == null)
             {
-                throw new ArgumentNullException(nameof(action)); 
+                throw new ArgumentNullException(nameof(action));
             }
 
             // TODO: Handle DLX config
@@ -110,16 +108,16 @@
         }
 
         /// <summary>
-        /// Creates an interval based consumer and connects to exchange 
-        /// provided via options. Will call <paramref name="action"/> every N 
+        /// Creates an interval based consumer and connects to exchange
+        /// provided via options. Will call <paramref name="action"/> every N
         /// seconds provided via <paramref name="timeSpan"/>
         /// </summary>
-        /// <typeparam name="TMessage">Type of the message that will be passed 
+        /// <typeparam name="TMessage">Type of the message that will be passed
         /// to <typeparamref name="action"/> action</typeparam>
         /// <param name="queueName">Name of the queue that will be created and
         /// attached to exchange provided via </param>
         /// <param name="timeSpan">Checking for messages interval</param>
-        /// <param name="action">Action will be called if message can be 
+        /// <param name="action">Action will be called if message can be
         /// successfully parsed to <typeparamref name="TMessage"/> type</param>
         public void ReceiveIntervalBased<TMessage>(
             string queueName,

@@ -13,7 +13,7 @@
             return date.GetWeekOfYear() - first.GetWeekOfYear() + 1;
         }
 
-        static int GetWeekOfYear(this DateTime date)
+        private static int GetWeekOfYear(this DateTime date)
         {
             return DateTimeExtensions.gc.GetWeekOfYear(
                 date, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);

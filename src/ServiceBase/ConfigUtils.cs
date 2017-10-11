@@ -48,7 +48,7 @@
             {
                 configBuilder.AddCommandLine(args);
             }
-            
+
             return configBuilder.Build();
         }
     }

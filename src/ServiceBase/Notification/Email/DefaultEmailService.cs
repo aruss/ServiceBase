@@ -39,7 +39,7 @@
 
             emailMessage.EmailTo = email;
 
-            // TODO: implement caching 
+            // TODO: implement caching
             emailMessage.Subject = _textFormatter.Format(
                 Path.Combine(_options.TemplateDirectoryPath,
                 $"{templateName}_Subject.txt"),
@@ -47,7 +47,7 @@
 
             if (sendHtml)
             {
-                // TODO: implement razor parsing 
+                // TODO: implement razor parsing
                 emailMessage.Html = _textFormatter.Format(
                    Path.Combine(_options.TemplateDirectoryPath,
                    $"{templateName}_Body.cshtml"),
@@ -60,7 +60,7 @@
                     $"{templateName}_Body.txt"),
                     dict);
             }
-            
+
             await _emailSender.SendEmailAsync(emailMessage);
         }
     }

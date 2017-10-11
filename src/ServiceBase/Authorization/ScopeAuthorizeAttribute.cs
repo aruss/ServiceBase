@@ -14,7 +14,6 @@
 
         public ScopeAuthorizeAttribute(string scope) : base(scope)
         {
-
         }
     }
 }

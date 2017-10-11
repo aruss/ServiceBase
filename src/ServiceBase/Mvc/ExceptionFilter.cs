@@ -24,7 +24,6 @@
 
         public void Dispose()
         {
-
         }
 
         public void OnException(ExceptionContext context)

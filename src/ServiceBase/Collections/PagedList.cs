@@ -4,7 +4,7 @@ namespace ServiceBase.Collections
     using System.Linq;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
     public class PagedList<TItem> : IPagedList
@@ -15,7 +15,6 @@ namespace ServiceBase.Collections
         /// </summary>
         public PagedList()
         {
-
         }
 
         /// <summary>
@@ -39,9 +38,9 @@ namespace ServiceBase.Collections
             this.Skip = skip;
 
             this.Take = take ?? items.Count();
-            this.Sort = sort; 
+            this.Sort = sort;
         }
-        
+
         public int Total { get; set; }
         public int Skip { get; set; }
         public int Take { get; set; }

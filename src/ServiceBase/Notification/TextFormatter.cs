@@ -2,14 +2,14 @@
 {
     using System.Collections.Generic;
     using System.IO;
-    
+
     public class TextFormatter
     {
         public string Format(
             string path,
             IDictionary<string, object> viewData)
         {
-            return TokenizeText(File.ReadAllText(path), viewData); 
+            return TokenizeText(File.ReadAllText(path), viewData);
         }
 
         public string TokenizeText(
@@ -22,7 +22,7 @@
                 result = result
                     .Replace($"{{{item.Key}}}", item.Value.ToString());
             }
-            
+
             return result;
         }
     }

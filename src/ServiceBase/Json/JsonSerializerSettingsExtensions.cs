@@ -30,12 +30,12 @@
                 new StringEnumConverter { CamelCaseText = true }
             );
 
-            return settings; 
+            return settings;
         }
 
         public static JsonSerializerSettings CreateWithDefaults()
         {
-            return new JsonSerializerSettings().SetupDefaults(); 
+            return new JsonSerializerSettings().SetupDefaults();
         }
     }
 }

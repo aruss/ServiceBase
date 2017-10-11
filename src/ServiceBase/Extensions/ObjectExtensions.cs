@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    
+
     public static class ObjectExtensions
     {
         /// <summary>
@@ -11,7 +11,7 @@
         /// </summary>
         public static IDictionary<string, object> ToDictionary(
             this object source,
-            BindingFlags bindingAttr = BindingFlags.DeclaredOnly | 
+            BindingFlags bindingAttr = BindingFlags.DeclaredOnly |
                 BindingFlags.Public |
                 BindingFlags.Instance)
         {

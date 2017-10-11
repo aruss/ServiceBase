@@ -23,7 +23,7 @@
             {
                 outputFormatters.Remove(outputFormatter);
             }
-            
+
             outputFormatters.Add(new JsonOutputFormatter(
                 new JsonSerializerSettings().SetupDefaults(),
                 ArrayPool<Char>.Shared));

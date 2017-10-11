@@ -79,12 +79,16 @@
             {
                 case EventTypes.Failure:
                     return this._eventOptions.RaiseFailureEvents;
+
                 case EventTypes.Information:
                     return this._eventOptions.RaiseInformationEvents;
+
                 case EventTypes.Success:
                     return this._eventOptions.RaiseSuccessEvents;
+
                 case EventTypes.Error:
                     return this._eventOptions.RaiseErrorEvents;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

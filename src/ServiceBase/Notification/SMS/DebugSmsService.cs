@@ -18,9 +18,9 @@
         {
             _logger = logger;
         }
-        
+
         /// <summary>
-        /// Sends SMS by creating a message from provided template 
+        /// Sends SMS by creating a message from provided template
         /// </summary>
         /// <param name="templateName">Template name.</param>
         /// <param name="numberTo">The destination phone number. Format with a
@@ -35,7 +35,7 @@
         }
 
         /// <summary>
-        /// Sends SMS by creating a message from provided template 
+        /// Sends SMS by creating a message from provided template
         /// </summary>
         /// <param name="templateName">Template name.</param>
         /// <param name="numberTo">The destination phone number. Format with a

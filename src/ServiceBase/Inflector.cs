@@ -77,7 +77,7 @@
             AddUncountable("aircraft");
         }
 
-        #endregion
+        #endregion Default Rules
 
         private class Rule
         {
@@ -180,7 +180,7 @@
         {
             return Regex.Replace(
                 Regex.Replace(
-                    Regex.Replace(pascalCasedWord, 
+                    Regex.Replace(pascalCasedWord,
                     @"([A-Z]+)([A-Z][a-z])", "$1_$2"), @"([a-z\d])([A-Z])",
                     "$1_$2"), @"[-\s]", "_").ToLower();
         }
@@ -219,10 +219,13 @@
             {
                 case 1:
                     return numberString + "st";
+
                 case 2:
                     return numberString + "nd";
+
                 case 3:
                     return numberString + "rd";
+
                 default:
                     return numberString + "th";
             }

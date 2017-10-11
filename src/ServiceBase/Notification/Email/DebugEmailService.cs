@@ -1,5 +1,4 @@
-﻿
-namespace ServiceBase.Notification.Email
+﻿namespace ServiceBase.Notification.Email
 {
     using System;
     using System.Collections.Generic;

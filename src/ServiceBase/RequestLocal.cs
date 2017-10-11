@@ -20,7 +20,7 @@
         /// </summary>
         private static long _id;
 
-        #endregion
+        #endregion Private Static Fields
 
         #region Private Fields
 
@@ -31,7 +31,7 @@
 
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        #endregion
+        #endregion Private Fields
 
         #region Constructors
 
@@ -49,7 +49,7 @@
                 Interlocked.Increment(ref RequestLocal<TValue>._id));
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Public Properties
 
@@ -83,7 +83,7 @@
             }
         }
 
-        #endregion
+        #endregion Public Properties
 
         #region Public Methods
 
@@ -97,8 +97,6 @@
                     .HttpContext.Items.Remove(this._key);
         }
 
-        #endregion
+        #endregion Public Methods
     }
 }
-
-

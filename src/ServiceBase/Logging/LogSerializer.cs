@@ -11,7 +11,7 @@ namespace ServiceBase.Logging
     /// </summary>
     public static class LogSerializer
     {
-        static readonly JsonSerializerSettings jsonSettings =
+        private static readonly JsonSerializerSettings jsonSettings =
             new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,

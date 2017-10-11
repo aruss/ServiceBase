@@ -1,5 +1,4 @@
-﻿
-namespace ServiceBase.Events.RabbitMQ
+﻿namespace ServiceBase.Events.RabbitMQ
 {
     public class MessagePackSerializer : IBinarySerializer
     {

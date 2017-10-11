@@ -1,5 +1,4 @@
-﻿// Parts of the code are borrowed from Brock Allen & Dominick Baier. 
-
+﻿// Parts of the code are borrowed from Brock Allen & Dominick Baier.
 
 namespace ServiceBase.Extensions
 {
@@ -266,7 +265,7 @@ namespace ServiceBase.Extensions
                 // and create a string.
                 var sBuilder = new StringBuilder();
 
-                // Loop through each byte of the hashed data 
+                // Loop through each byte of the hashed data
                 // and format each one as a hexadecimal string.
                 for (int i = 0; i < data.Length; i++)
                 {
@@ -292,7 +291,8 @@ namespace ServiceBase.Extensions
             return Path.GetFullPath(path);
         }
 
-        static readonly string[] UglyBase64 = { "+", "/", "=" };
+        private static readonly string[] UglyBase64 = { "+", "/", "=" };
+
         [DebuggerStepThrough]
         public static string StripUglyBase64(this string s)
         {

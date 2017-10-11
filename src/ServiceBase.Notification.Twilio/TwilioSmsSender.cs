@@ -1,5 +1,4 @@
-﻿
-namespace ServiceBase.Notification.Twilio
+﻿namespace ServiceBase.Notification.Twilio
 {
     using System;
     using System.Collections.Generic;
@@ -11,7 +10,7 @@ namespace ServiceBase.Notification.Twilio
     using ServiceBase.Notification.Sms;
 
     /// <summary>
-    /// Twilio SMS sender 
+    /// Twilio SMS sender
     /// </summary>
     public class TwilioSmsSender : ISmsSender
     {
@@ -69,7 +68,7 @@ namespace ServiceBase.Notification.Twilio
 
             if (String.IsNullOrEmpty(numberFrom))
             {
-                numberFrom = this._options.From; 
+                numberFrom = this._options.From;
             }
 
             if (String.IsNullOrEmpty(numberFrom))

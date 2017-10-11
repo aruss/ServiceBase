@@ -1,5 +1,4 @@
-﻿
-namespace ServiceBase
+﻿namespace ServiceBase
 {
     using System.Net.Http;
     using System.Threading;
@@ -23,9 +22,8 @@ namespace ServiceBase
         private int _maxRetries;
 
         public RetryHttpClientHandler(int maxRetries = 3)
-            :this(new HttpClientHandler(), maxRetries)
+            : this(new HttpClientHandler(), maxRetries)
         {
-
         }
 
         public RetryHttpClientHandler(

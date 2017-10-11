@@ -1,5 +1,4 @@
-﻿
-namespace ServiceBase.Notification.Plivo
+﻿namespace ServiceBase.Notification.Plivo
 {
     using System;
     using System.Collections.Generic;
@@ -11,7 +10,7 @@ namespace ServiceBase.Notification.Plivo
     using ServiceBase.Notification.Sms;
 
     /// <summary>
-    /// Plivo SMS sender 
+    /// Plivo SMS sender
     /// </summary>
     public class PlivoSmsSender : ISmsSender
     {
@@ -72,7 +71,7 @@ namespace ServiceBase.Notification.Plivo
 
             if (String.IsNullOrEmpty(numberFrom))
             {
-                numberFrom = this._options.From; 
+                numberFrom = this._options.From;
             }
 
             if (String.IsNullOrEmpty(numberFrom))
@@ -94,7 +93,7 @@ namespace ServiceBase.Notification.Plivo
                     new KeyValuePair<string, string>("src", numberFrom),
                     new KeyValuePair<string, string>("text", message)
                 });
-                
+
                 var url = "https://api.plivo.com/v1/Account" +
                     $"{_options.AuthId}/Message";
 

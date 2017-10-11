@@ -4,7 +4,7 @@
     using System.Linq;
 
     /// <summary>
-    /// Contains extensions for <see cref="IConfiguration"/> 
+    /// Contains extensions for <see cref="IConfiguration"/>
     /// </summary>
     public static class IConfigurationExtensions
     {

@@ -3,6 +3,7 @@
     using System.IO;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Bson;
+
     public class JsonBinarySerializer : IBinarySerializer
     {
         public TObject Deserialize<TObject>(byte[] bytes)

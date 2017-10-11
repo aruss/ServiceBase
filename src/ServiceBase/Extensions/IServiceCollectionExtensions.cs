@@ -106,6 +106,5 @@
             return services.TryAdd<TService, TImplementation>(
                 ServiceLifetime.Singleton);
         }
-
     }
 }

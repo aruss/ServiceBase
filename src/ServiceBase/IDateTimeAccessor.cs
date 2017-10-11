@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    /// Datetime helper for abstracting UtcNow for unit tests and stuff 
+    /// Datetime helper for abstracting UtcNow for unit tests and stuff
     /// </summary>
     public interface IDateTimeAccessor
     {
@@ -16,6 +16,6 @@
     public class DateTimeAccessor : IDateTimeAccessor
     {
         public DateTime UtcNow => UtcNowFunc();
-        public Func<DateTime> UtcNowFunc = () => DateTime.UtcNow;        
+        public Func<DateTime> UtcNowFunc = () => DateTime.UtcNow;
     }
 }

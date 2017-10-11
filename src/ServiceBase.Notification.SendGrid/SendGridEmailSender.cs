@@ -12,10 +12,12 @@
         private readonly SendGridOptions _options;
         private readonly ILogger<SendGridEmailSender> _logger;
 
-        public SendGridEmailSender(SendGridOptions options, ILogger<SendGridEmailSender> logger)
+        public SendGridEmailSender(
+            SendGridOptions options,
+            ILogger<SendGridEmailSender> logger)
         {
             _logger = logger;
-            _options = options; 
+            _options = options;
         }
 
         public async Task SendEmailAsync(EmailMessage message)

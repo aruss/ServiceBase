@@ -4,8 +4,8 @@
     using Microsoft.AspNetCore.Mvc.Razor;
 
     /// <summary>
-    /// Specifies the contracts for a view location expander that is used by 
-    /// <see cref="Microsoft.AspNetCore.Mvc.Razor.RazorViewEngine"/> instances 
+    /// Specifies the contracts for a view location expander that is used by
+    /// <see cref="Microsoft.AspNetCore.Mvc.Razor.RazorViewEngine"/> instances
     /// to determine search paths for a view.
     /// </summary>
     public class CustomViewLocationExpander : IViewLocationExpander
