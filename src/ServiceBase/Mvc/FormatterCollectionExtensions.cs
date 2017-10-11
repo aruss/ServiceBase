@@ -1,14 +1,19 @@
-﻿namespace ServiceBase.Api
+﻿namespace ServiceBase.Mvc
 {
     using System;
     using System.Buffers;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc.Formatters;
     using Newtonsoft.Json;
+    using ServiceBase.Json;
 
     public static class FormatterCollectionExtensions
     {
-        public static void ReplaceJsonOutputFormatter(
+        /// <summary>
+        /// Adds custom configured <see cref="JsonOutputFormatter"/>.
+        /// </summary>
+        /// <param name="outputFormatters"></param>
+        public static void AddDefaultJsonOutputFormatter(
             this FormatterCollection<IOutputFormatter> outputFormatters)
         {
             var outputFormatter = outputFormatters
@@ -20,7 +25,7 @@
             }
             
             outputFormatters.Add(new JsonOutputFormatter(
-                new JsonSerializerSettings().ConfigureCommon(),
+                new JsonSerializerSettings().SetupDefaults(),
                 ArrayPool<Char>.Shared));
         }
     }

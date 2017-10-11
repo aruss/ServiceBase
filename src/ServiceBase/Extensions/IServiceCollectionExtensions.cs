@@ -1,5 +1,4 @@
-﻿
-namespace ServiceBase.Extensions
+﻿namespace ServiceBase.Extensions
 {
     using System;
     using System.Linq;

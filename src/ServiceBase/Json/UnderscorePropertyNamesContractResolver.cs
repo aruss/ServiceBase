@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.Api
+﻿namespace ServiceBase.Json
 {
     using Newtonsoft.Json.Serialization;
 

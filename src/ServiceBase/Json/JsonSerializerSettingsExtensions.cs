@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.Api
+﻿namespace ServiceBase.Json
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -6,7 +6,13 @@
 
     public static class JsonSerializerSettingsExtensions
     {
-        public static JsonSerializerSettings ConfigureCommon(
+        /// <summary>
+        /// Configures <see cref="JsonSerializerSettings"/> with common
+        /// restfull API settings.
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public static JsonSerializerSettings SetupDefaults(
             this JsonSerializerSettings settings)
         {
             settings.ContractResolver =
@@ -25,6 +31,11 @@
             );
 
             return settings; 
+        }
+
+        public static JsonSerializerSettings CreateWithDefaults()
+        {
+            return new JsonSerializerSettings().SetupDefaults(); 
         }
     }
 }

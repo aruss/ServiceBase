@@ -21,6 +21,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mvc\ApiResult.cs" />
+    <Compile Remove="Mvc\ApiResultExceptionFilterAttribute.cs" />
+    <Compile Remove="Mvc\ApiResultExtensions.cs" />
+    <Compile Remove="Mvc\ApiResultValidateModelAttribute.cs" />
+    <Compile Remove="Mvc\ExceptionDescription.cs" />
+    <Compile Remove="Mvc\PagedListRequest.cs" />
+    <Compile Remove="Mvc\ResponseMessage.cs" />
+    <Compile Remove="Mvc\ResponseMessageKind.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="ServiceBase.nuspec" />
   </ItemGroup>
 
