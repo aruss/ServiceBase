@@ -1,6 +1,7 @@
 ﻿namespace ServiceBase.Mvc
 {
     using System;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Logging;
@@ -11,11 +12,14 @@
         private readonly ILogger _logger;
 
         public ExceptionFilter(
-            ILogger logger,
-            bool includeStackTrace = false)
+            ILogger<ExceptionFilter> logger,
+            IHostingEnvironment hostingEnvironment)
         {
             this._logger = logger;
-            this._includeStackTrace = includeStackTrace; 
+
+            this._includeStackTrace =
+                hostingEnvironment.IsDevelopment() ||
+                hostingEnvironment.IsEnvironment("Test");
         }
 
         public void Dispose()
