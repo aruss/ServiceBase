@@ -5,12 +5,12 @@
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Logging;
 
-    public class GlobalExceptionFilter : IExceptionFilter, IDisposable
+    public class ExceptionFilter : IExceptionFilter, IDisposable
     {
         private readonly bool _includeStackTrace;
         private readonly ILogger _logger;
 
-        public GlobalExceptionFilter(
+        public ExceptionFilter(
             ILogger logger,
             bool includeStackTrace = false)
         {
