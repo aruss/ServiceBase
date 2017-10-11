@@ -3,7 +3,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
-    public class BadRequestFilterAttribute : ActionFilterAttribute
+    public class BadRequestFilter : ActionFilterAttribute
     {
         public override void OnResultExecuting(ResultExecutingContext context)
         {
