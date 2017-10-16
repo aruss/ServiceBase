@@ -176,7 +176,7 @@ namespace ServiceBase.Extensions
                 // Allows "~/" or "~/foo".
                 (url.Length > 1 && url[0] == '~' && url[1] == '/'));
         }
-
+        
         [DebuggerStepThrough]
         public static string AddQueryString(this string url, string query)
         {
