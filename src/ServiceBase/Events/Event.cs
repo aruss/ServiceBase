@@ -10,7 +10,6 @@ namespace ServiceBase.Events
     /// <summary>
     /// Models base class for events raised from IdentityServer.
     /// </summary>
-    [Serializable]
     public abstract class Event
     {
         /// <summary>
@@ -29,15 +28,15 @@ namespace ServiceBase.Events
             int id,
             string message = null)
         {
-            Category = category ??
+            this.Category = category ??
                 throw new ArgumentNullException(nameof(category));
 
-            Name = name ??
+            this.Name = name ??
                 throw new ArgumentNullException(nameof(name));
 
-            EventType = type;
-            Id = id;
-            Message = message;
+            this.EventType = type;
+            this.Id = id;
+            this.Message = message;
         }
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace ServiceBase.Events
         /// <returns></returns>
         protected internal virtual Task PrepareAsync()
         {
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
 
         /// <summary>
