@@ -9,7 +9,8 @@
 
         public static int GetWeekOfMonth(this DateTime date)
         {
-            var first = new DateTime(date.Year, date.Month, 1);
+            DateTime first = new DateTime(date.Year, date.Month, 1);
+
             return date.GetWeekOfYear() - first.GetWeekOfYear() + 1;
         }
 
@@ -22,31 +23,51 @@
         public static DateTime GetStartOfDay(this DateTime date)
         {
             return new DateTime(
-                date.Year, date.Month, date.Day,
-                0, 0, 0, 0);
+                date.Year,
+                date.Month,
+                date.Day,
+                0, 0, 0, 0,
+                date.Kind
+            );
         }
 
         public static DateTime GetEndOfDay(this DateTime date)
         {
             return new DateTime(
-                date.Year, date.Month, date.Day,
-                23, 59, 59, 999);
+                date.Year,
+                date.Month,
+                date.Day,
+                23, 59, 59, 999,
+                date.Kind
+            );
         }
 
         public static DateTime GetStartOfMonth(this DateTime date)
         {
-            return new DateTime(date.Year, date.Month, 1, 0, 0, 0, 0);
+            return new DateTime(
+                date.Year,
+                date.Month,
+                1, 0, 0, 0, 0,
+                date.Kind
+            );
         }
 
         public static DateTime GetEndOfMonth(this DateTime date)
         {
-            return new DateTime(date.Year, date.Month,
-              DateTime.DaysInMonth(date.Year, date.Month), 23, 59, 59, 999);
+            return new DateTime(
+                date.Year,
+                date.Month,
+                DateTime.DaysInMonth(date.Year, date.Month),
+                23, 59, 59, 999,
+                date.Kind
+            );
         }
 
         public static int GetUnixTimestamp(this DateTime date)
         {
-            return (int)(date.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            return (int)(date.Subtract(
+                new DateTime(1970, 1, 1, 0, 0, 0, date.Kind))
+            ).TotalSeconds;
         }
     }
 }
