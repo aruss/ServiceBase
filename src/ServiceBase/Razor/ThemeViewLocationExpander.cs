@@ -1,6 +1,7 @@
 namespace ServiceBase.Razor
 {
     using System.Collections.Generic;
+    using System.IO;
     using Microsoft.AspNetCore.Mvc.Razor;
     using ServiceBase.Extensions;
 
@@ -8,6 +9,8 @@ namespace ServiceBase.Razor
     /// Specifies the contracts for a view location expander that is used by 
     /// <see cref="Microsoft.AspNetCore.Mvc.Razor.RazorViewEngine"/> instances 
     /// to determine search paths for a view.
+    /// NOTE: FileWatcher will not track changes if absolute path is provided
+    /// due to #248 bug <see href="https://github.com/aspnet/FileSystem/issues/248"/>
     /// </summary>
     public class ThemeViewLocationExpander : IViewLocationExpander
     {
@@ -15,7 +18,18 @@ namespace ServiceBase.Razor
 
         public ThemeViewLocationExpander(string themePath)
         {
-            this._themePath = themePath?.RemoveTrailingSlash();
+            if (Path.IsPathRooted(themePath))
+            {
+                this._themePath = Path
+                    .GetFullPath(themePath)
+                    .RemoveTrailingSlash();
+            }
+            else
+            {
+                this._themePath = themePath
+                    .Replace("./", "~/")
+                    .RemoveTrailingSlash();
+            }
         }
 
         public IEnumerable<string> ExpandViewLocations(
