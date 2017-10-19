@@ -14,8 +14,8 @@
     /// </summary>
     public class TwilioSmsSender : ISmsSender
     {
-        private readonly TwilioOptions _options;
-        private readonly ILogger<TwilioSmsSender> _logger;
+        private readonly TwilioOptions options;
+        private readonly ILogger<TwilioSmsSender> logger;
 
         /// <summary>
         /// Creates an instance of TwilioSmsSender
@@ -28,8 +28,8 @@
             TwilioOptions options,
             ILogger<TwilioSmsSender> logger)
         {
-            _logger = logger;
-            _options = options;
+            this.logger = logger;
+            this.options = options;
         }
 
         /// <summary>
@@ -68,7 +68,7 @@
 
             if (String.IsNullOrEmpty(numberFrom))
             {
-                numberFrom = this._options.From;
+                numberFrom = this.options.From;
             }
 
             if (String.IsNullOrEmpty(numberFrom))
@@ -82,24 +82,25 @@
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Basic",
                     Convert.ToBase64String(Encoding.ASCII.GetBytes(
-                        $"{_options.Sid}:{_options.Token}")));
+                        $"{this.options.Sid}:{this.options.Token}")));
 
-                var content = new FormUrlEncodedContent(new[]
+                FormUrlEncodedContent content = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string, string>("To", numberTo),
                     new KeyValuePair<string, string>("From", numberFrom),
                     new KeyValuePair<string, string>("Body", message)
                 });
 
-                var url = $"https://api.twilio.com/2010-04-01/Accounts/" +
-                    $"{_options.Sid}/Messages.json";
+                string url = $"https://api.twilio.com/2010-04-01/Accounts/" +
+                    $"{this.options.Sid}/Messages.json";
 
-                var result = await client.PostAsync(url, content)
+                HttpResponseMessage result = await client
+                    .PostAsync(url, content)
                     .ConfigureAwait(false);
 
                 if (!result.IsSuccessStatusCode)
                 {
-                    _logger.LogError(result);
+                    this.logger.LogError(result);
                 }
             }
         }

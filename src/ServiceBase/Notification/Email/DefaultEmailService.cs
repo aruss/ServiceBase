@@ -8,20 +8,20 @@
 
     public class DefaultEmailService : IEmailService
     {
-        private readonly IEmailSender _emailSender;
-        private readonly DefaultEmailServiceOptions _options;
-        private readonly ILogger<DefaultEmailService> _logger;
-        private readonly TextFormatter _textFormatter;
+        private readonly IEmailSender emailSender;
+        private readonly DefaultEmailServiceOptions options;
+        private readonly ILogger<DefaultEmailService> logger;
+        private readonly TextFormatter textFormatter;
 
         public DefaultEmailService(
             DefaultEmailServiceOptions options,
             ILogger<DefaultEmailService> logger,
             IEmailSender emailSender)
         {
-            _logger = logger;
-            _options = options;
-            _emailSender = emailSender;
-            _textFormatter = new TextFormatter();
+            this.logger = logger;
+            this.options = options;
+            this.emailSender = emailSender;
+            this.textFormatter = new TextFormatter();
         }
 
         public async Task SendEmailAsync(
@@ -35,33 +35,35 @@
                 dict = viewData.ToDictionary();
             }
 
-            var emailMessage = new EmailMessage();
+            var emailMessage = new EmailMessage
+            {
+                EmailTo = email,
 
-            emailMessage.EmailTo = email;
-
-            // TODO: implement caching
-            emailMessage.Subject = _textFormatter.Format(
-                Path.Combine(_options.TemplateDirectoryPath,
-                $"{templateName}_Subject.txt"),
-                dict);
+                // TODO: implement caching
+                Subject = this.textFormatter.Format(
+                    Path.Combine(this.options.TemplateDirectoryPath,
+                    $"{templateName}_Subject.txt"),
+                    dict
+                )
+            };
 
             if (sendHtml)
             {
                 // TODO: implement razor parsing
-                emailMessage.Html = _textFormatter.Format(
-                   Path.Combine(_options.TemplateDirectoryPath,
+                emailMessage.Html = this.textFormatter.Format(
+                   Path.Combine(this.options.TemplateDirectoryPath,
                    $"{templateName}_Body.cshtml"),
                    dict);
             }
             else
             {
-                emailMessage.Text = _textFormatter.Format(
-                    Path.Combine(_options.TemplateDirectoryPath,
+                emailMessage.Text = this.textFormatter.Format(
+                    Path.Combine(this.options.TemplateDirectoryPath,
                     $"{templateName}_Body.txt"),
                     dict);
             }
 
-            await _emailSender.SendEmailAsync(emailMessage);
+            await this.emailSender.SendEmailAsync(emailMessage);
         }
     }
 }

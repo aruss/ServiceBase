@@ -27,15 +27,15 @@
 
         public static T Next<T>(this Random rnd, System.Type type)
         {
-            var constants = new ArrayList();
+            ArrayList constants = new ArrayList();
 
-            var fieldInfos = type.GetFields(
+            FieldInfo[] fieldInfos = type.GetFields(
                 BindingFlags.Public |
                 BindingFlags.Static |
                 BindingFlags.FlattenHierarchy);
 
             // replace by linq
-            foreach (var fi in fieldInfos)
+            foreach (FieldInfo fi in fieldInfos)
             {
                 if (fi.IsLiteral && !fi.IsInitOnly)
                 {
@@ -53,24 +53,32 @@
             return (float)(rnd.Next() & 0x7fffffff) * scale;
         }
 
-        public static float NextFloat(this Random rnd, float maxValue)
+        public static float NextFloat(
+            this Random rnd,
+            float maxValue)
         {
             return NextFloat(rnd) * maxValue;
         }
 
         public static float NextFloat(
-            this Random rnd, float minValue, float maxValue)
+            this Random rnd,
+            float minValue,
+            float maxValue)
         {
             return NextFloat(rnd) * (maxValue - minValue) + minValue;
         }
 
-        public static double NextDouble(this Random rnd, double maxValue)
+        public static double NextDouble(
+            this Random rnd,
+            double maxValue)
         {
             return rnd.NextDouble() * maxValue;
         }
 
         public static double NextDouble(
-            this Random rnd, double minValue, double maxValue)
+            this Random rnd,
+            double minValue,
+            double maxValue)
         {
             return rnd.NextDouble() * (maxValue - minValue) + minValue;
         }
@@ -81,16 +89,18 @@
         }
 
         public static DateTime Next(
-            this Random rnd, DateTime min, DateTime max)
+            this Random rnd,
+            DateTime min,
+            DateTime max)
         {
             if (max <= min)
             {
                 throw new ArgumentException("Max must be greater than min.");
             }
 
-            var minTicks = min.Ticks;
-            var maxTicks = max.Ticks;
-            var rn = (Convert.ToDouble(maxTicks)
+            long minTicks = min.Ticks;
+            long maxTicks = max.Ticks;
+            double rn = (Convert.ToDouble(maxTicks)
                - Convert.ToDouble(minTicks)) * rnd.NextDouble()
                + Convert.ToDouble(minTicks);
 
@@ -99,9 +109,9 @@
 
         public static T NextEnum<T>(this Random rnd)
         {
-            var items = Enum.GetNames(typeof(T));
-            var r = new Random((int)DateTime.Now.Ticks);
-            var e = items[r.Next(0, items.Length - 1)];
+            string[] items = Enum.GetNames(typeof(T));
+            Random r = new Random((int)DateTime.Now.Ticks);
+            string e = items[r.Next(0, items.Length - 1)];
 
             return (T)Enum.Parse(typeof(T), e, true);
         }

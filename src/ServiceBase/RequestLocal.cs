@@ -18,7 +18,7 @@
         /// <summary>
         /// Saves the internal id of the last requestlocal instance.
         /// </summary>
-        private static long _id;
+        private static long id;
 
         #endregion Private Static Fields
 
@@ -27,9 +27,9 @@
         /// <summary>
         /// Saves the key used for caching in the http context.
         /// </summary>
-        private string _key;
+        private string key;
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
         #endregion Private Fields
 
@@ -41,12 +41,12 @@
         /// </summary>
         public RequestLocal(IHttpContextAccessor httpContextAccessor)
         {
-            this._httpContextAccessor = httpContextAccessor;
+            this.httpContextAccessor = httpContextAccessor;
 
-            this._key = string.Format(
+            this.key = string.Format(
                 "requestlocal_{0}_-_{1}",
                 typeof(TValue).FullName,
-                Interlocked.Increment(ref RequestLocal<TValue>._id));
+                Interlocked.Increment(ref RequestLocal<TValue>.id));
         }
 
         #endregion Constructors
@@ -60,14 +60,14 @@
         {
             get
             {
-                return (TValue)this._httpContextAccessor
-                    .HttpContext.Items[this._key];
+                return (TValue)this.httpContextAccessor
+                    .HttpContext.Items[this.key];
             }
 
             set
             {
-                this._httpContextAccessor
-                    .HttpContext.Items[this._key] = value;
+                this.httpContextAccessor
+                    .HttpContext.Items[this.key] = value;
             }
         }
 
@@ -78,7 +78,7 @@
         {
             get
             {
-                return this._httpContextAccessor
+                return this.httpContextAccessor
                     .HttpContext.Items.ContainsKey(this._key);
             }
         }
@@ -93,8 +93,8 @@
         /// </summary>
         public void Dispose()
         {
-            this._httpContextAccessor
-                    .HttpContext.Items.Remove(this._key);
+            this.httpContextAccessor
+                    .HttpContext.Items.Remove(this.key);
         }
 
         #endregion Public Methods
