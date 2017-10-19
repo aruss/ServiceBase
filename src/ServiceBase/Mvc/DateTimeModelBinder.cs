@@ -9,7 +9,8 @@
     {
         private static readonly string[] DateTimeFormats = {
             "yyyyMMdd'T'HHmmss.FFFFFFFK",
-            "yyyy-MM-dd'T'HH:mm:ss.FFFFFFFK"
+            "yyyy-MM-dd'T'HH:mm:ss.FFFFFFFK",
+            "yyyy-MM-dd"
         };
 
         public Task BindModelAsync(ModelBindingContext bindingContext)
