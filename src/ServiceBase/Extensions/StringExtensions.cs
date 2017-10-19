@@ -37,7 +37,7 @@ namespace ServiceBase.Extensions
                 return "";
             }
 
-            var sb = new StringBuilder(100);
+            StringBuilder sb = new StringBuilder(100);
 
             foreach (var element in list)
             {

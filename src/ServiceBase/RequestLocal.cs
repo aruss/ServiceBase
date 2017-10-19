@@ -79,7 +79,7 @@
             get
             {
                 return this.httpContextAccessor
-                    .HttpContext.Items.ContainsKey(this._key);
+                    .HttpContext.Items.ContainsKey(this.key);
             }
         }
 
