@@ -9,31 +9,33 @@
 
     public class SendGridEmailSender : IEmailSender
     {
-        private readonly SendGridOptions _options;
-        private readonly ILogger<SendGridEmailSender> _logger;
+        private readonly SendGridOptions options;
+        private readonly ILogger<SendGridEmailSender> logger;
 
         public SendGridEmailSender(
             SendGridOptions options,
             ILogger<SendGridEmailSender> logger)
         {
-            _logger = logger;
-            _options = options;
+            this.logger = logger;
+            this.options = options;
         }
 
         public async Task SendEmailAsync(EmailMessage message)
         {
-            var client = new SendGridClient(_options.Key);
-            var msg = new SendGridMessage
+            SendGridClient client = new SendGridClient(this.options.Key);
+
+            SendGridMessage msg = new SendGridMessage
             {
                 From = new EmailAddress(message.EmailFrom),
                 Subject = message.Subject,
                 PlainTextContent = message.Text,
                 HtmlContent = message.Html
             };
-            msg.AddTo(new EmailAddress(message.EmailTo));
-            var result = await client.SendEmailAsync(msg);
 
-            _logger.LogInformation(JsonConvert.SerializeObject(message));
+            msg.AddTo(new EmailAddress(message.EmailTo));
+            Response result = await client.SendEmailAsync(msg);
+
+            this.logger.LogInformation(JsonConvert.SerializeObject(message));
         }
     }
 }

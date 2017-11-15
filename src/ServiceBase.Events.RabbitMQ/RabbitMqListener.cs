@@ -12,12 +12,12 @@
     /// </summary>
     public class RabbitMqListener : IDisposable
     {
-        private readonly RabbitMqOptions _options;
-        private readonly IBinarySerializer _serializer;
-        private readonly ILogger<RabbitMqListener> _logger;
+        private readonly RabbitMqOptions options;
+        private readonly IBinarySerializer serializer;
+        private readonly ILogger<RabbitMqListener> logger;
 
-        private IConnection _connection;
-        private List<IModel> _models;
+        private IConnection connection;
+        private List<IModel> models;
 
         /// <summary>
         /// Default constructor for <see cref="RabbitMqListener"/>
@@ -31,17 +31,17 @@
             IBinarySerializer serializer,
             ILogger<RabbitMqListener> logger)
         {
-            this._options = options;
-            this._logger = logger;
-            this._serializer = serializer;
-            this._models = new List<IModel>();
+            this.options = options;
+            this.logger = logger;
+            this.serializer = serializer;
+            this.models = new List<IModel>();
 
             ConnectionFactory factory = new ConnectionFactory()
             {
-                Uri = this._options.Uri
+                Uri = this.options.Uri
             };
 
-            this._connection = factory.CreateConnection();
+            this.connection = factory.CreateConnection();
         }
 
         /// <summary>
@@ -72,30 +72,32 @@
             // TODO: Handle DLX config
             // http://www.rabbitmq.com/dlx.html
 
-            IModel model = this._connection.CreateModel();
+            IModel model = this.connection.CreateModel();
 
             EventingBasicConsumer consumer =
                 new EventingBasicConsumer(model);
 
             model.ExchangeDeclare(
-                this._options.ExchangeName, ExchangeType.Fanout);
+                this.options.ExchangeName, ExchangeType.Fanout);
 
             model.QueueDeclare(queueName, false, false, false, null);
 
             model.QueueBind(queueName,
-                this._options.ExchangeName, String.Empty, null);
+                this.options.ExchangeName, String.Empty, null);
 
             consumer.Received += (ch, ea) =>
             {
                 try
                 {
-                    var obj = this._serializer.Deserialize<TMessage>(ea.Body);
+                    TMessage obj = this.serializer
+                        .Deserialize<TMessage>(ea.Body);
+
                     action.Invoke(obj);
                 }
                 catch (Exception ex)
                 {
                     model.BasicNack(ea.DeliveryTag, false, true);
-                    this._logger.LogError(ex, ex.Message);
+                    this.logger.LogError(ex, ex.Message);
                 }
                 finally
                 {
@@ -104,7 +106,7 @@
             };
 
             model.BasicConsume(queueName, false, consumer);
-            this._models.Add(model);
+            this.models.Add(model);
         }
 
         /// <summary>
@@ -132,12 +134,12 @@
         /// </summary>
         public void Dispose()
         {
-            foreach (var item in this._models)
+            foreach (IModel item in this.models)
             {
                 item.Close(200, "Goodbye");
             }
 
-            this._connection.Close();
+            this.connection.Close();
         }
     }
 }

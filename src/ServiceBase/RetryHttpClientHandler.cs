@@ -19,7 +19,7 @@
 
     public class RetryHttpClientHandler : DelegatingHandler
     {
-        private int _maxRetries;
+        private int maxRetries;
 
         public RetryHttpClientHandler(int maxRetries = 3)
             : this(new HttpClientHandler(), maxRetries)
@@ -27,19 +27,23 @@
         }
 
         public RetryHttpClientHandler(
-            HttpMessageHandler innerHandler, int maxRetries = 3)
+            HttpMessageHandler innerHandler,
+            int maxRetries = 3)
             : base(innerHandler)
         {
-            _maxRetries = maxRetries;
+            this.maxRetries = maxRetries;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request, CancellationToken cancellationToken)
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
         {
-            for (int i = 0; i < _maxRetries; i++)
+            for (int i = 0; i < this.maxRetries; i++)
             {
-                var response = await base.SendAsync(
-                    request, cancellationToken);
+                HttpResponseMessage response = await base.SendAsync(
+                    request,
+                    cancellationToken
+                );
 
                 if (response.IsSuccessStatusCode)
                 {

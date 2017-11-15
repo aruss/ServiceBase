@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>ServiceBase.Notification.Plivo</id>
-    <version>1.1.0</version>
+    <version>$version$</version>
     <authors>Russlan Akiev</authors>
     <owners>Russlan Akiev</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

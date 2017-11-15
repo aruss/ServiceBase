@@ -14,22 +14,22 @@
         /// <summary>
         /// The options
         /// </summary>
-        private readonly EventOptions _eventOptions;
+        private readonly EventOptions eventOptions;
 
         /// <summary>
         /// The <see cref="IHttpContextAccessor"/>
         /// </summary>
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
         /// <summary>
         /// The <see cref="IDateTimeAccessor"/>
         /// </summary>
-        private readonly IDateTimeAccessor _dateTimeAccessor;
+        private readonly IDateTimeAccessor dateTimeAccessor;
 
         /// <summary>
         /// The sink
         /// </summary>
-        private readonly IEventSink _eventSink;
+        private readonly IEventSink eventSink;
 
         /// <summary>
         /// Initializes a new instance of the
@@ -44,10 +44,10 @@
             IDateTimeAccessor dateTimeAccessor,
             IEventSink eventSink)
         {
-            this._eventOptions = eventOptions;
-            this._httpContextAccessor = httpContextAccessor;
-            this._dateTimeAccessor = dateTimeAccessor;
-            this._eventSink = eventSink;
+            this.eventOptions = eventOptions;
+            this.httpContextAccessor = httpContextAccessor;
+            this.dateTimeAccessor = dateTimeAccessor;
+            this.eventSink = eventSink;
         }
 
         /// <summary>
@@ -63,7 +63,7 @@
             if (this.CanRaiseEvent(evt))
             {
                 await this.PrepareEventAsync(evt);
-                await this._eventSink.PersistAsync(evt);
+                await this.eventSink.PersistAsync(evt);
             }
         }
 
@@ -78,16 +78,16 @@
             switch (evtType)
             {
                 case EventTypes.Failure:
-                    return this._eventOptions.RaiseFailureEvents;
+                    return this.eventOptions.RaiseFailureEvents;
 
                 case EventTypes.Information:
-                    return this._eventOptions.RaiseInformationEvents;
+                    return this.eventOptions.RaiseInformationEvents;
 
                 case EventTypes.Success:
-                    return this._eventOptions.RaiseSuccessEvents;
+                    return this.eventOptions.RaiseSuccessEvents;
 
                 case EventTypes.Error:
-                    return this._eventOptions.RaiseErrorEvents;
+                    return this.eventOptions.RaiseErrorEvents;
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -114,11 +114,10 @@
         /// <returns></returns>
         protected virtual async Task PrepareEventAsync(Event evt)
         {
-            var httpContext = this._httpContextAccessor.HttpContext;
+            HttpContext httpContext = this.httpContextAccessor.HttpContext;
 
             evt.ActivityId = httpContext.TraceIdentifier;
-
-            evt.TimeStamp = this._dateTimeAccessor.UtcNow;
+            evt.TimeStamp = this.dateTimeAccessor.UtcNow;
             evt.ProcessId = Process.GetCurrentProcess().Id;
 
             if (httpContext.Connection.LocalIpAddress != null)

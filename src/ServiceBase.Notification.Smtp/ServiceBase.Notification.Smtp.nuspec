@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>ServiceBase.Notification.Smtp</id>
-    <version>1.1.0</version>
+    <version>$version$</version>
     <authors>Russlan Akiev</authors>
     <owners>Russlan Akiev</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -12,7 +12,7 @@
     <tags>dotnet dotnet-core smtp email</tags>
     <dependencies>
       <group targetFramework=".NETCoreApp2.0">
-        <dependency id="MailKit" version="1.18.0" exclude="Build,Analyzers" />
+        <dependency id="MailKit" version="1.20.0" exclude="Build,Analyzers" />
 		<dependency id="Microsoft.Extensions.Configuration.Binder" version="2.0.0" exclude="Build,Analyzers" />
 		<dependency id="Microsoft.Extensions.Logging" version="2.0.0" exclude="Build,Analyzers" />
       </group>

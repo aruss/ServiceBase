@@ -134,14 +134,21 @@
 
         private static string ApplyRules(List<Rule> rules, string word)
         {
-            if (rules == null) throw new ArgumentNullException("rules");
-            if (word == null) throw new ArgumentNullException("word");
+            if (rules == null)
+            {
+                throw new ArgumentNullException(nameof(rules));
+            }
+
+            if (word == null)
+            {
+                throw new ArgumentNullException(nameof(word));
+            }
 
             var result = word;
 
             if (!Inflector.Uncountables.Contains(word.ToLower()))
             {
-                for (var i = rules.Count - 1; i >= 0; i--)
+                for (int i = rules.Count - 1; i >= 0; i--)
                 {
                     if ((result = rules[i].Apply(word)) != null)
                     {

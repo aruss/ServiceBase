@@ -10,9 +10,9 @@
     /// </summary>
     public class RabbitMqEventSink : IEventSink
     {
-        private readonly ILogger _logger;
-        private readonly IBinarySerializer _serializer;
-        private readonly RabbitMqOptions _options;
+        private readonly ILogger logger;
+        private readonly IBinarySerializer serializer;
+        private readonly RabbitMqOptions options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RabbitMqEventSink"/>
@@ -24,9 +24,9 @@
             IBinarySerializer serializer,
             RabbitMqOptions options)
         {
-            this._logger = logger;
-            this._serializer = serializer;
-            this._options = options;
+            this.logger = logger;
+            this.serializer = serializer;
+            this.options = options;
         }
 
         /// <summary>
@@ -41,22 +41,22 @@
                 throw new ArgumentNullException(nameof(evnt));
             }
 
-            var factory = new ConnectionFactory()
+            ConnectionFactory factory = new ConnectionFactory()
             {
-                Uri = this._options.Uri
+                Uri = this.options.Uri
             };
 
-            using (var connection = factory.CreateConnection())
-            using (var channel = connection.CreateModel())
+            using (IConnection connection = factory.CreateConnection())
+            using (IModel channel = connection.CreateModel())
             {
                 channel.ExchangeDeclare(
-                    exchange: this._options.ExchangeName,
+                    exchange: this.options.ExchangeName,
                     type: ExchangeType.Fanout);
 
-                byte[] body = this._serializer.Serialize(evnt);
+                byte[] body = this.serializer.Serialize(evnt);
 
                 channel.BasicPublish(
-                    exchange: this._options.ExchangeName,
+                    exchange: this.options.ExchangeName,
                     routingKey: String.Empty,
                     basicProperties: null,
                     body: body

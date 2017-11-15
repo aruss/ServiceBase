@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Primitives;
 
     public static class RequestCultureMiddlewareExtensions
     {
@@ -43,7 +44,7 @@
 
             // context.Request.GetTypedHeaders().AcceptLanguage
 
-            var cultureQuery = context.Request.Query["lang"];
+            StringValues cultureQuery = context.Request.Query["lang"];
 
             if (!string.IsNullOrWhiteSpace(cultureQuery))
             {
@@ -56,7 +57,7 @@
 
             if (requestCulture != null)
             {
-                var culture = new CultureInfo(cultureQuery);
+                CultureInfo culture = new CultureInfo(cultureQuery);
                 /*#if !DNXCORE50
                                 Thread.CurrentThread.CurrentCulture = culture;
                                 Thread.CurrentThread.CurrentUICulture = culture;

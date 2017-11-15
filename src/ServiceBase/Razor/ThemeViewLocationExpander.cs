@@ -14,19 +14,19 @@ namespace ServiceBase.Razor
     /// </summary>
     public class ThemeViewLocationExpander : IViewLocationExpander
     {
-        private readonly string _themePath;
+        private readonly string themePath;
 
         public ThemeViewLocationExpander(string themePath)
         {
             if (Path.IsPathRooted(themePath))
             {
-                this._themePath = Path
+                this.themePath = Path
                     .GetFullPath(themePath)
                     .RemoveTrailingSlash();
             }
             else
             {
-                this._themePath = themePath
+                this.themePath = themePath
                     .Replace("./", "~/")
                     .RemoveTrailingSlash();
             }
@@ -36,8 +36,8 @@ namespace ServiceBase.Razor
             ViewLocationExpanderContext context,
             IEnumerable<string> viewLocations)
         {
-            yield return $"{this._themePath}/Views/{{1}}/{{0}}.cshtml";
-            yield return $"{this._themePath}/Views/Shared/{{0}}.cshtml";
+            yield return $"{this.themePath}/Views/{{1}}/{{0}}.cshtml";
+            yield return $"{this.themePath}/Views/Shared/{{0}}.cshtml";
         }
 
         public void PopulateValues(ViewLocationExpanderContext context)
