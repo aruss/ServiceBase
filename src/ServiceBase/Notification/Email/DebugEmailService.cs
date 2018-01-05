@@ -1,4 +1,7 @@
-﻿namespace ServiceBase.Notification.Email
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Notification.Email
 {
     using System;
     using System.Collections.Generic;
@@ -9,11 +12,11 @@
 
     public class DebugEmailService : IEmailService
     {
-        private readonly ILogger<DefaultEmailService> logger;
+        private readonly ILogger<DefaultEmailService> _logger;
 
         public DebugEmailService(ILogger<DefaultEmailService> logger)
         {
-            this.logger = logger;
+            this._logger = logger;
         }
 
         public async Task SendEmailAsync(
@@ -27,18 +30,18 @@
                 dict = viewData.ToDictionary();
             }
 
-            StringBuilder sb = new StringBuilder("Sending EMail\n");
+            StringBuilder sb = new StringBuilder("Sending E-Mail\n");
 
-            sb.AppendLine(String.Format("\tTemplate:\t{0}", templateName));
-            sb.AppendLine(String.Format("\tTo:\t{0}", email));
+            sb.AppendLine(String.Format(" Template:\t{0}", templateName));
+            sb.AppendLine(String.Format(" To:\t{0}", email));
 
             foreach (KeyValuePair<string, object> item in dict)
             {
                 sb.AppendLine(
-                    String.Format("\t{0}:\t{1}", item.Key, item.Value));
+                    String.Format(" {0}:\t{1}", item.Key, item.Value));
             }
 
-            this.logger.LogInformation(sb.ToString());
+            this._logger.LogInformation(sb.ToString());
         }
     }
 }

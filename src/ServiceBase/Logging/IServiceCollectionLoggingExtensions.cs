@@ -1,11 +1,18 @@
-﻿namespace Microsoft.Extensions.Logging
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace Microsoft.Extensions.Logging
 {
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Serilog;
+    using Serilog.Core;
 
-    public static class IServiceCollectionLoggingExtensions
+    /// <summary>
+    /// <see cref="IServiceCollection"/> extension methods.
+    /// </summary>
+    public static partial class IServiceCollectionLoggingExtensions
     {
         /// <summary>
         /// Adds Serilog logging services
@@ -41,9 +48,10 @@
             this ILoggingBuilder loggingBuilder,
             IConfiguration config)
         {
-            var serilogOptions = config.GetSection("Serilog");
+            IConfigurationSection serilogOptions =
+                config.GetSection("Serilog");
 
-            var logger = new LoggerConfiguration()
+            Logger logger = new LoggerConfiguration()
                 .ReadFrom.ConfigurationSection(serilogOptions)
                 .CreateLogger();
 

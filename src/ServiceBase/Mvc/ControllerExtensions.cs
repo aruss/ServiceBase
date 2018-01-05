@@ -2,7 +2,10 @@
 {
     using Microsoft.AspNetCore.Mvc;
 
-    public static class ControllerExtensions
+    /// <summary>
+    /// <see cref="ControllerBase"/> extension methods.
+    /// </summary>
+    public static partial class ControllerBaseExtensions
     {
         /// <summary>
         /// Returns a created HTTP status code according

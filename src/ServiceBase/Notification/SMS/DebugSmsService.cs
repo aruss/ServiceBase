@@ -1,4 +1,7 @@
-﻿namespace ServiceBase.Notification.Sms
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Notification.Sms
 {
     using System;
     using System.Collections.Generic;
@@ -16,7 +19,7 @@
 
         public DebugSmsService(ILogger<DebugSmsService> logger)
         {
-            _logger = logger;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -31,7 +34,7 @@
             string numberTo,
             object viewData)
         {
-            this.SendSmsAsync(templateName, numberTo, "none", viewData);
+            await this.SendSmsAsync(templateName, numberTo, "none", viewData);
         }
 
         /// <summary>
@@ -57,19 +60,19 @@
                 dict = viewData.ToDictionary();
             }
 
-            var sb = new StringBuilder();
+            var sb = new StringBuilder("Sending SMS\n");
 
-            sb.AppendLine(String.Format("Template:\t{0}", templateName));
-            sb.AppendLine(String.Format("Number To:\t{0}", numberTo));
-            sb.AppendLine(String.Format("Number From:\t{0}", numberFrom));
+            sb.AppendLine(String.Format(" Template:\t{0}", templateName));
+            sb.AppendLine(String.Format(" Number To:\t{0}", numberTo));
+            sb.AppendLine(String.Format(" Number From:\t{0}", numberFrom));
 
             foreach (var item in dict)
             {
                 sb.AppendLine(
-                    String.Format("\t{0}:\t{1}", item.Key, item.Value));
+                    String.Format(" {0}:\t{1}", item.Key, item.Value));
             }
 
-            _logger.LogInformation(sb.ToString());
+            this._logger.LogInformation(sb.ToString());
         }
     }
 }

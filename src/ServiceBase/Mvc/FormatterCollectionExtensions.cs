@@ -7,7 +7,10 @@
     using Newtonsoft.Json;
     using ServiceBase.Json;
 
-    public static class FormatterCollectionExtensions
+    /// <summary>
+    /// <see cref="FormatterCollection{IOutputFormatter}"/> extension methods.
+    /// </summary>
+    public static partial class FormatterCollectionExtensions
     {
         /// <summary>
         /// Adds custom configured <see cref="JsonOutputFormatter"/>.

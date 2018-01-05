@@ -1,4 +1,7 @@
-﻿namespace ServiceBase.Notification.Email
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Notification.Email
 {
     using System.Collections.Generic;
     using System.IO;
@@ -8,20 +11,20 @@
 
     public class DefaultEmailService : IEmailService
     {
-        private readonly IEmailSender emailSender;
-        private readonly DefaultEmailServiceOptions options;
-        private readonly ILogger<DefaultEmailService> logger;
-        private readonly TextFormatter textFormatter;
+        private readonly IEmailSender _emailSender;
+        private readonly DefaultEmailServiceOptions _options;
+        private readonly ILogger<DefaultEmailService> _logger;
+        private readonly TextFormatter _textFormatter;
 
         public DefaultEmailService(
             DefaultEmailServiceOptions options,
             ILogger<DefaultEmailService> logger,
             IEmailSender emailSender)
         {
-            this.logger = logger;
-            this.options = options;
-            this.emailSender = emailSender;
-            this.textFormatter = new TextFormatter();
+            this._logger = logger;
+            this._options = options;
+            this._emailSender = emailSender;
+            this._textFormatter = new TextFormatter();
         }
 
         public async Task SendEmailAsync(
@@ -35,13 +38,13 @@
                 dict = viewData.ToDictionary();
             }
 
-            var emailMessage = new EmailMessage
+            EmailMessage emailMessage = new EmailMessage
             {
                 EmailTo = email,
 
                 // TODO: implement caching
-                Subject = this.textFormatter.Format(
-                    Path.Combine(this.options.TemplateDirectoryPath,
+                Subject = this._textFormatter.Format(
+                    Path.Combine(this._options.TemplateDirectoryPath,
                     $"{templateName}_Subject.txt"),
                     dict
                 )
@@ -50,20 +53,20 @@
             if (sendHtml)
             {
                 // TODO: implement razor parsing
-                emailMessage.Html = this.textFormatter.Format(
-                   Path.Combine(this.options.TemplateDirectoryPath,
+                emailMessage.Html = this._textFormatter.Format(
+                   Path.Combine(this._options.TemplateDirectoryPath,
                    $"{templateName}_Body.cshtml"),
                    dict);
             }
             else
             {
-                emailMessage.Text = this.textFormatter.Format(
-                    Path.Combine(this.options.TemplateDirectoryPath,
+                emailMessage.Text = this._textFormatter.Format(
+                    Path.Combine(this._options.TemplateDirectoryPath,
                     $"{templateName}_Body.txt"),
                     dict);
             }
 
-            await this.emailSender.SendEmailAsync(emailMessage);
+            await this._emailSender.SendEmailAsync(emailMessage);
         }
     }
 }

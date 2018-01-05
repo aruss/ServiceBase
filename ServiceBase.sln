@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.3
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBase", "src\ServiceBase\ServiceBase.csproj", "{DAE80583-3053-430E-A85F-31E6C8D4EDF4}"
 EndProject
@@ -35,6 +35,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBase.Events.RabbitMQ", "src\ServiceBase.Events.RabbitMQ\ServiceBase.Events.RabbitMQ.csproj", "{488AF66E-FD16-46EE-9885-B47B03D2B747}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBase.Notification.Plivo", "src\ServiceBase.Notification.Plivo\ServiceBase.Notification.Plivo.csproj", "{F7613D65-64B1-4298-9CE4-33E1887CD9DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBase.Tests", "src\ServiceBase.Tests\ServiceBase.Tests.csproj", "{78B5A5B8-D1EB-4CE6-963C-B60C68BF1F54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +72,10 @@ Global
 		{F7613D65-64B1-4298-9CE4-33E1887CD9DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7613D65-64B1-4298-9CE4-33E1887CD9DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7613D65-64B1-4298-9CE4-33E1887CD9DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78B5A5B8-D1EB-4CE6-963C-B60C68BF1F54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78B5A5B8-D1EB-4CE6-963C-B60C68BF1F54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78B5A5B8-D1EB-4CE6-963C-B60C68BF1F54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78B5A5B8-D1EB-4CE6-963C-B60C68BF1F54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{243EAC3B-E697-4767-8485-01AF6FE96759} = {E403DD45-1D53-4580-8BFC-74D6AF935321}
 		{488AF66E-FD16-46EE-9885-B47B03D2B747} = {7DCFFD6C-8F72-409F-85B2-982726F3F2F3}
 		{F7613D65-64B1-4298-9CE4-33E1887CD9DB} = {7DCFFD6C-8F72-409F-85B2-982726F3F2F3}
+		{78B5A5B8-D1EB-4CE6-963C-B60C68BF1F54} = {7DCFFD6C-8F72-409F-85B2-982726F3F2F3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BED3036E-2E6B-44E8-A5C6-7C4305BF6456}

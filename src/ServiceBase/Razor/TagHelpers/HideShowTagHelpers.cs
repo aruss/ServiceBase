@@ -11,7 +11,7 @@
         public override void Process(
             TagHelperContext context, TagHelperOutput output)
         {
-            if (HideIf)
+            if (this.HideIf)
             {
                 output.SuppressOutput();
             }
@@ -27,7 +27,7 @@
         public override void Process(
             TagHelperContext context, TagHelperOutput output)
         {
-            if (ShowIf == false)
+            if (this.ShowIf == false)
             {
                 output.SuppressOutput();
             }
@@ -43,7 +43,7 @@
         public override void Process(
             TagHelperContext context, TagHelperOutput output)
         {
-            if (HideIfNull == null)
+            if (this.HideIfNull == null)
             {
                 output.SuppressOutput();
             }
@@ -59,7 +59,7 @@
         public override void Process(
             TagHelperContext context, TagHelperOutput output)
         {
-            if (ShowIfNull != null)
+            if (this.ShowIfNull != null)
             {
                 output.SuppressOutput();
             }

@@ -6,6 +6,20 @@
 
     public static class IServiceCollectionExtensions
     {
+        public static IServiceCollection TryRemove<TService>(
+           this IServiceCollection services)
+        {
+            ServiceDescriptor descriptorToRemove = services
+               .FirstOrDefault(d => d.ServiceType == typeof(TService));
+
+            if (descriptorToRemove != null)
+            {
+                services.Remove(descriptorToRemove);
+            }
+
+            return services;
+        }
+
         /// <summary>
         /// Replaces registerd <typeparamref name="TService"/>
         /// </summary>
@@ -20,13 +34,7 @@
              where TService : class
              where TImplementation : class, TService
         {
-            ServiceDescriptor descriptorToRemove = services
-                .FirstOrDefault(d => d.ServiceType == typeof(TService));
-
-            if (descriptorToRemove != null)
-            {
-                services.Remove(descriptorToRemove);
-            }
+            services.TryRemove<TService>();
 
             ServiceDescriptor descriptorToAdd = new ServiceDescriptor(
                 typeof(TService),
@@ -50,24 +58,34 @@
         /// <returns></returns>
         public static IServiceCollection Replace<TService, TImplementation>(
              this IServiceCollection services,
-             Func<IServiceProvider, object> implementationFactory,
+             Func<IServiceProvider, TImplementation> implementationFactory,
              ServiceLifetime lifetime)
              where TService : class
              where TImplementation : class, TService
         {
-            ServiceDescriptor descriptorToRemove = services
-                .FirstOrDefault(d => d.ServiceType == typeof(TService));
-
-            if (descriptorToRemove != null)
-            {
-                services.Remove(descriptorToRemove);
-            }
+            services.TryRemove<TService>();
 
             ServiceDescriptor descriptorToAdd = new ServiceDescriptor(
                 typeof(TService),
                 implementationFactory,
                 lifetime
             );
+
+            services.Add(descriptorToAdd);
+
+            return services;
+        }
+
+        public static IServiceCollection Replace<TService, TImplementation>(
+             this IServiceCollection services,
+             TImplementation implementation)
+             where TService : class
+        {
+            services.TryRemove<TService>();
+
+            ServiceDescriptor descriptorToAdd = new ServiceDescriptor(
+                typeof(TService),
+                implementation);
 
             services.Add(descriptorToAdd);
 

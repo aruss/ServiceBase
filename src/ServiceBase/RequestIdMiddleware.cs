@@ -7,11 +7,11 @@
     public class RequestIdMiddleware
     {
         private const string headerName = "X-Request-ID";
-        private readonly RequestDelegate next;
+        private readonly RequestDelegate _next;
 
         public RequestIdMiddleware(RequestDelegate next)
         {
-            this.next = next;
+            this._next = next;
         }
 
         public async Task Invoke(HttpContext context)
@@ -24,7 +24,7 @@
 
             context.Response.Headers[headerName] = context.TraceIdentifier;
 
-            await this.next(context);
+            await this._next(context);
         }
     }
 }

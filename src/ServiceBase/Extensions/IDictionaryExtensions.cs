@@ -14,16 +14,40 @@
         public static T ToObject<T>(
             this IDictionary<string, object> source) where T : class, new()
         {
-            T someObject = new T();
-            Type someObjectType = someObject.GetType();
+            return source.ToObject<T, object>(); 
+        }
 
-            foreach (KeyValuePair<string, object> item in source)
+        /// <summary>
+        /// Converts dictionary to object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static T ToObject<T>(
+            this IDictionary<string, string> source) where T : class, new()
+        {
+            return source.ToObject<T, string>();
+        }
+
+        /// <summary>
+        /// Converts dictionary to object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static T ToObject<T, T2>(
+            this IDictionary<string, T2> source) where T : class, new()
+        {
+            T obj = new T();
+            Type type = obj.GetType();
+
+            foreach (KeyValuePair<string, T2> item in source)
             {
-                someObjectType.GetProperty(item.Key)
-                    .SetValue(someObject, item.Value, null);
+                type.GetProperty(item.Key)
+                    .SetValue(obj, item.Value, null);
             }
 
-            return someObject;
+            return obj;
         }
     }
 }

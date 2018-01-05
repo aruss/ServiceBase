@@ -1,4 +1,7 @@
-﻿namespace ServiceBase
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase
 {
     using System.Net.Http;
     using System.Threading;
@@ -19,7 +22,7 @@
 
     public class RetryHttpClientHandler : DelegatingHandler
     {
-        private int maxRetries;
+        private int _maxRetries;
 
         public RetryHttpClientHandler(int maxRetries = 3)
             : this(new HttpClientHandler(), maxRetries)
@@ -31,14 +34,14 @@
             int maxRetries = 3)
             : base(innerHandler)
         {
-            this.maxRetries = maxRetries;
+            this._maxRetries = maxRetries;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
-            for (int i = 0; i < this.maxRetries; i++)
+            for (int i = 0; i < this._maxRetries; i++)
             {
                 HttpResponseMessage response = await base.SendAsync(
                     request,
