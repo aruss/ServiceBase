@@ -8,6 +8,7 @@ namespace ServiceBase.UnitTests
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
+    using Microsoft.AspNetCore.Http;
     using Moq;
     using ServiceBase.Logging;
     using ServiceBase.Notification.Email;
@@ -60,10 +61,13 @@ namespace ServiceBase.UnitTests
                 TemplateDirectoryPath = "../../../SMS/Templates"
             };
 
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+
             var smsService = new DefaultSmsService(
                 options,
                 logger,
-                smsSender.Object);
+                smsSender.Object,
+                httpContextAccessorMock.Object);
 
             // Set culture 
             CultureInfo originalCulture =

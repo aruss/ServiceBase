@@ -8,6 +8,7 @@ namespace ServiceBase.UnitTests
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
+    using Microsoft.AspNetCore.Http;
     using Moq;
     using ServiceBase.Logging;
     using ServiceBase.Notification.Email;
@@ -80,10 +81,13 @@ namespace ServiceBase.UnitTests
                 TemplateDirectoryPath = "../../../Email/Templates"
             };
 
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>(); 
+
             var emailService = new DefaultEmailService(
                 options,
                 logger,
-                emailSender.Object);
+                emailSender.Object,
+                httpContextAccessorMock.Object);
 
             // Set culture 
             CultureInfo originalCulture =

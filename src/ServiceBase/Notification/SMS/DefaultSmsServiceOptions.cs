@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace ServiceBase.Notification.Sms
 {
@@ -13,12 +15,13 @@ namespace ServiceBase.Notification.Sms
         /// Path of directory with templates.
         /// </summary>
         public string TemplateDirectoryPath { get; set; }
-
-        public Func<string> GetTemplateDirectoryPath { get; set; }
+        
+        public Func<HttpContext, Task<string>>
+            GetTemplateDirectoryPathAsync { get; set; }
 
         public DefaultSmsServiceOptions()
         {
-            this.GetTemplateDirectoryPath = () =>
+            this.GetTemplateDirectoryPathAsync = async (context) =>
             {
                 return this.TemplateDirectoryPath;
             };
