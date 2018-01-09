@@ -5,8 +5,16 @@ namespace ServiceBase.Notification.Email
 {
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Sends <see cref="EmailMessage"/>.
+    /// </summary>
     public interface IEmailSender
     {
+        /// <summary>
+        /// Sends <see cref="EmailMessage"/>.
+        /// </summary>
+        /// <param name="message">The instance of
+        /// <see cref="EmailMessage"/>.</param>
         Task SendEmailAsync(EmailMessage message);
     }
 }

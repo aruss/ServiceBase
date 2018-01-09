@@ -1,9 +1,9 @@
-using FluentAssertions;
-using System.Threading.Tasks;
-using Xunit;
-
 namespace ServiceBase.UnitTests
 {
+    using FluentAssertions;
+    using System.Threading.Tasks;
+    using Xunit;
+
     [Collection("ServiceBase")]
     public class InflectorTests
     {

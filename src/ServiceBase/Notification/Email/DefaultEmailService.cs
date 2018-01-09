@@ -3,9 +3,12 @@
 
 namespace ServiceBase.Notification.Email
 {
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
+    using System.Xml.Serialization;
     using Microsoft.Extensions.Logging;
     using ServiceBase.Extensions;
 
@@ -14,7 +17,8 @@ namespace ServiceBase.Notification.Email
         private readonly IEmailSender _emailSender;
         private readonly DefaultEmailServiceOptions _options;
         private readonly ILogger<DefaultEmailService> _logger;
-        private readonly TextFormatter _textFormatter;
+
+        private static ConcurrentDictionary<string, EmailTemplate> _templates;
 
         public DefaultEmailService(
             DefaultEmailServiceOptions options,
@@ -24,49 +28,158 @@ namespace ServiceBase.Notification.Email
             this._logger = logger;
             this._options = options;
             this._emailSender = emailSender;
-            this._textFormatter = new TextFormatter();
+
+            DefaultEmailService._templates =
+                new ConcurrentDictionary<string, EmailTemplate>();
         }
 
-        public async Task SendEmailAsync(
-            string templateName, string email, object viewData, bool sendHtml)
+        /// <summary>
+        /// Resolves the tempalte file path.
+        /// </summary>
+        /// <param name="culture">Current UI Culture.</param>
+        /// <param name="templateName">Name of the file. File pattern
+        /// should be SomeTemplate.de-DE.xml</param>
+        /// <returns>File path to template file.</returns>
+        public virtual string GetTemplatePath(
+            CultureInfo culture,
+            string templateName)
         {
-            IDictionary<string, object> dict =
-                viewData as Dictionary<string, object>;
+            string basePath = this._options.GetTemplateDirectoryPath();
 
-            if (dict == null)
+            string path = Path.GetFullPath(
+                Path.Combine(basePath,
+                    $"{templateName}.{culture.Name}.xml"
+                )
+            );
+
+            if (File.Exists(path))
             {
-                dict = viewData.ToDictionary();
+                return path;
             }
 
-            EmailMessage emailMessage = new EmailMessage
-            {
-                EmailTo = email,
-
-                // TODO: implement caching
-                Subject = this._textFormatter.Format(
-                    Path.Combine(this._options.TemplateDirectoryPath,
-                    $"{templateName}_Subject.txt"),
-                    dict
+            path = Path.GetFullPath(
+                Path.Combine(basePath,
+                    $"{templateName}.{this._options.DefaultLocale}.xml"
                 )
+            );
+
+            if (File.Exists(path))
+            {
+                return path;
+            }
+
+            throw new FileNotFoundException(path);
+        }
+
+        /// <summary>
+        /// Loads template file from file system
+        /// </summary>
+        /// <param name="culture">Current UI Culture.</param>
+        /// <param name="templateName">Name of the file. File pattern
+        /// should be SomeTemplate.de-DE.xml</param>
+        /// <returns></returns>
+        public virtual async Task<EmailTemplate> GetTemplate(
+            CultureInfo culture,
+            string templateName)
+        {
+            string path = this.GetTemplatePath(culture, templateName);
+
+            return DefaultEmailService._templates.GetOrAdd(path, (p) =>
+            {
+                this._logger.LogInformation($"Loading email template: {p}");
+
+                using (StreamReader reader = new StreamReader(p))
+                {
+                    XmlSerializer serializer =
+                        new XmlSerializer(typeof(EmailTemplate));
+
+                    return (EmailTemplate)serializer.Deserialize(reader);
+                }
+            });
+        }
+
+        /// <summary>
+        /// Replaces template tokens with viewData
+        /// </summary>
+        /// <param name="template">String template.</param>
+        /// <param name="viewData">Dictionary with view data.</param>
+        /// <returns>Parsed template.</returns>
+        public virtual async Task<string> Tokenize(
+            string template,
+            IDictionary<string, object> viewData)
+        {
+            string result = template;
+            foreach (var item in viewData)
+            {
+                result = result
+                    .Replace($"{{{item.Key}}}", item.Value.ToString());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Parses the templates and uses layout file.
+        /// </summary>
+        /// <param name="template">Template for content.</param>
+        /// <param name="templateLayout">Template for layout.</param>
+        /// <param name="viewData">Dictionary with view data.</param>
+        /// <returns>Parsed template.</returns>
+        public virtual async Task<string> Tokenize(
+            string template,
+            string templateLayout,
+            IDictionary<string, object> viewData)
+        {
+            string content = await this.Tokenize(template, viewData);
+            string layout = await this.Tokenize(templateLayout, viewData);
+            string html = layout.Replace("{Content}", content);
+
+            return html; 
+        }
+
+        /// <summary>
+        /// Creates and sends <see cref="EmailMessage"/>.
+        /// </summary>
+        /// <param name="templateName">Template name.</param>
+        /// <param name="email">Destination email address.</param>
+        /// <param name="viewData">View Model.</param>
+        /// <param name="sendHtml">Send as HTML.</param>
+        public async Task SendEmailAsync(
+            string templateName,
+            string email,
+            object model,
+            bool sendHtml)
+        {
+            CultureInfo culture = CultureInfo.CurrentUICulture;
+            
+            EmailMessage message = new EmailMessage
+            {
+                EmailTo = email
             };
 
-            if (sendHtml)
+            IDictionary<string, object> viewData =
+               (model as Dictionary<string, object>) ??
+               model?.ToDictionary();
+
+            EmailTemplate template =
+                await this.GetTemplate(culture, templateName);
+
+            EmailTemplate templateLayout =
+                await this.GetTemplate(culture, "_Layout");
+            
+            if (viewData != null)
             {
-                // TODO: implement razor parsing
-                emailMessage.Html = this._textFormatter.Format(
-                   Path.Combine(this._options.TemplateDirectoryPath,
-                   $"{templateName}_Body.cshtml"),
-                   dict);
-            }
-            else
-            {
-                emailMessage.Text = this._textFormatter.Format(
-                    Path.Combine(this._options.TemplateDirectoryPath,
-                    $"{templateName}_Body.txt"),
-                    dict);
+                message.Subject = await this
+                    .Tokenize(template.Subject, viewData);
+
+                message.Html = await this
+                    .Tokenize(template.Html, templateLayout.Html, viewData);
+
+                message.Text = await this
+                    .Tokenize(template.Text, templateLayout.Text, viewData);
             }
 
-            await this._emailSender.SendEmailAsync(emailMessage);
+            await this._emailSender.SendEmailAsync(message);
         }
     }
 }

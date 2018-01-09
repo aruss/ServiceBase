@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<EmailTemplate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Subject>Subject Template1 en-US {Name}</Subject>
+  <Text>Text Template1 en-US {Name}</Text>
+  <Html><![CDATA[Html Template1 en-US {Name}]]></Html>
+</EmailTemplate>

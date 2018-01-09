@@ -21,7 +21,7 @@ namespace ServiceBase.Notification.Sms
         Task SendSmsAsync(
             string templateName,
             string numberTo,
-            object viewData);
+            object model);
 
         /// <summary>
         /// Sends SMS by creating a message from provided template 
@@ -36,6 +36,6 @@ namespace ServiceBase.Notification.Sms
             string templateName,
             string numberTo,
             string numberFrom,
-            object viewData);
+            object model);
     }
 }

@@ -20,8 +20,5 @@ namespace ServiceBase.Notification.Sms
         /// <param name="message">The text of the message you want to send,
         /// limited to 1600 characters.</param>
         Task SendSmsAsync(string numberTo, string numberFrom, string message);
-
-        //Task SendSmsAsync(IEnumerable<string> numberTo, string numberFrom, string message);
-        //Task SendSmsAsync(IEnumerable<string> numberTo, string message);
     }
 }

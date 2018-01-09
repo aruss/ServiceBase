@@ -1,0 +1,1 @@
+Template2 en-US {Name}
