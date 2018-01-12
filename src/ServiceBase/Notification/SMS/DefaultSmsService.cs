@@ -91,9 +91,7 @@ namespace ServiceBase.Notification.Sms
             CultureInfo culture,
             string templateName)
         {
-            string basePath = await this._options
-                .GetTemplateDirectoryPathAsync(
-                    this._httpContextAccessor.HttpContext);
+            string basePath = this._options.TemplateDirectoryPath; 
 
             if (String.IsNullOrWhiteSpace(basePath))
             {
@@ -114,7 +112,7 @@ namespace ServiceBase.Notification.Sms
 
             path = Path.GetFullPath(
                 Path.Combine(basePath,
-                    $"{templateName}.{this._options.DefaultLocale}.txt"
+                    $"{templateName}.{this._options.DefaultCulture}.txt"
                 )
             );
 

@@ -49,9 +49,7 @@ namespace ServiceBase.Notification.Email
             CultureInfo culture,
             string templateName)
         {
-            string basePath = await this._options
-                .GetTemplateDirectoryPathAsync(
-                    this._httpContextAccessor.HttpContext);
+            string basePath = this._options.TemplateDirectoryPath; 
 
             if (String.IsNullOrWhiteSpace(basePath))
             {
@@ -72,7 +70,7 @@ namespace ServiceBase.Notification.Email
 
             path = Path.GetFullPath(
                 Path.Combine(basePath,
-                    $"{templateName}.{this._options.DefaultLocale}.xml"
+                    $"{templateName}.{this._options.DefaultCulture}.xml"
                 )
             );
 

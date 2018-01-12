@@ -3,26 +3,11 @@
 
 namespace ServiceBase.Notification.Email
 {
-    using System;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Http;
-
     public class DefaultEmailServiceOptions
     {
-        public string DefaultLocale { get; set; }
+        public string DefaultCulture { get; set; }
 
         public string TemplateDirectoryPath { get; set; }
-
-        public Func<HttpContext, Task<string>>
-            GetTemplateDirectoryPathAsync { get; set; }
-
-        public DefaultEmailServiceOptions()
-        {
-            this.GetTemplateDirectoryPathAsync = async (context) =>
-            {
-                return this.TemplateDirectoryPath;
-            };
-        }
     }
 }
 

@@ -11,10 +11,11 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static T ToObject<T>(
-            this IDictionary<string, object> source) where T : class, new()
+        public static TResult ToObject<TResult>(
+            this IDictionary<string, object> source)
+            where TResult : class, new()
         {
-            return source.ToObject<T, object>(); 
+            return source.ToObject<TResult, object>();
         }
 
         /// <summary>
@@ -23,10 +24,11 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static T ToObject<T>(
-            this IDictionary<string, string> source) where T : class, new()
+        public static TResult ToObject<TResult>(
+            this IDictionary<string, string> source)
+            where TResult : class, new()
         {
-            return source.ToObject<T, string>();
+            return source.ToObject<TResult, string>();
         }
 
         /// <summary>
@@ -35,16 +37,24 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static T ToObject<T, T2>(
-            this IDictionary<string, T2> source) where T : class, new()
+        public static TResult ToObject<TResult, TValue>(
+            this IDictionary<string, TValue> source)
+            where TResult : class, new()
         {
-            T obj = new T();
+            TResult obj = new TResult();
             Type type = obj.GetType();
 
-            foreach (KeyValuePair<string, T2> item in source)
+            foreach (KeyValuePair<string, TValue> item in source)
             {
-                type.GetProperty(item.Key)
-                    .SetValue(obj, item.Value, null);
+                try
+                {
+                    type
+                        .GetProperty(item.Key)
+                        .SetValue(obj, item.Value, null);
+                }
+                catch (Exception)
+                {
+                }
             }
 
             return obj;
