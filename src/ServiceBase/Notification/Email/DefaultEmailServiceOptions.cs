@@ -8,6 +8,7 @@ namespace ServiceBase.Notification.Email
         public string DefaultCulture { get; set; }
 
         public string TemplateDirectoryPath { get; set; }
+        public string DefaultLocale { get; set; }
     }
 }
 

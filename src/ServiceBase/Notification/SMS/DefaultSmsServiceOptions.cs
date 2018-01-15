@@ -11,5 +11,6 @@ namespace ServiceBase.Notification.Sms
         /// Path of directory with templates.
         /// </summary>
         public string TemplateDirectoryPath { get; set; }
+        public string DefaultLocale { get; set; }
     }
 }
