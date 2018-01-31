@@ -3,31 +3,36 @@
 
 namespace ServiceBase.Notification.Email
 {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
     using ServiceBase.Extensions;
 
     public class DefaultEmailService : IEmailService
     {
-        private readonly IEmailSender _emailSender;
-        private readonly DefaultEmailServiceOptions _options;
-        private readonly ILogger<DefaultEmailService> _logger;
+        internal readonly IEmailSender _emailSender;
+        internal readonly DefaultEmailServiceOptions _options;
+        internal readonly ILogger<DefaultEmailService> _logger;
+        internal readonly IHttpContextAccessor _httpContextAccessor; 
 
         private static ConcurrentDictionary<string, EmailTemplate> _templates;
 
         public DefaultEmailService(
             DefaultEmailServiceOptions options,
             ILogger<DefaultEmailService> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IHttpContextAccessor httpContextAccessor)
         {
             this._logger = logger;
             this._options = options;
             this._emailSender = emailSender;
+            this._httpContextAccessor = httpContextAccessor;
 
             DefaultEmailService._templates =
                 new ConcurrentDictionary<string, EmailTemplate>();
@@ -40,11 +45,17 @@ namespace ServiceBase.Notification.Email
         /// <param name="templateName">Name of the file. File pattern
         /// should be SomeTemplate.de-DE.xml</param>
         /// <returns>File path to template file.</returns>
-        public virtual string GetTemplatePath(
+        public virtual async Task<string> GetTemplatePathAsync(
             CultureInfo culture,
             string templateName)
         {
-            string basePath = this._options.GetTemplateDirectoryPath();
+            string basePath = this._options.TemplateDirectoryPath; 
+
+            if (String.IsNullOrWhiteSpace(basePath))
+            {
+                throw new NullReferenceException(
+                    "TemplateDirectoryPath may not be null"); 
+            }
 
             string path = Path.GetFullPath(
                 Path.Combine(basePath,
@@ -59,7 +70,7 @@ namespace ServiceBase.Notification.Email
 
             path = Path.GetFullPath(
                 Path.Combine(basePath,
-                    $"{templateName}.{this._options.DefaultLocale}.xml"
+                    $"{templateName}.{this._options.DefaultCulture}.xml"
                 )
             );
 
@@ -82,7 +93,8 @@ namespace ServiceBase.Notification.Email
             CultureInfo culture,
             string templateName)
         {
-            string path = this.GetTemplatePath(culture, templateName);
+            string path =
+                await this.GetTemplatePathAsync(culture, templateName);
 
             return DefaultEmailService._templates.GetOrAdd(path, (p) =>
             {

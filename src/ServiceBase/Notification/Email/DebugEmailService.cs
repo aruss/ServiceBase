@@ -44,4 +44,5 @@ namespace ServiceBase.Notification.Email
             this._logger.LogInformation(sb.ToString());
         }
     }
+
 }

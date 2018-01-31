@@ -3,22 +3,12 @@
 
 namespace ServiceBase.Notification.Email
 {
-    using System;
-
     public class DefaultEmailServiceOptions
     {
-        public string DefaultLocale { get; set; }
+        public string DefaultCulture { get; set; }
 
         public string TemplateDirectoryPath { get; set; }
-
-        public Func<string> GetTemplateDirectoryPath { get; set; }
-
-        public DefaultEmailServiceOptions()
-        {
-            this.GetTemplateDirectoryPath = () =>
-            {
-                return this.TemplateDirectoryPath;
-            };
-        }
+        public string DefaultLocale { get; set; }
     }
 }
+

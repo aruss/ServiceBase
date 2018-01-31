@@ -3,31 +3,36 @@
 
 namespace ServiceBase.Notification.Sms
 {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
     using ServiceBase.Extensions;
 
     public class DefaultSmsService : ISmsService
     {
-        private readonly ISmsSender _smsSender;
-        private readonly DefaultSmsServiceOptions _options;
-        private readonly ILogger<DefaultSmsService> _logger;
+        internal readonly ISmsSender _smsSender;
+        internal readonly DefaultSmsServiceOptions _options;
+        internal readonly ILogger<DefaultSmsService> _logger;
+        internal readonly IHttpContextAccessor _httpContextAccessor;
 
         private static ConcurrentDictionary<string, string> _templates;
         
         public DefaultSmsService(
             DefaultSmsServiceOptions options,
             ILogger<DefaultSmsService> logger,
-            ISmsSender smsSender)
+            ISmsSender smsSender,
+            IHttpContextAccessor httpContextAccessor)
         {
             this._logger = logger;
             this._options = options;
             this._smsSender = smsSender;
+            this._httpContextAccessor = httpContextAccessor;
 
             DefaultSmsService._templates =
                 new ConcurrentDictionary<string, string>();
@@ -82,12 +87,18 @@ namespace ServiceBase.Notification.Sms
         /// <param name="templateName">Name of the file. File pattern
         /// should be SomeTemplate.de-DE.txt</param>
         /// <returns>File path to template file.</returns>
-        public virtual string GetTemplatePath(
+        public virtual async Task<string> GetTemplatePathAsync(
             CultureInfo culture,
             string templateName)
         {
-            string basePath = this._options.GetTemplateDirectoryPath();
+            string basePath = this._options.TemplateDirectoryPath; 
 
+            if (String.IsNullOrWhiteSpace(basePath))
+            {
+                throw new NullReferenceException(
+                    "TemplateDirectoryPath may not be null");
+            }
+            
             string path = Path.GetFullPath(
                 Path.Combine(basePath,
                     $"{templateName}.{culture.Name}.txt"
@@ -101,7 +112,7 @@ namespace ServiceBase.Notification.Sms
 
             path = Path.GetFullPath(
                 Path.Combine(basePath,
-                    $"{templateName}.{this._options.DefaultLocale}.txt"
+                    $"{templateName}.{this._options.DefaultCulture}.txt"
                 )
             );
 
@@ -124,7 +135,8 @@ namespace ServiceBase.Notification.Sms
             CultureInfo culture,
             string templateName)
         {
-            string path = this.GetTemplatePath(culture, templateName);
+            string path =
+                await this.GetTemplatePathAsync(culture, templateName);
 
             return DefaultSmsService._templates.GetOrAdd(path, (p) =>
             {
