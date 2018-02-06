@@ -8,16 +8,16 @@
 
     public class ExceptionFilter : IExceptionFilter, IDisposable
     {
-        private readonly bool includeStackTrace;
-        private readonly ILogger logger;
+        private readonly bool _includeStackTrace;
+        private readonly ILogger _logger;
 
         public ExceptionFilter(
             ILogger<ExceptionFilter> logger,
             IHostingEnvironment hostingEnvironment)
         {
-            this.logger = logger;
+            this._logger = logger;
 
-            this.includeStackTrace =
+            this._includeStackTrace =
                 hostingEnvironment.IsDevelopment() ||
                 hostingEnvironment.IsEnvironment("Test");
         }
@@ -34,12 +34,12 @@
                 Error = context.Exception.Message
             };
 
-            if (this.includeStackTrace)
+            if (this._includeStackTrace)
             {
                 response.StackTrace = context.Exception.StackTrace;
             }
 
-            this.logger.LogError(context.Exception,
+            this._logger.LogError(context.Exception,
                 context.Exception.Message);
 
             context.Result = new ObjectResult(response)

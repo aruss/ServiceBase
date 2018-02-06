@@ -19,7 +19,7 @@
         public static void AddDefaultJsonOutputFormatter(
             this FormatterCollection<IOutputFormatter> outputFormatters)
         {
-            var outputFormatter = outputFormatters
+            IOutputFormatter outputFormatter = outputFormatters
                 .FirstOrDefault(c => c is JsonOutputFormatter);
 
             if (outputFormatter != null)

@@ -21,6 +21,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Multitenancy\**" />
+    <EmbeddedResource Remove="Multitenancy\**" />
+    <None Remove="Multitenancy\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Mvc\ApiResult.cs" />
     <Compile Remove="Mvc\ApiResultExceptionFilterAttribute.cs" />
     <Compile Remove="Mvc\ApiResultExtensions.cs" />
@@ -49,6 +55,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
     <PackageReference Include="Serilog" Version="2.6.0" />

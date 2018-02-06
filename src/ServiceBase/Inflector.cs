@@ -103,10 +103,10 @@ namespace ServiceBase
 
         private static void AddIrregular(string singular, string plural)
         {
-            AddPlural("(" + singular[0] + ")" + singular
+            Inflector.AddPlural("(" + singular[0] + ")" + singular
                 .Substring(1) + "$", "$1" + plural.Substring(1));
 
-            AddSingular("(" + plural[0] + ")" + plural
+            Inflector.AddSingular("(" + plural[0] + ")" + plural
                 .Substring(1) + "$", "$1" + singular.Substring(1));
         }
 
@@ -127,12 +127,12 @@ namespace ServiceBase
 
         public static string Pluralize(this string word)
         {
-            return ApplyRules(Inflector.Plurals, word);
+            return Inflector.ApplyRules(Inflector.Plurals, word);
         }
 
         public static string Singularize(this string word)
         {
-            return ApplyRules(Inflector.Singulars, word);
+            return Inflector.ApplyRules(Inflector.Singulars, word);
         }
 
         private static string ApplyRules(List<Rule> rules, string word)
@@ -165,8 +165,9 @@ namespace ServiceBase
 
         public static string Titleize(this string word)
         {
-            return Regex.Replace(Humanize(Underscore(word)), @"\b([a-z])",
-                                 match => match.Captures[0].Value.ToUpper());
+            return Regex.Replace(Inflector.Humanize(
+                Underscore(word)), @"\b([a-z])",
+                match => match.Captures[0].Value.ToUpper());
         }
 
         public static string Humanize(this string lowercaseAndUnderscoredWord)
@@ -178,12 +179,13 @@ namespace ServiceBase
         public static string Pascalize(this string lowercaseAndUnderscoredWord)
         {
             return Regex.Replace(lowercaseAndUnderscoredWord, "(?:^|_)(.)",
-                                 match => match.Groups[1].Value.ToUpper());
+                match => match.Groups[1].Value.ToUpper());
         }
 
         public static string Camelize(this string lowercaseAndUnderscoredWord)
         {
-            return Uncapitalize(Pascalize(lowercaseAndUnderscoredWord));
+            return Inflector.Uncapitalize(
+                Inflector.Pascalize(lowercaseAndUnderscoredWord));
         }
 
         public static string Underscore(this string pascalCasedWord)
@@ -208,12 +210,12 @@ namespace ServiceBase
 
         public static string Ordinalize(this string numberString)
         {
-            return Ordanize(int.Parse(numberString), numberString);
+            return Inflector.Ordanize(int.Parse(numberString), numberString);
         }
 
         public static string Ordinalize(this int number)
         {
-            return Ordanize(number, number.ToString());
+            return Inflector.Ordanize(number, number.ToString());
         }
 
         private static string Ordanize(int number, string numberString)
