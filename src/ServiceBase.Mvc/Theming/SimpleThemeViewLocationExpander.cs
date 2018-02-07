@@ -1,4 +1,4 @@
-namespace ServiceBase.Razor
+namespace ServiceBase.Mvc.Theming
 {
     using System.Collections.Generic;
     using System.IO;
@@ -12,11 +12,11 @@ namespace ServiceBase.Razor
     /// NOTE: FileWatcher will not track changes if absolute path is provided
     /// due to #248 bug <see href="https://github.com/aspnet/FileSystem/issues/248"/>
     /// </summary>
-    public class ThemeViewLocationExpander : IViewLocationExpander
+    public class SimpleThemeViewLocationExpander : IViewLocationExpander
     {
         private readonly string _themePath;
 
-        public ThemeViewLocationExpander(string themePath)
+        public SimpleThemeViewLocationExpander(string themePath)
         {
             if (Path.IsPathRooted(themePath))
             {

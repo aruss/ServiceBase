@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.Mvc
+﻿namespace ServiceBase.Mvc.Filters
 {
     /// <summary>
     /// Error model used by <see cref="ExceptionFilter"/>.

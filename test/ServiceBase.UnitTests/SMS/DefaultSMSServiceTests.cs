@@ -57,7 +57,7 @@ namespace ServiceBase.UnitTests
 
             var options = new DefaultSmsServiceOptions
             {
-                DefaultLocale = defaultCulture,
+                DefaultCulture = defaultCulture,
                 TemplateDirectoryPath = "../../../SMS/Templates"
             };
 

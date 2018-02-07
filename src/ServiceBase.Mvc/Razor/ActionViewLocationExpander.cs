@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.Razor
+﻿namespace ServiceBase.Mvc.Razor
 {
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc.Razor;

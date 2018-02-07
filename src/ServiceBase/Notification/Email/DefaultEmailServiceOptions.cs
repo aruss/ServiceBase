@@ -5,10 +5,15 @@ namespace ServiceBase.Notification.Email
 {
     public class DefaultEmailServiceOptions
     {
+        /// <summary>
+        /// Default UI culture name.
+        /// </summary>
         public string DefaultCulture { get; set; }
 
+        /// <summary>
+        /// Absolute path to template directory.
+        /// </summary>
         public string TemplateDirectoryPath { get; set; }
-        public string DefaultLocale { get; set; }
     }
 }
 

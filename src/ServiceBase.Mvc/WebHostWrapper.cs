@@ -103,10 +103,10 @@
                     optional: false,
                     reloadOnChange: false);
 
-            // if (isDevelopment)
-            // {
-            //     configBuilder.AddUserSecrets<TStartup>();
-            // }
+             if (isDevelopment)
+             {
+                 configBuilder.AddUserSecrets<TStartup>();
+             }
 
             configBuilder.AddEnvironmentVariables();
 

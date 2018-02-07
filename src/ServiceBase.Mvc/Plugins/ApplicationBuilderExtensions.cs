@@ -1,8 +1,9 @@
-﻿namespace ServiceBase.ExtensionHost
+﻿namespace ServiceBase.Mvc.Plugins
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using ServiceBase.Mvc.Theming;
 
     public static class ApplicationBuilderExtensions
     {
@@ -50,7 +51,7 @@
 
             app.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new CustomFileProvider(extensionsPath)
+                FileProvider = new ThemeFileProvider(extensionsPath)
             });
         }
     }

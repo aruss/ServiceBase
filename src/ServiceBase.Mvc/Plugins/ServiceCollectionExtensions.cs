@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.ExtensionHost
+﻿namespace ServiceBase.Mvc.Plugins
 {
     using System;
     using System.Collections.Generic;
@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using ServiceBase.Mvc.Theming;
 
     public static class ServiceCollectionExtensions
     {
@@ -42,7 +43,8 @@
         }
 
         public static void AddMvcHost(
-            this IServiceCollection services)
+            this IServiceCollection services,
+            string extensionsPath)
         {
             ServiceProvider serviceProvider = services.BuildServiceProvider();
 
@@ -78,14 +80,14 @@
                 foreach (var portableExecutableReference in refs)
                 {
                     razor.AdditionalCompilationReferences
-                    .Add(portableExecutableReference);
+                        .Add(portableExecutableReference);
                 }
 
                 razor.ViewLocationExpanders.Clear();
 
                 razor.ViewLocationExpanders
-                    .Add(new CustomViewLocationExpander(
-                        // TODO: pass request theme infor provider via options
+                    .Add(new ThemeViewLocationExpander(
+                        extensionsPath,
                         new DefaultRequestThemeInfoProvider()));
             });
 

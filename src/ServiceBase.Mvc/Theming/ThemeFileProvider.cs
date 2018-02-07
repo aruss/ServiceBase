@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.ExtensionHost
+﻿namespace ServiceBase.Mvc.Theming
 {
     using System;
     using System.Collections.Generic;
@@ -11,11 +11,19 @@
 
     // https://github.com/aspnet/FileSystem/blob/e469b8f244e38c346ab6a64f363df4d638cf5cee/src/FS.Physical/PhysicalFileProvider.cs
     // https://raw.githubusercontent.com/aspnet/FileSystem/e469b8f244e38c346ab6a64f363df4d638cf5cee/src/FS.Physical/Internal/PathUtils.cs
-    public class CustomFileProvider : IFileProvider
+
+    /// <summary>
+    /// This file provider uses following pattern /themes/{ThemeName}/Public/*
+    /// to provide static files. You will have to use following request pathes
+    /// /{ThemeName}/*
+    ///
+    /// for example href="/FooTheme/img/foo.png" will request /Themes/FooTheme/Public/img/foo.png 
+    /// </summary>
+    public class ThemeFileProvider : IFileProvider
     {
         private readonly string _basePath;
 
-        public CustomFileProvider(string basePath)
+        public ThemeFileProvider(string basePath)
         {
             this._basePath = basePath;
         }

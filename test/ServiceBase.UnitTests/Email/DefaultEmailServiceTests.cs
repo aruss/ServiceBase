@@ -77,7 +77,7 @@ namespace ServiceBase.UnitTests
 
             var options = new DefaultEmailServiceOptions
             {
-                DefaultLocale = defaultCulture,
+                DefaultCulture = defaultCulture,
                 TemplateDirectoryPath = "../../../Email/Templates"
             };
 

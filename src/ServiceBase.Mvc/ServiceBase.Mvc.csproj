@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ServiceBase.ExtensionHost.nuspec" />
-    <None Remove="ServiceBase.WebHost.nuspec" />
+    <None Remove="ServiceBase.Mvc.nuspec" />
   </ItemGroup>
 
   <ItemGroup>

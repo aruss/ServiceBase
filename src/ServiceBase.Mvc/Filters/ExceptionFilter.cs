@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.Mvc
+﻿namespace ServiceBase.Mvc.Filters
 {
     using System;
     using Microsoft.AspNetCore.Hosting;

@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBase.Events.RabbitMQ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBase.Notification.Plivo", "src\ServiceBase.Notification.Plivo\ServiceBase.Notification.Plivo.csproj", "{F7613D65-64B1-4298-9CE4-33E1887CD9DB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBase.ExtensionHost", "src\ServiceBase.ExtensionHost\ServiceBase.ExtensionHost.csproj", "{823D516F-B9C6-4F67-B7B7-7DFB2450593D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBase.Mvc", "src\ServiceBase.Mvc\ServiceBase.Mvc.csproj", "{823D516F-B9C6-4F67-B7B7-7DFB2450593D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Events", "Events", "{855D40B6-8DC0-4C32-A16A-33643A168514}"
 EndProject

@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.Razor.TagHelpers
+﻿namespace ServiceBase.Mvc.TagHelpers
 {
     using Microsoft.AspNetCore.Razor.TagHelpers;
 

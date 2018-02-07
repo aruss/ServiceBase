@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.ExtensionHost
+﻿namespace ServiceBase.Mvc.Plugins
 {
     using System;
     using Microsoft.AspNetCore.Builder;
