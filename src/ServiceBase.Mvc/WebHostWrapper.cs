@@ -37,7 +37,7 @@
             // Configuration.ExampleDataWriter.Write(config); 
 
             IConfigurationSection configHost = config.GetSection("Host");
-
+            
             IWebHostBuilder hostBuilder = new WebHostBuilder()
                 .UseKestrel()
                 .UseUrls(configHost.GetValue<string>("Urls"))
@@ -60,10 +60,10 @@
                 .RunAsync(WebHostWrapper.cancelTokenSource.Token)
                 .Wait();
         }
-        
+
         public static void Restart()
         {
-            WebHostWrapper.Shutdown(2); 
+            WebHostWrapper.Shutdown(2);
         }
 
         public static void Shutdown(int exitCode = 0)
@@ -103,10 +103,10 @@
                     optional: false,
                     reloadOnChange: false);
 
-             if (isDevelopment)
-             {
-                 configBuilder.AddUserSecrets<TStartup>();
-             }
+            if (isDevelopment)
+            {
+                configBuilder.AddUserSecrets<TStartup>();
+            }
 
             configBuilder.AddEnvironmentVariables();
 

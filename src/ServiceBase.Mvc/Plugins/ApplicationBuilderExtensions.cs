@@ -7,14 +7,14 @@
 
     public static class ApplicationBuilderExtensions
     {
-        public static void UseExtensions(
+        public static void UsePlugins(
             this IApplicationBuilder app)
         {
             ILogger logger = app.ApplicationServices
                 .GetService<ILoggerFactory>()
                 .CreateLogger("Extensions");
 
-            foreach (IConfigureAction action in ExtensionManager
+            foreach (IConfigureAction action in PluginManager
                 .GetServices<IConfigureAction>())
             {
                 logger.LogInformation(
@@ -25,7 +25,7 @@
             }
         }
 
-        public static void UseMvcHost(
+        public static void UsePluginsMvcHost(
             this IApplicationBuilder app,
             string extensionsPath)
         {
@@ -34,7 +34,7 @@
 
             app.UseMvc(routeBuilder =>
             {
-                foreach (IUseMvcAction action in ExtensionManager
+                foreach (IUseMvcAction action in PluginManager
                     .GetServices<IUseMvcAction>())
                 {
                     logger.LogInformation(

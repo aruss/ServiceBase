@@ -11,46 +11,54 @@
 
     public static class ServiceCollectionExtensions
     {
-        public static void AddExtensions(
+        public static void AddPlugins(
             this IServiceCollection services,
-            string extensionsPath,
-            bool includingSubpaths = true)
+            string pluginsPath)
         {
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
-            AssemblyProvider assemblyProvider =
-                new AssemblyProvider(serviceProvider);
+            ILogger logger = serviceProvider
+               .GetService<ILoggerFactory>()
+               .CreateLogger("Plugins");
+
+            AssemblyProvider assemblyProvider = new AssemblyProvider(logger);
 
             IEnumerable<Assembly> assemblies = assemblyProvider
-                .GetAssemblies(extensionsPath, includingSubpaths);
+                .GetAssemblies(pluginsPath);
 
-            ExtensionManager.SetAssemblies(assemblies);
+            PluginManager.SetAssemblies(assemblies);
 
-            ILogger logger = serviceProvider
-                .GetService<ILoggerFactory>()
-                .CreateLogger("Extensions");
-
-            foreach (IConfigureServicesAction action in ExtensionManager
+            foreach (IConfigureServicesAction action in PluginManager
                 .GetServices<IConfigureServicesAction>())
             {
                 logger.LogInformation(
                     "Executing ConfigureServices action '{0}'",
                     action.GetType().FullName);
 
-                action.Execute(services, serviceProvider);
-                serviceProvider = services.BuildServiceProvider();
+                try
+                {
+                    action.Execute(services, serviceProvider);
+                    serviceProvider = services.BuildServiceProvider();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(
+                        ex,
+                        $"Executing ConfigureServices action '{action.GetType().FullName}' caused an error."
+                    );
+                }
             }
         }
 
-        public static void AddMvcHost(
+        public static void AddPluginsMvcHost(
             this IServiceCollection services,
-            string extensionsPath)
+            string pluginsPath)
         {
             ServiceProvider serviceProvider = services.BuildServiceProvider();
 
             ILogger logger = serviceProvider
                 .GetService<ILoggerFactory>()
-                .CreateLogger("Extensions");
+                .CreateLogger("Plugins");
 
             services
                 .AddRouting((options) =>
@@ -63,7 +71,7 @@
                 .AddViewLocalization()
                 .AddDataAnnotationsLocalization();
 
-            foreach (Assembly assembly in ExtensionManager.Assemblies)
+            foreach (Assembly assembly in PluginManager.Assemblies)
             {
                 mvcBuilder.AddApplicationPart(assembly);
             }
@@ -71,7 +79,7 @@
             mvcBuilder.AddRazorOptions(razor =>
             {
                 IEnumerable<MetadataReference> refs =
-                    ExtensionManager.Assemblies
+                    PluginManager.Assemblies
                         .Where(x => !x.IsDynamic &&
                             !string.IsNullOrWhiteSpace(x.Location))
                         .Select(x => MetadataReference
@@ -87,18 +95,28 @@
 
                 razor.ViewLocationExpanders
                     .Add(new ThemeViewLocationExpander(
-                        extensionsPath,
+                        pluginsPath,
                         new DefaultRequestThemeInfoProvider()));
             });
 
-            foreach (IAddMvcAction action in ExtensionManager
+            foreach (IAddMvcAction action in PluginManager
                 .GetServices<IAddMvcAction>())
             {
                 logger.LogInformation(
-                    "Executing AddMvc action '{0}'",
-                    action.GetType().FullName);
+                    $"Executing AddMvc action '{action.GetType().FullName}'");
 
-                action.Execute(mvcBuilder, serviceProvider);
+                try
+                {
+                    action.Execute(mvcBuilder, serviceProvider);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(
+                        ex,
+                        $"Executing AddMvc action '{action.GetType().FullName}' caused an error."
+                    );
+                    throw;
+                }                
             }
         }
     }

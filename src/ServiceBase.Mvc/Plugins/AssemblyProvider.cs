@@ -6,19 +6,17 @@
     using System.Linq;
     using System.Reflection;
     using System.Runtime.Loader;
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
     public class AssemblyProvider
     {
         private readonly ILogger _logger;
 
-        public Func<Assembly, bool> IsCandidateAssembly { get; set; }
-        
-        public AssemblyProvider(IServiceProvider serviceProvider)
+        private Func<Assembly, bool> IsCandidateAssembly { get; set; }
+
+        public AssemblyProvider(ILogger logger)
         {
-            this._logger = serviceProvider.GetService<ILoggerFactory>()
-                .CreateLogger("Extensions");
+            this._logger = logger; 
 
             this.IsCandidateAssembly = assembly =>
                 !assembly.FullName.StartsWith(
@@ -27,13 +25,11 @@
                     "Microsoft.", StringComparison.OrdinalIgnoreCase);
         }
 
-        public IEnumerable<Assembly> GetAssemblies(
-            string path,
-            bool includingSubpaths)
+        public IEnumerable<Assembly> GetAssemblies(string path)
         {
             List<Assembly> assemblies = new List<Assembly>();
 
-            this.GetAssembliesFromPath(assemblies, path, includingSubpaths);
+            this.GetAssembliesFromPath(assemblies, path, "bin");
 
             return assemblies;
         }
@@ -41,69 +37,61 @@
         private void GetAssembliesFromPath(
             List<Assembly> assemblies,
             string path,
-            bool includingSubpaths)
+            string subPath)
         {
-            if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
+            // Get all plugins folders
+            foreach (string pluginPath in Directory.GetDirectories(path))
             {
-                this._logger.LogInformation(
-                    "Discovering and loading assemblies from path '{0}'",
-                    path);
-
-                foreach (string extensionPath in
-                    Directory.EnumerateFiles(path, "*.dll"))
-                {
-                    Assembly assembly = null;
-
-                    try
-                    {
-                        assembly = AssemblyLoadContext.Default
-                            .LoadFromAssemblyPath(extensionPath);
-
-                        if (this.IsCandidateAssembly(assembly) &&
-                            !assemblies.Any(a => String.Equals(
-                                a.FullName,
-                                assembly.FullName,
-                                StringComparison.OrdinalIgnoreCase)))
-                        {
-                            assemblies.Add(assembly);
-
-                            this._logger.LogInformation(
-                                "Assembly '{0}' is discovered and loaded",
-                                assembly.FullName);
-                        }
-                    }
-
-                    catch (Exception e)
-                    {
-                        this._logger.LogWarning(
-                            "Error loading assembly '{0}'",
-                            extensionPath);
-                    }
-                }
-
-                if (includingSubpaths)
-                {
-                    foreach (string subpath in Directory.GetDirectories(path))
-                    {
-                        this.GetAssembliesFromPath(
-                            assemblies, subpath, includingSubpaths);
-                    }
-                }
+                this.GetAssembliesFromPath(assemblies,
+                    Path.Combine(pluginPath, subPath));
             }
-            else
+        }
+
+        private void GetAssembliesFromPath(
+            List<Assembly> assemblies,
+            string path)
+        {
+            this._logger.LogInformation(
+                   "Discovering and loading assemblies from path '{0}'",
+                   path);
+
+            foreach (string assemblyPath in
+                 Directory.EnumerateFiles(path, "*.dll"))
             {
-                if (string.IsNullOrEmpty(path))
+                Assembly assembly = null;
+
+                try
+                {
+                    // var test = Assembly.LoadFile(assemblyPath);
+                    
+                    assembly = AssemblyLoadContext.Default
+                        .LoadFromAssemblyPath(assemblyPath);
+                    
+                    if (this.IsCandidateAssembly(assembly) &&
+                        !assemblies.Any(a => String.Equals(
+                        a.FullName,
+                        assembly.FullName,
+                        StringComparison.OrdinalIgnoreCase)))
+                    {
+                        assemblies.Add(assembly);
+
+                        this._logger.LogInformation(
+                            "Assembly '{0}' is discovered and loaded",
+                            assembly.FullName);
+                    }
+                }
+                catch (Exception e)
                 {
                     this._logger.LogWarning(
-                        "Discovering and loading assemblies from path skipped: path not provided",
-                        path);
-                }
-                else
-                {
-                    this._logger.LogWarning(
-                        "Discovering and loading assemblies from path '{0}' skipped: path not found",
-                        path);
-                }
+                        "Error loading assembly '{0}'",
+                        assemblyPath);
+                }            
+            }
+
+            // load assemblies from subdirectories
+            foreach (string subpath in Directory.GetDirectories(path))
+            {
+                this.GetAssembliesFromPath(assemblies, subpath);
             }
         }
     }
