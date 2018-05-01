@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="_Plugins\**" />
+    <EmbeddedResource Remove="_Plugins\**" />
+    <None Remove="_Plugins\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="ServiceBase.Mvc.nuspec" />
   </ItemGroup>
 

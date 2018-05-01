@@ -45,12 +45,17 @@
 
             yield return "~/Plugins/" + requestTheme + "/Views/{1}/{0}.cshtml";
             yield return "~/Plugins/" + requestTheme + "/Views/Shared/{0}.cshtml";
-            
+
+            /*
+            yield return $"{this._basePath}/{requestTheme}/Views/{{1}}/{{0}}.cshtml";
+            yield return $"{this._basePath}/{requestTheme}/Views/Shared/{{1}}/{{0}}.cshtml";
+
             if (requestTheme != defaultTheme)
             {
-                yield return "~/Plugins/" + defaultTheme + "/Views/{1}/{0}.cshtml";
-                yield return "~/Plugins/" + defaultTheme + "/Views/Shared/{0}.cshtml";
+                yield return $"{this._basePath}/{defaultTheme}/Views/{{1}}/{{0}}.cshtml";
+                yield return $"{this._basePath}/{defaultTheme}/Views/Shared/{{1}}/{{0}}.cshtml";
             }
+            */
 
             /*
             yield return Path.GetFullPath(Path.Combine(this._basePath,

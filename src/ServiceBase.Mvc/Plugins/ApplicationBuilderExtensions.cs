@@ -1,47 +1,42 @@
 ﻿namespace ServiceBase.Mvc.Plugins
 {
+    using System.Collections.Generic;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using ServiceBase.Mvc.Theming;
 
-    public static class ApplicationBuilderExtensions
+    public static partial class ApplicationBuilderExtensions
     {
         public static void UsePlugins(
-            this IApplicationBuilder app)
+            this IApplicationBuilder applicationBuilder)
         {
-            ILogger logger = app.ApplicationServices
-                .GetService<ILoggerFactory>()
-                .CreateLogger("Extensions");
+            IEnumerable<IConfigureAction> actions =
+                PluginAssembyLoader.GetServices<IConfigureAction>();
 
-            foreach (IConfigureAction action in PluginManager
-                .GetServices<IConfigureAction>())
+            foreach (IConfigureAction action in actions)
             {
-                logger.LogInformation(
-                    "Executing Configure action '{0}'",
-                    action.GetType().FullName);
-
-                action.Execute(app, app.ApplicationServices);
+                action.Execute(applicationBuilder);
             }
         }
 
         public static void UsePluginsMvcHost(
-            this IApplicationBuilder app,
-            string extensionsPath)
+                this IApplicationBuilder applicationBuilder,
+                string pluginsPath)
         {
-            ILogger logger = app.ApplicationServices
-                .GetService<ILoggerFactory>().CreateLogger("Extensions");
+            ILogger logger = applicationBuilder.ApplicationServices
+                .GetService<ILoggerFactory>().CreateLogger("Plugins");
 
-            app.UseMvc(routeBuilder =>
+            applicationBuilder.UseMvc(routeBuilder =>
             {
-                foreach (IUseMvcAction action in PluginManager
+                foreach (IUseMvcAction action in PluginAssembyLoader
                     .GetServices<IUseMvcAction>())
                 {
                     logger.LogInformation(
                         "Executing UseMvc action '{0}'",
                         action.GetType().FullName);
 
-                    action.Execute(routeBuilder, app.ApplicationServices);
+                    action.Execute(routeBuilder);
                 }
 
                 routeBuilder.MapRoute(
@@ -49,10 +44,11 @@
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            app.UseStaticFiles(new StaticFileOptions()
+            applicationBuilder.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new ThemeFileProvider(extensionsPath)
+                FileProvider = new ThemeFileProvider(pluginsPath)
             });
         }
     }
+
 }

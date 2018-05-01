@@ -9,27 +9,22 @@
     using Microsoft.Extensions.Logging;
     using ServiceBase.Mvc.Theming;
 
-    public static class ServiceCollectionExtensions
+    public static partial class IServiceCollectionExtensions
     {
         public static void AddPlugins(
-            this IServiceCollection services,
-            string pluginsPath)
+            this IServiceCollection serviceCollection)
         {
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
+            IServiceProvider serviceProvider =
+                serviceCollection.BuildServiceProvider();
 
             ILogger logger = serviceProvider
-               .GetService<ILoggerFactory>()
-               .CreateLogger("Plugins");
+                 .GetService<ILoggerFactory>()
+                 .CreateLogger("Plugins");
 
-            AssemblyProvider assemblyProvider = new AssemblyProvider(logger);
+            IEnumerable<IConfigureServicesAction> actions =
+                PluginAssembyLoader.GetServices<IConfigureServicesAction>();
 
-            IEnumerable<Assembly> assemblies = assemblyProvider
-                .GetAssemblies(pluginsPath);
-
-            PluginManager.SetAssemblies(assemblies);
-
-            foreach (IConfigureServicesAction action in PluginManager
-                .GetServices<IConfigureServicesAction>())
+            foreach (IConfigureServicesAction action in actions)
             {
                 logger.LogInformation(
                     "Executing ConfigureServices action '{0}'",
@@ -37,14 +32,14 @@
 
                 try
                 {
-                    action.Execute(services, serviceProvider);
-                    serviceProvider = services.BuildServiceProvider();
+                    action.Execute(serviceCollection);
                 }
                 catch (Exception ex)
                 {
                     logger.LogError(
                         ex,
-                        $"Executing ConfigureServices action '{action.GetType().FullName}' caused an error."
+                        "Executing ConfigureServices action '{0}' caused an error.",
+                        action.GetType().FullName
                     );
                 }
             }
@@ -52,9 +47,11 @@
 
         public static void AddPluginsMvcHost(
             this IServiceCollection services,
-            string pluginsPath)
+            string pluginsPath,
+            IRequestThemeInfoProvider requestThemeInfoProvider = null)
         {
-            ServiceProvider serviceProvider = services.BuildServiceProvider();
+            ServiceProvider serviceProvider =
+                services.BuildServiceProvider();
 
             ILogger logger = serviceProvider
                 .GetService<ILoggerFactory>()
@@ -71,15 +68,20 @@
                 .AddViewLocalization()
                 .AddDataAnnotationsLocalization();
 
-            foreach (Assembly assembly in PluginManager.Assemblies)
+            IEnumerable<IAddMvcAction> actions = PluginAssembyLoader
+                .GetServices<IAddMvcAction>();
+
+            IEnumerable<Assembly> assemblies = actions
+                .Select(s => s.GetType().Assembly);
+
+            foreach (Assembly assembly in assemblies)
             {
                 mvcBuilder.AddApplicationPart(assembly);
             }
 
             mvcBuilder.AddRazorOptions(razor =>
             {
-                IEnumerable<MetadataReference> refs =
-                    PluginManager.Assemblies
+                IEnumerable<MetadataReference> refs = assemblies
                         .Where(x => !x.IsDynamic &&
                             !string.IsNullOrWhiteSpace(x.Location))
                         .Select(x => MetadataReference
@@ -96,27 +98,28 @@
                 razor.ViewLocationExpanders
                     .Add(new ThemeViewLocationExpander(
                         pluginsPath,
+                        requestThemeInfoProvider ??
                         new DefaultRequestThemeInfoProvider()));
             });
 
-            foreach (IAddMvcAction action in PluginManager
-                .GetServices<IAddMvcAction>())
+            foreach (IAddMvcAction action in actions)
             {
                 logger.LogInformation(
-                    $"Executing AddMvc action '{action.GetType().FullName}'");
+                    $"Executing AddMvc action '{0}'",
+                    action.GetType().FullName);
 
                 try
                 {
-                    action.Execute(mvcBuilder, serviceProvider);
+                    action.Execute(mvcBuilder);
                 }
                 catch (Exception ex)
                 {
                     logger.LogError(
                         ex,
-                        $"Executing AddMvc action '{action.GetType().FullName}' caused an error."
+                        $"Executing AddMvc action '{0}' caused an error.",
+                        action.GetType().FullName
                     );
-                    throw;
-                }                
+                }
             }
         }
     }

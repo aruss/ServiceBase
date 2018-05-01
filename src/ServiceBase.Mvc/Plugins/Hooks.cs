@@ -1,40 +1,32 @@
 ﻿namespace ServiceBase.Mvc.Plugins
 {
-    using System;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.DependencyInjection;
 
-    public interface IExtension
+    public interface IPlugin
     {
-        string Name { get; set; }
+        //string Name { get; set; }
+        
     }
 
     public interface IConfigureAction
     {
-        void Execute(
-            IApplicationBuilder app, 
-            IServiceProvider serviceProvider);
+        void Execute(IApplicationBuilder applicationBuilder);
     }
 
     public interface IConfigureServicesAction
     {
-        void Execute(
-            IServiceCollection services, 
-            IServiceProvider serviceProvider);
+        void Execute(IServiceCollection serviceCollection);
     }
 
     public interface IUseMvcAction
     {
-        void Execute(
-            IRouteBuilder routeBuilder, 
-            IServiceProvider serviceProvider);
+        void Execute(IRouteBuilder routeBuilder);
     }
 
     public interface IAddMvcAction
     {
-        void Execute(
-            IMvcBuilder mvcBuilder,
-            IServiceProvider serviceProvider);
+        void Execute(IMvcBuilder mvcBuilder);
     }
 }

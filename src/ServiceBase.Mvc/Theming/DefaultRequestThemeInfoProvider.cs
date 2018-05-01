@@ -13,7 +13,7 @@
             this._defaultTheme = defaultTheme; 
         }
 
-        public async Task<ThemeInfoResult> DetermineThemeInfoResult(
+        public Task<ThemeInfoResult> DetermineThemeInfoResult(
             HttpContext httpContext)
         {
             var result = new ThemeInfoResult
@@ -30,7 +30,7 @@
                 result.RequestTheme = result.DefaultTheme;
             }
 
-            return result;
+            return Task.FromResult(result); 
         }
     }
 }
