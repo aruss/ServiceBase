@@ -8,7 +8,7 @@
         private readonly string _defaultTheme;
 
         public DefaultRequestThemeInfoProvider(
-            string defaultTheme = "BaseTheme")
+            string defaultTheme = "DefaultTheme")
         {
             this._defaultTheme = defaultTheme; 
         }
