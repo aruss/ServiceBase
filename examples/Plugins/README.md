@@ -3,10 +3,17 @@
 
 This is a example application that utilizes most of bits and parts from the ServiceBase library, including the plugin architecture.
 
+
+Key features
+
+- Dynamic Plugin Loading
+- Localization
+- Theming
+
+
 The Folder structure is as follows
 
 ```txt
-Plugin Architecture /
 ├── Web Host/
 │   └── Plugins/
 │       ├── Plugin A/
@@ -16,6 +23,74 @@ Plugin Architecture /
 ```
 
     ❗ The `Plugins` folder HAS to be inside the Web Host application, since the compilation context for Razor does not work if it is outside.
+
+
+Simple Theme Plugin would look like follows
+
+```txt
+├── Public/
+│   ├── css/
+│   │   └── main.css
+│   └── js/
+│       └── main.js
+├── Resources/
+│   └── Localization/
+│       ├── Shared.de-DE.json
+│       └── Shared.en-US.json
+├── Views/
+│   ├── Home/
+│   │   └── Home.cshtml
+│   ├── Shared/
+│   │   └── _Layout.cshtml
+│   ├── _ViewImports.cshtml
+│   └── _ViewStart.cshtml
+├── gulpfile.js
+└── package.js
+```
+
+## Actions
+
+This is a kinda hook pattern, so you can implement a method and it will be executed in a centralized place from plugin architecture.
+
+### ConfigureServicesAction
+```csharp
+namespace ThemeA
+{
+    using Microsoft.Extensions.DependencyInjection;
+    using ServiceBase.Mvc.Plugins;
+
+    public class ConfigureServicesAction : IConfigureServicesAction
+    {
+        public void Execute(IServiceCollection services)
+        {
+            // Add here your services
+        }
+    }
+}
+```
+
+### ConfigureAction
+
+```csharp
+namespace PluginFoo
+{
+    using Microsoft.AspNetCore.Builder;
+    using ServiceBase.Mvc.Plugins;
+
+    public class ConfigureAction : IConfigureAction
+    {
+        public void Execute(IApplicationBuilder applicationBuilder)
+        {
+            // Configure here your services
+        }
+    }
+}
+```
+
+### IAddMvcAction
+
+### IUseMvcAction
+
 
 ## Building
 
