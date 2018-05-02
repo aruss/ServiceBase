@@ -6,28 +6,41 @@
     using Microsoft.Extensions.Logging;
     using ServiceBase.Mvc.Theming;
 
+    /// <summary>
+    /// Contains <see cref="IApplicationBuilder"/> extenion methods.
+    /// </summary>
     public static partial class ApplicationBuilderExtensions
     {
+        /// <summary>
+        /// Adds services of each plugins to the
+        /// <see cref="IApplicationBuilder"/> request execution pipeline.
+        /// </summary>
         public static void UsePlugins(
-            this IApplicationBuilder applicationBuilder)
+            this IApplicationBuilder app)
         {
             IEnumerable<IConfigureAction> actions =
                 PluginAssembyLoader.GetServices<IConfigureAction>();
 
             foreach (IConfigureAction action in actions)
             {
-                action.Execute(applicationBuilder);
+                action.Execute(app);
             }
         }
 
-        public static void UsePluginsMvcHost(
-                this IApplicationBuilder applicationBuilder,
-                string pluginsPath)
+        /// <summary>
+        /// Adds MVC to the <see cref="IApplicationBuilder"/> request
+        /// execution pipeline, configured to work with plugin architecture.
+        /// </summary>
+        /// <param name="app">
+        /// Instance of <see cref="IApplicationBuilder"/>.
+        /// </param>
+        public static void UsePluginsMvc(
+                this IApplicationBuilder app)
         {
-            ILogger logger = applicationBuilder.ApplicationServices
+            ILogger logger = app.ApplicationServices
                 .GetService<ILoggerFactory>().CreateLogger("Plugins");
 
-            applicationBuilder.UseMvc(routeBuilder =>
+            app.UseMvc(routeBuilder =>
             {
                 foreach (IUseMvcAction action in PluginAssembyLoader
                     .GetServices<IUseMvcAction>())
@@ -43,12 +56,25 @@
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
 
-            applicationBuilder.UseStaticFiles(new StaticFileOptions()
+        /// <summary>
+        ///  Enables static file serving with plugin architecture.
+        /// </summary>
+        /// <param name="app">
+        /// Instance of <see cref="IApplicationBuilder"/>.
+        /// </param>
+        /// <param name="basePath">
+        /// Base path to plugins folder.
+        /// </param>
+        public static void UsePluginsStaticFiles(
+                this IApplicationBuilder app,
+                string basePath)
+        {
+            app.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new ThemeFileProvider(pluginsPath)
+                FileProvider = new PluginsFileProvider(basePath)
             });
         }
     }
-
 }

@@ -3,7 +3,7 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
 
-    public class DefaultRequestThemeInfoProvider : IRequestThemeInfoProvider
+    public class DefaultRequestThemeInfoProvider : IThemeInfoProvider
     {
         private readonly string _defaultTheme;
 

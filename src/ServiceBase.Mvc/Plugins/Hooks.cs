@@ -7,7 +7,6 @@
     public interface IPlugin
     {
         //string Name { get; set; }
-        
     }
 
     public interface IConfigureAction

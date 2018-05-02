@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using Microsoft.AspNetCore.Mvc.Razor;
     using Microsoft.CodeAnalysis;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@
 
             ILogger logger = serviceProvider
                  .GetService<ILoggerFactory>()
-                 .CreateLogger("Plugins");
+                 .CreateLogger(typeof(IServiceCollectionExtensions));
 
             IEnumerable<IConfigureServicesAction> actions =
                 PluginAssembyLoader.GetServices<IConfigureServicesAction>();
@@ -30,32 +31,36 @@
                     "Executing ConfigureServices action '{0}'",
                     action.GetType().FullName);
 
-                try
-                {
-                    action.Execute(serviceCollection);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(
-                        ex,
-                        "Executing ConfigureServices action '{0}' caused an error.",
-                        action.GetType().FullName
-                    );
-                }
+                action.Execute(serviceCollection);
             }
         }
 
-        public static void AddPluginsMvcHost(
+        public static void AddPluginsMvc(
             this IServiceCollection services,
-            string pluginsPath,
-            IRequestThemeInfoProvider requestThemeInfoProvider = null)
+            string viewsBasePath)
+        {
+            services.AddPluginsMvc(
+                new CustomViewLocationExpander(viewsBasePath));
+        }
+
+        public static void AddPluginsMvc(
+            this IServiceCollection services,
+            IThemeInfoProvider themeInfoProvider)
+        {
+            services.AddPluginsMvc(
+                new ThemeViewLocationExpander(themeInfoProvider));
+        }
+
+        public static void AddPluginsMvc(
+            this IServiceCollection services,
+            IViewLocationExpander viewLocationExpander = null)
         {
             ServiceProvider serviceProvider =
                 services.BuildServiceProvider();
 
             ILogger logger = serviceProvider
                 .GetService<ILoggerFactory>()
-                .CreateLogger("Plugins");
+                .CreateLogger(typeof(IServiceCollectionExtensions));
 
             services
                 .AddRouting((options) =>
@@ -93,13 +98,11 @@
                         .Add(portableExecutableReference);
                 }
 
-                razor.ViewLocationExpanders.Clear();
-
-                razor.ViewLocationExpanders
-                    .Add(new ThemeViewLocationExpander(
-                        pluginsPath,
-                        requestThemeInfoProvider ??
-                        new DefaultRequestThemeInfoProvider()));
+                if (viewLocationExpander != null)
+                {
+                    razor.ViewLocationExpanders.Clear();
+                    razor.ViewLocationExpanders.Add(viewLocationExpander);
+                }
             });
 
             foreach (IAddMvcAction action in actions)
@@ -108,18 +111,7 @@
                     $"Executing AddMvc action '{0}'",
                     action.GetType().FullName);
 
-                try
-                {
-                    action.Execute(mvcBuilder);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(
-                        ex,
-                        $"Executing AddMvc action '{0}' caused an error.",
-                        action.GetType().FullName
-                    );
-                }
+                action.Execute(mvcBuilder);
             }
         }
     }
