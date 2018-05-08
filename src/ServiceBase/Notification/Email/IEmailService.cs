@@ -7,6 +7,21 @@ namespace ServiceBase.Notification.Email
 
     public interface IEmailService
     {
+        /// <summary>
+        /// Sends email
+        /// </summary>
+        /// <param name="templateName">
+        /// Name of template will be used to parse the view data in it.
+        /// </param>
+        /// <param name="email">
+        /// Email address of recipient.
+        /// </param>
+        /// <param name="viewData">
+        /// The model.
+        /// </param>
+        /// <param name="sendHtml">
+        /// If true email will be send as HTML.
+        /// </param>
         Task SendEmailAsync(
             string templateName,
             string email,

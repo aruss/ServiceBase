@@ -3,83 +3,32 @@
 
 namespace ServiceBase.Notification.Email
 {
-    using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
     using ServiceBase.Extensions;
+    using ServiceBase.Resources;
 
     public class DefaultEmailService : IEmailService
     {
-        internal readonly IEmailSender _emailSender;
         internal readonly DefaultEmailServiceOptions _options;
+        internal readonly IEmailSender _emailSender;
+        internal readonly IResourceStore _resourceStore;
         internal readonly ILogger<DefaultEmailService> _logger;
-        internal readonly IHttpContextAccessor _httpContextAccessor; 
-
-        private static ConcurrentDictionary<string, EmailTemplate> _templates;
 
         public DefaultEmailService(
             DefaultEmailServiceOptions options,
-            ILogger<DefaultEmailService> logger,
             IEmailSender emailSender,
-            IHttpContextAccessor httpContextAccessor)
+            IResourceStore resourceStore,
+            ILogger<DefaultEmailService> logger)
         {
-            this._logger = logger;
             this._options = options;
             this._emailSender = emailSender;
-            this._httpContextAccessor = httpContextAccessor;
-
-            DefaultEmailService._templates =
-                new ConcurrentDictionary<string, EmailTemplate>();
-        }
-
-        /// <summary>
-        /// Resolves the tempalte file path.
-        /// </summary>
-        /// <param name="culture">Current UI Culture.</param>
-        /// <param name="templateName">Name of the file. File pattern
-        /// should be SomeTemplate.de-DE.xml</param>
-        /// <returns>File path to template file.</returns>
-        public virtual async Task<string> GetTemplatePathAsync(
-            CultureInfo culture,
-            string templateName)
-        {
-            string basePath = this._options.TemplateDirectoryPath; 
-
-            if (String.IsNullOrWhiteSpace(basePath))
-            {
-                throw new NullReferenceException(
-                    "TemplateDirectoryPath may not be null"); 
-            }
-
-            string path = Path.GetFullPath(
-                Path.Combine(basePath,
-                    $"{templateName}.{culture.Name}.xml"
-                )
-            );
-
-            if (File.Exists(path))
-            {
-                return path;
-            }
-
-            path = Path.GetFullPath(
-                Path.Combine(basePath,
-                    $"{templateName}.{this._options.DefaultCulture}.xml"
-                )
-            );
-
-            if (File.Exists(path))
-            {
-                return path;
-            }
-
-            throw new FileNotFoundException(path);
+            this._resourceStore = resourceStore;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -93,21 +42,16 @@ namespace ServiceBase.Notification.Email
             CultureInfo culture,
             string templateName)
         {
-            string path =
-                await this.GetTemplatePathAsync(culture, templateName);
+            Resource resource = await _resourceStore
+                .GetEmailTemplateAsync(culture.Name, templateName);
 
-            return DefaultEmailService._templates.GetOrAdd(path, (p) =>
+            using (TextReader reader = new StringReader(resource.Value))
             {
-                this._logger.LogInformation($"Loading email template: {p}");
+                XmlSerializer serializer =
+                    new XmlSerializer(typeof(EmailTemplate));
 
-                using (StreamReader reader = new StreamReader(p))
-                {
-                    XmlSerializer serializer =
-                        new XmlSerializer(typeof(EmailTemplate));
-
-                    return (EmailTemplate)serializer.Deserialize(reader);
-                }
-            });
+                return (EmailTemplate)serializer.Deserialize(reader);
+            }
         }
 
         /// <summary>
@@ -116,7 +60,7 @@ namespace ServiceBase.Notification.Email
         /// <param name="template">String template.</param>
         /// <param name="viewData">Dictionary with view data.</param>
         /// <returns>Parsed template.</returns>
-        public virtual async Task<string> Tokenize(
+        public virtual Task<string> Tokenize(
             string template,
             IDictionary<string, object> viewData)
         {
@@ -127,7 +71,7 @@ namespace ServiceBase.Notification.Email
                     .Replace($"{{{item.Key}}}", item.Value.ToString());
             }
 
-            return result;
+            return Task.FromResult(result);
         }
 
         /// <summary>
@@ -146,7 +90,7 @@ namespace ServiceBase.Notification.Email
             string layout = await this.Tokenize(templateLayout, viewData);
             string html = layout.Replace("{Content}", content);
 
-            return html; 
+            return html;
         }
 
         /// <summary>
@@ -163,7 +107,7 @@ namespace ServiceBase.Notification.Email
             bool sendHtml)
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
-            
+
             EmailMessage message = new EmailMessage
             {
                 EmailTo = email
@@ -178,7 +122,7 @@ namespace ServiceBase.Notification.Email
 
             EmailTemplate templateLayout =
                 await this.GetTemplate(culture, "_Layout");
-            
+
             if (viewData != null)
             {
                 message.Subject = await this

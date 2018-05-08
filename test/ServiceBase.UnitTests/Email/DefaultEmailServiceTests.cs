@@ -78,16 +78,16 @@ namespace ServiceBase.UnitTests
             var options = new DefaultEmailServiceOptions
             {
                 DefaultCulture = defaultCulture,
-                TemplateDirectoryPath = "../../../Email/Templates"
+                //TemplateDirectoryPath = "../../../Email/Templates"
             };
 
             var httpContextAccessorMock = new Mock<IHttpContextAccessor>(); 
 
             var emailService = new DefaultEmailService(
                 options,
-                logger,
                 emailSender.Object,
-                httpContextAccessorMock.Object);
+                null,
+                logger);
 
             // Set culture 
             CultureInfo originalCulture =

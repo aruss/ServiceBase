@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    public static class IDictionaryExtensions
+    public static partial class IDictionaryExtensions
     {
         /// <summary>
         /// Converts dictionary to object

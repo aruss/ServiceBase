@@ -22,7 +22,7 @@ namespace ServiceBase.Notification.Sms
         internal readonly IHttpContextAccessor _httpContextAccessor;
 
         private static ConcurrentDictionary<string, string> _templates;
-        
+
         public DefaultSmsService(
             DefaultSmsServiceOptions options,
             ILogger<DefaultSmsService> logger,
@@ -50,7 +50,7 @@ namespace ServiceBase.Notification.Sms
             string numberTo,
             object model)
         {
-            await this.SendSmsAsync(templateName, numberTo, null, model); 
+            await this.SendSmsAsync(templateName, numberTo, null, model);
         }
 
         /// <summary>
@@ -75,8 +75,8 @@ namespace ServiceBase.Notification.Sms
               model?.ToDictionary();
 
             string template = await this.GetTemplate(culture, templateName);
-            string message = await this.Tokenize(template, viewData); 
-            
+            string message = await this.Tokenize(template, viewData);
+
             await this._smsSender.SendSmsAsync(numberTo, numberFrom, message);
         }
 
@@ -87,18 +87,18 @@ namespace ServiceBase.Notification.Sms
         /// <param name="templateName">Name of the file. File pattern
         /// should be SomeTemplate.de-DE.txt</param>
         /// <returns>File path to template file.</returns>
-        public virtual async Task<string> GetTemplatePathAsync(
+        public virtual Task<string> GetTemplatePathAsync(
             CultureInfo culture,
             string templateName)
         {
-            string basePath = this._options.TemplateDirectoryPath; 
+            string basePath = this._options.TemplateDirectoryPath;
 
             if (String.IsNullOrWhiteSpace(basePath))
             {
                 throw new NullReferenceException(
                     "TemplateDirectoryPath may not be null");
             }
-            
+
             string path = Path.GetFullPath(
                 Path.Combine(basePath,
                     $"{templateName}.{culture.Name}.txt"
@@ -107,7 +107,7 @@ namespace ServiceBase.Notification.Sms
 
             if (File.Exists(path))
             {
-                return path;
+                return Task.FromResult(path);
             }
 
             path = Path.GetFullPath(
@@ -118,7 +118,7 @@ namespace ServiceBase.Notification.Sms
 
             if (File.Exists(path))
             {
-                return path;
+                return Task.FromResult(path);
             }
 
             throw new FileNotFoundException(path);
@@ -142,7 +142,7 @@ namespace ServiceBase.Notification.Sms
             {
                 this._logger.LogInformation($"Loading SMS template: {p}");
 
-                return File.ReadAllText(p); 
+                return File.ReadAllText(p);
             });
         }
 
@@ -152,18 +152,18 @@ namespace ServiceBase.Notification.Sms
         /// <param name="template">String template.</param>
         /// <param name="viewData">Dictionary with view data.</param>
         /// <returns>Parsed template.</returns>
-        public virtual async Task<string> Tokenize(
+        public virtual Task<string> Tokenize(
             string template,
             IDictionary<string, object> viewData)
         {
             string result = template;
-            foreach (var item in viewData)
+            foreach (KeyValuePair<string, object> item in viewData)
             {
                 result = result
                     .Replace($"{{{item.Key}}}", item.Value.ToString());
             }
 
-            return result;
+            return Task.FromResult(result);
         }
     }
 }

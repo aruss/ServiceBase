@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Reflection;
 
-    public static class RandomExtensions
+    public static partial class RandomExtensions
     {
         private static Random instance;
 

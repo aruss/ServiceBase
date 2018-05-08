@@ -4,7 +4,7 @@
     using System.Linq;
     using Microsoft.Extensions.DependencyInjection;
 
-    public static class IServiceCollectionExtensions
+    public static partial class IServiceCollectionExtensions
     {
         public static IServiceCollection TryRemove<TService>(
            this IServiceCollection services)

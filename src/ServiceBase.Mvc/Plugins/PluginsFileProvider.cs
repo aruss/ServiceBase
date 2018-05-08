@@ -1,4 +1,4 @@
-﻿namespace ServiceBase.Mvc.Plugins
+﻿namespace ServiceBase.Plugins
 {
     using System;
     using System.Collections.Generic;

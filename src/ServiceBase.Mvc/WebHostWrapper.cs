@@ -1,10 +1,11 @@
-﻿namespace ServiceBase.ExtensionHost
+﻿namespace ServiceBase
 {
     using System;
     using System.IO;
     using System.Threading;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
     public class WebHostWrapper
@@ -12,11 +13,34 @@
         private static CancellationTokenSource
               cancelTokenSource = new CancellationTokenSource();
 
-        public static void Start<TStartup>(string[] args)
+        public static void Start<TStartup>(
+            string[] args,
+            Action<IServiceCollection> configureServices = null)
              where TStartup : class
         {
-            WebHostWrapper.Start<TStartup>(args,
-                Directory.GetCurrentDirectory());
+            string contentRoot = Environment
+                .GetEnvironmentVariable("ASPNETCORE_CONTENTROOT");
+
+            if (!string.IsNullOrWhiteSpace(contentRoot))
+            {
+                FileAttributes attr = File.GetAttributes(contentRoot);
+
+                if ((attr & FileAttributes.Directory) !=
+                    FileAttributes.Directory)
+                {
+                    throw new ArgumentException(
+                        $"Given Content root \"{contentRoot}\"is not a valid directory");
+                }
+            }
+            else
+            {
+                contentRoot = Directory.GetCurrentDirectory();
+            }
+
+            WebHostWrapper.Start<TStartup>(
+                args,
+                contentRoot,
+                configureServices);
         }
 
         /// <summary>
@@ -27,7 +51,8 @@
         /// <param name="basePath"></param>
         public static void Start<TStartup>(
             string[] args,
-            string basePath)
+            string basePath,
+            Action<IServiceCollection> configureServices = null)
             where TStartup : class
         {
             IConfiguration config = WebHostWrapper
@@ -37,7 +62,7 @@
             // Configuration.ExampleDataWriter.Write(config); 
 
             IConfigurationSection configHost = config.GetSection("Host");
-            
+
             IWebHostBuilder hostBuilder = new WebHostBuilder()
                 .UseKestrel()
                 .UseUrls(configHost.GetValue<string>("Urls"))
@@ -49,11 +74,17 @@
                 })
                 .UseStartup<TStartup>();
 
-            // if (configHost.GetValue<bool>("UseIISIntegration"))
-            // {
-            //     Console.WriteLine("Enabling IIS Integration");
-            //     hostBuilder = hostBuilder.UseIISIntegration();
-            // }
+            if (configureServices != null)
+            {
+                hostBuilder = hostBuilder
+                    .ConfigureServices(configureServices);
+            }
+
+            if (configHost.GetValue<bool>("UseIISIntegration"))
+            {
+                Console.WriteLine("Enabling IIS Integration");
+                hostBuilder = hostBuilder.UseIISIntegration();
+            }
 
             hostBuilder
                 .Build()

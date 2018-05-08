@@ -13,7 +13,7 @@ namespace ServiceBase.Notification.Email
         /// <summary>
         /// Absolute path to template directory.
         /// </summary>
-        public string TemplateDirectoryPath { get; set; }
+        /// public string TemplateDirectoryPath { get; set; }
     }
 }
 
