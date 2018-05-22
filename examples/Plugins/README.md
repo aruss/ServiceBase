@@ -22,7 +22,9 @@ The Folder structure is as follows
 └── Shared Library/
 ```
 
-    ❗ The `Plugins` folder HAS to be inside the Web Host application, since the compilation context for Razor does not work if it is outside.
+    ❗ The `Plugins` folder HAS to be inside the Web Host application, since the compilation context for Razor does not work if it is outside. 
+    
+    Or at least thats what I understood
 
 
 Simple Theme Plugin would look like follows
@@ -97,3 +99,5 @@ namespace PluginFoo
 To be able to use Visual Studio in old fashioned manner, like hit F5 and debug a crap out of it, you will need to add a reference to the plugin and add a static reference. Then you will not have to worry about starting and pausing the process with some fishy tricks like `Console.ReadLine()` and then attaching the debugger and so on.
 
 ## Publishing
+
+tbd;
