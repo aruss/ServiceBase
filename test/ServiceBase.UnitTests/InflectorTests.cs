@@ -8,9 +8,11 @@ namespace ServiceBase.UnitTests
     public class InflectorTests
     {
         [Fact]
-        public async Task DasherizeTest()
+        public Task DasherizeTest()
         {
             "foo_bar_baz".Dasherize().Should().Be("foo-bar-baz");
+
+            return Task.FromResult(0); 
         }
     }
 }

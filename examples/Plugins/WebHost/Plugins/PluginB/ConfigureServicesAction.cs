@@ -1,11 +1,11 @@
 ﻿namespace PluginB
 {
-    using System;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using ServiceBase.Mvc.Plugins;
+    using ServiceBase.Plugins;
     using Shared;
+    using System;
 
     public class ConfigureServicesAction : IConfigureServicesAction
     {

@@ -1,8 +1,8 @@
 ﻿namespace ThemeA
 {
-    using System;
     using Microsoft.Extensions.DependencyInjection;
-    using ServiceBase.Mvc.Plugins;
+    using ServiceBase.Plugins;
+    using System;
 
     public class ConfigureServicesAction : IConfigureServicesAction
     {
