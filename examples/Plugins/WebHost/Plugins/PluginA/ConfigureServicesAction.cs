@@ -1,9 +1,9 @@
 ﻿namespace PluginA
 {
-    using System;
     using Microsoft.Extensions.DependencyInjection;
-    using ServiceBase.Mvc.Plugins;
+    using ServiceBase.Plugins;
     using Shared;
+    using System;
 
     public class ConfigureServicesAction : IConfigureServicesAction
     {

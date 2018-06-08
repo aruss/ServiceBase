@@ -1,9 +1,9 @@
 ﻿namespace PluginA
 {
-    using System;
     using Microsoft.AspNetCore.Builder;
+    using ServiceBase.Plugins;
     using Shared;
-    using ServiceBase.Mvc.Plugins;
+    using System;
 
     public class ConfigureAction : IConfigureAction
     {

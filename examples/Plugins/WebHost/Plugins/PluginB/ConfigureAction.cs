@@ -1,9 +1,9 @@
 ﻿namespace PluginB
 {
-    using System;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
-    using ServiceBase.Mvc.Plugins;
+    using ServiceBase.Plugins;
+    using System;
 
     public class ConfigureAction : IConfigureAction
     {

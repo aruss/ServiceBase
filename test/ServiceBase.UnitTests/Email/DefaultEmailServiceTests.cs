@@ -18,7 +18,7 @@ namespace ServiceBase.UnitTests
     public class DefaultEmailServiceTests
     {
         // Wirte test files
-        public void Serialize()
+        private void Serialize()
         {
             XmlSerializer serializer =
                 new XmlSerializer(typeof(EmailTemplate));
@@ -57,7 +57,7 @@ namespace ServiceBase.UnitTests
 
             emailSender
                 .Setup(c => c.SendEmailAsync(It.IsAny<EmailMessage>()))
-                .Returns(new Func<EmailMessage, Task>(async (emailMessage) =>
+                .Returns(new Func<EmailMessage, Task>((emailMessage) =>
                 {
                     Assert.NotNull(emailMessage);
 
@@ -71,6 +71,8 @@ namespace ServiceBase.UnitTests
 
                     string text = $"Text LayoutStart {expectedCulture} Text {templateName} {expectedCulture} Foo Text LayoutEnd {expectedCulture}";
                     Assert.Equal(text, emailMessage.Text);
+
+                    return Task.FromResult(0); 
                 }));
 
             var logger = new NullLogger<DefaultEmailService>();

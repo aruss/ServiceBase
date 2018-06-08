@@ -1,15 +1,13 @@
 ﻿namespace ServiceBase.Plugins
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
     using Microsoft.AspNetCore.Mvc.Razor;
     using Microsoft.CodeAnalysis;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using ServiceBase.Mvc.Theming;
-    using ServiceBase.Plugins;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
 
     public static partial class IServiceCollectionExtensions
     {

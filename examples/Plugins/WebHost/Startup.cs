@@ -6,8 +6,8 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using ServiceBase.Mvc.Plugins;
     using ServiceBase.Mvc.Theming;
+    using ServiceBase.Plugins;
 
     public class Startup : IStartup
     {
@@ -39,7 +39,7 @@
                 Path.Combine(environment.ContentRootPath, "Plugins"));
 
             Console.WriteLine("Loading plugins statically.");
-            Console.WriteLine(typeof(PluginA.PluginAPlugin));
+            Console.WriteLine(typeof(PluginA.PluginAInfo));
             //Console.WriteLine(typeof(PluginB.PluginBPlugin));
 #endif
         }
@@ -48,7 +48,7 @@
         {
             services.AddSingleton(Configuration);
             services.AddPlugins();
-            services.AddPluginsMvcHost(this._pluginsPath, new SimpleThemeInfoProvider("ThemeA"));
+            services.AddPluginsMvc();
 
             return services.BuildServiceProvider();
         }
@@ -56,7 +56,7 @@
         public void Configure(IApplicationBuilder app)
         {
             app.UsePlugins();
-            app.UsePluginsMvcHost(this._pluginsPath);
+            app.UsePluginsMvc(); 
         }
     }
 }

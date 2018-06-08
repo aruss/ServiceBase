@@ -40,7 +40,7 @@ namespace ServiceBase.UnitTests
 
             smsSender
                 .Setup(c => c.SendSmsAsync(numberTo, numberFrom, It.IsAny<string>()))
-                .Returns(new Func<string, string, string, Task>(async (nTo, nFrom, msg) =>
+                .Returns(new Func<string, string, string, Task>((nTo, nFrom, msg) =>
                 {
                     Assert.NotNull(nTo);
                     Assert.NotNull(nFrom);
@@ -51,6 +51,8 @@ namespace ServiceBase.UnitTests
 
                     string subject = $"{templateName} {expectedCulture} Foo";
                     Assert.Equal(subject, msg);
+
+                    return Task.FromResult(0); 
                 }));
 
             var logger = new NullLogger<DefaultSmsService>();
