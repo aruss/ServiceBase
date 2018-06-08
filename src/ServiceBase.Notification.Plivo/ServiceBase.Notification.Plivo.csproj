@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <Authors>Russlan Akiev</Authors>
     <Company />
     <Description>Plivo SMS sender for ServiceBase.Notification.Sms</Description>
@@ -9,7 +9,6 @@
     <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
     <PackageTags>dotnet dotnet-core plivo sms</PackageTags>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Version>1.1.0</Version>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
