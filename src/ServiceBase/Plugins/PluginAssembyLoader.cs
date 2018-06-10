@@ -9,17 +9,25 @@
 
     public static class PluginAssembyLoader
     {
+        /// <summary>
+        /// Get all the assemblies from white listed plugins
+        /// including all subdirectories into current app domain.
+        /// </summary>
+        /// <param name="basePath">Base directory path for plugins.</param>
+        /// <param name="whiteList">List of plugin names that should be loded,
+        /// all other plugins will be ignored.</param>
         public static void LoadAssemblies(
-            string path,
+            string basePath,
             IEnumerable<string> whiteList = null)
         {
-            Console.WriteLine($"Loading plugin assemblies from \"{path}\"");
+            Console
+                .WriteLine($"Loading plugin assemblies from \"{basePath}\"");
 
             IEnumerable<string> pathes = whiteList == null ?
-                PluginAssembyLoader.GetAssemblyPathes(path) :
-                PluginAssembyLoader.GetAssemblyPathes(path, whiteList);
+                PluginAssembyLoader.GetAssemblyPathes(basePath) :
+                PluginAssembyLoader.GetAssemblyPathes(basePath, whiteList);
 
-            Console.WriteLine($"Found {path.Count()} assemblies");
+            Console.WriteLine($"Found {basePath.Count()} assemblies");
 
             PluginAssembyLoader.LoadAssemblies(pathes);
 
@@ -31,15 +39,24 @@
             };
         }
 
+        /// <summary>
+        /// Get all the assembly(*.dll) pathes from white listed plugins
+        /// including all subdirectories.
+        /// </summary>
+        /// <param name="basePath">Base directory path for plugins.</param>
+        /// <param name="whiteList">List of plugin names that should be loded,
+        /// all other plugins will be ignored.</param>
+        /// <returns>A list of assembly pathes.</returns>
         public static IEnumerable<string> GetAssemblyPathes(
-            string path,
-            IEnumerable<string> whiteList)
+            string basePath,
+            IEnumerable<string> whiteList = null)
         {
             List<string> list = whiteList.Select(s => s).ToList();
 
-            foreach (string pluginPath in Directory.GetDirectories(path))
+            foreach (string pluginPath in Directory.GetDirectories(basePath))
             {
-                string dirName = Path.GetFileName(path.RemoveTrailingSlash());
+                string dirName = Path.GetFileName(
+                    basePath.RemoveTrailingSlash());
 
                 string listItem = list.FirstOrDefault(s => s.Equals(
                     dirName,
@@ -50,7 +67,7 @@
                     list.Remove(listItem);
 
                     foreach (string assemblyPath in
-                        Directory.EnumerateFiles(pluginPath, "*.dll"))
+                        PluginAssembyLoader.GetAssemblyPathes(pluginPath))
                     {
                         yield return assemblyPath;
                     }
@@ -58,15 +75,46 @@
             }
         }
 
-        public static IEnumerable<string> GetAssemblyPathes(
-            string path)
+        /// <summary>
+        /// Get all the assembly(*.dll) pathes from the all plugin directories
+        /// including all subdirectories.
+        /// </summary>
+        /// <param name="basePath">Base directory path for plugins.</param>
+        /// <returns>A list of assembly pathes.</returns>
+        public static IEnumerable<string> GetAssemblyPathes(string basePath)
         {
-            foreach (string pluginPath in Directory.GetDirectories(path))
+            foreach (string pluginPath in Directory.GetDirectories(basePath))
             {
-                foreach (string assemblyPath in
-                    Directory.EnumerateFiles(pluginPath, "*.dll"))
+                foreach (string assemblyPath in PluginAssembyLoader.
+                    GetAssemblyPathesFromPluginDir(pluginPath))
                 {
-                    yield return assemblyPath;
+                    yield return assemblyPath; 
+                } 
+            }
+        }
+
+        /// <summary>
+        /// Get all the assembly (*.dll) pathes from the plugin directory
+        /// including all subdirectories.
+        /// </summary>
+        /// <param name="pluginPath">Base path of the plugin directory.</param>
+        /// <returns>A list of assembly pathes.</returns>
+        private static IEnumerable<string> GetAssemblyPathesFromPluginDir(
+            string pluginPath)
+        {
+            foreach (string assemblyPath in
+                   Directory.EnumerateFiles(pluginPath, "*.dll"))
+            {
+                yield return assemblyPath;
+            }
+
+            foreach (string subDirPath in
+                Directory.GetDirectories(pluginPath))
+            {
+                foreach (var subAssemblyPath in PluginAssembyLoader
+                    .GetAssemblyPathesFromPluginDir(subDirPath))
+                {
+                    yield return subAssemblyPath;
                 }
             }
         }
