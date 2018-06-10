@@ -1,5 +1,6 @@
 ﻿namespace ServiceBase.Plugins
 {
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Razor;
     using Microsoft.CodeAnalysis;
     using Microsoft.Extensions.DependencyInjection;
@@ -46,6 +47,7 @@
 
             IMvcBuilder mvcBuilder = services
                 .AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddViewLocalization()
                 .AddDataAnnotationsLocalization();
 
