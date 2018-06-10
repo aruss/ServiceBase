@@ -56,13 +56,13 @@
             foreach (string pluginPath in Directory.GetDirectories(basePath))
             {
                 string dirName = Path.GetFileName(
-                    basePath.RemoveTrailingSlash());
+                    pluginPath.RemoveTrailingSlash());
 
                 string listItem = list.FirstOrDefault(s => s.Equals(
                     dirName,
                     StringComparison.InvariantCultureIgnoreCase));
 
-                if (string.IsNullOrWhiteSpace(listItem))
+                if (!String.IsNullOrWhiteSpace(listItem))
                 {
                     list.Remove(listItem);
 
