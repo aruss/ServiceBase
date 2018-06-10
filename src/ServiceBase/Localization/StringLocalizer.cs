@@ -36,7 +36,9 @@ namespace ServiceBase.Localization
             if (resource == null ||
                 string.IsNullOrWhiteSpace(resource.Value))
             {
-                this._logger.LogWarning($"No localization found for \"{key}\"");
+                this._logger
+                    .LogWarning($"No localization found for \"{key}\"");
+
                 return key;
             }
 
