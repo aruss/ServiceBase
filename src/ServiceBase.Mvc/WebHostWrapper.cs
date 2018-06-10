@@ -103,20 +103,27 @@
             Environment.ExitCode = exitCode;
         }
 
-        private static string GetConfigFilePath(
-            string basePath,
-            bool isDevelopment)
+        private static string GetConfigFilePath(string basePath)
         {
-            string configFilePath = "./AppData/config.development.json";
+            string configRoot = Environment
+                .GetEnvironmentVariable("ASPNETCORE_CONFIGROOT");
 
-            if (File.Exists(Path.Combine(basePath, configFilePath)))
+            if (string.IsNullOrWhiteSpace(configRoot))
             {
-                return configFilePath;
+                configRoot = Path.Combine(basePath, "config"); 
             }
 
-            return "./AppData/config.json";
-        }
+            string configFilePath = Path.Combine(configRoot, "config.json");
 
+            if (!File.Exists(Path.Combine(basePath, configFilePath)))
+            {
+                throw new ApplicationException(
+                    $"Config file does not exists \"{configFilePath}\""); 
+            }
+
+            return configFilePath;
+        }
+                                                                                                           
         private static IConfigurationRoot LoadConfig<TStartup>(
             string[] args,
             string basePath)
@@ -128,8 +135,7 @@
                 .SetBasePath(basePath)
                 .AddJsonFile(
                     path: WebHostWrapper.GetConfigFilePath(
-                        basePath,
-                        isDevelopment
+                        basePath
                     ),
                     optional: false,
                     reloadOnChange: false);
