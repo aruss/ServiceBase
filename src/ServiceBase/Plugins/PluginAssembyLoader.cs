@@ -20,16 +20,15 @@
             string basePath,
             IEnumerable<string> whiteList = null)
         {
-            Console
-                .WriteLine($"Loading plugin assemblies from \"{basePath}\"");
+            // Get all the pathes recursevly respecting whitelist
+            string[] assemblyPathes = PluginAssembyLoader
+                .GetAssemblyPathesForAllPlugins(basePath, whiteList)
+                .ToArray();
 
-            IEnumerable<string> pathes = whiteList == null ?
-                PluginAssembyLoader.GetAssemblyPathes(basePath) :
-                PluginAssembyLoader.GetAssemblyPathes(basePath, whiteList);
+            Console.WriteLine($"Found {assemblyPathes.Count()} assemblies");
 
-            Console.WriteLine($"Found {basePath.Count()} assemblies");
-
-            PluginAssembyLoader.LoadAssemblies(pathes);
+            // Load all the assemblies
+            PluginAssembyLoader.LoadAssemblies(assemblyPathes);
 
             AssemblyLoadContext.Default.Resolving += (loadContext, name) =>
             {
@@ -39,18 +38,36 @@
             };
         }
 
-        /// <summary>
-        /// Get all the assembly(*.dll) pathes from white listed plugins
-        /// including all subdirectories.
-        /// </summary>
-        /// <param name="basePath">Base directory path for plugins.</param>
-        /// <param name="whiteList">List of plugin names that should be loded,
-        /// all other plugins will be ignored.</param>
-        /// <returns>A list of assembly pathes.</returns>
-        public static IEnumerable<string> GetAssemblyPathes(
+        private static IEnumerable<string> GetAssemblyPathesForAllPlugins(
             string basePath,
             IEnumerable<string> whiteList = null)
         {
+            // Return all the plugin folder names if white list is empty
+            if (whiteList == null || whiteList.Count() == 0)
+            {
+                Console.WriteLine(
+                    $"Loading plugin assemblies from \"{basePath}\"");
+                
+                foreach (string pluginPath in
+                    Directory.GetDirectories(basePath))
+                {
+                    foreach (string assemblyPath in PluginAssembyLoader.
+                        GetAssemblyPathesForPlugin(pluginPath))
+                    {
+                        yield return assemblyPath;
+                    }
+                }
+
+                yield break; 
+            }
+
+            // If white list is presend then return the names of plugin folders
+            // while respecting the white list
+
+            Console.WriteLine(
+               $"Loading plugin assemblies from \"{basePath}\" with white list: \n\t- {String.Join("\n\t- ", whiteList)}");
+
+
             List<string> list = whiteList.Select(s => s).ToList();
 
             foreach (string pluginPath in Directory.GetDirectories(basePath))
@@ -66,30 +83,12 @@
                 {
                     list.Remove(listItem);
 
-                    foreach (string assemblyPath in
-                        PluginAssembyLoader.GetAssemblyPathes(pluginPath))
+                    foreach (string assemblyPath in PluginAssembyLoader
+                        .GetAssemblyPathesForPlugin(pluginPath))
                     {
                         yield return assemblyPath;
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Get all the assembly(*.dll) pathes from the all plugin directories
-        /// including all subdirectories.
-        /// </summary>
-        /// <param name="basePath">Base directory path for plugins.</param>
-        /// <returns>A list of assembly pathes.</returns>
-        public static IEnumerable<string> GetAssemblyPathes(string basePath)
-        {
-            foreach (string pluginPath in Directory.GetDirectories(basePath))
-            {
-                foreach (string assemblyPath in PluginAssembyLoader.
-                    GetAssemblyPathesFromPluginDir(pluginPath))
-                {
-                    yield return assemblyPath; 
-                } 
             }
         }
 
@@ -99,11 +98,11 @@
         /// </summary>
         /// <param name="pluginPath">Base path of the plugin directory.</param>
         /// <returns>A list of assembly pathes.</returns>
-        private static IEnumerable<string> GetAssemblyPathesFromPluginDir(
+        private static IEnumerable<string> GetAssemblyPathesForPlugin(
             string pluginPath)
         {
             foreach (string assemblyPath in
-                   Directory.EnumerateFiles(pluginPath, "*.dll"))
+                  Directory.EnumerateFiles(pluginPath, "*.dll"))
             {
                 yield return assemblyPath;
             }
@@ -112,21 +111,28 @@
                 Directory.GetDirectories(pluginPath))
             {
                 foreach (var subAssemblyPath in PluginAssembyLoader
-                    .GetAssemblyPathesFromPluginDir(subDirPath))
+                    .GetAssemblyPathesForPlugin(subDirPath))
                 {
                     yield return subAssemblyPath;
                 }
             }
         }
 
-        public static void LoadAssemblies(IEnumerable<string> assemblyPathes)
+        /// <summary>
+        /// Loads assemblies into current app domain.
+        /// </summary>
+        /// <param name="assemblyPathes">
+        /// List of assembly pathes to load.
+        /// </param>
+        private static void LoadAssemblies(IEnumerable<string> assemblyPathes)
         {
             foreach (var assemblyPath in assemblyPathes)
             {
-                Console.WriteLine($"Loading assembly from \"{assemblyPath}\"");
-
                 try
                 {
+                    Console.WriteLine(
+                        $"Try loading assembly from \"{assemblyPath}\"");
+
                     AssemblyLoadContext.Default
                         .LoadFromAssemblyPath(assemblyPath);
                 }
@@ -138,6 +144,11 @@
             }
         }
 
+        /// <summary>
+        /// Finds implementation types for TService.
+        /// </summary>
+        /// <typeparam name="TService">Service type.</typeparam>
+        /// <returns>A list of implementation types.</returns>
         public static IEnumerable<Type> GetTypes<TService>()
         {
             Type type = typeof(TService);
@@ -153,6 +164,12 @@
             return types;
         }
 
+        /// <summary>
+        /// Get instances of requested services topologicaly sorted by
+        /// <see cref="DependsOnPluginAttribute"/>.
+        /// </summary>
+        /// <typeparam name="TService">Service type.</typeparam>
+        /// <returns>A list of service instances.</returns>
         public static IEnumerable<TService> GetServices<TService>()
         {
             IEnumerable<Type> types = PluginAssembyLoader.GetTypes<TService>();
@@ -171,48 +188,5 @@
                 yield return instance;
             }
         }
-    }
-
-}
-
-namespace ServiceBase.Plugins
-{
-    using System;
-
-    /// <summary>
-    /// A attribute which defines a dependency onto another task.
-    /// </summary>
-    [AttributeUsage(
-        AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    public sealed class DependsOnPluginAttribute : Attribute
-    {
-        #region Constructors
-
-        /// <summary>
-        /// Makes the current type depend on the specified type.
-        /// </summary>
-        /// <param name="type">
-        /// The type or interface (then it ll depend on all implementations)
-        /// which the current type depends on.
-        /// </param>
-        public DependsOnPluginAttribute(string pluginName)
-        {
-            this.PluginName = pluginName;
-        }
-
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the dependency.
-        /// </summary>
-        public string PluginName
-        {
-            get;
-            private set;
-        }
-
-        #endregion
     }
 }
