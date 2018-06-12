@@ -22,10 +22,11 @@
 
         public static void AddPluginsMvc(
             this IServiceCollection services,
-            IThemeInfoProvider themeInfoProvider)
-        {
+            IThemeInfoProvider themeInfoProvider,
+            string basePath)
+        {   
             services.AddPluginsMvc(
-                new ThemeViewLocationExpander(themeInfoProvider));
+                new ThemeViewLocationExpander(themeInfoProvider, basePath));
         }
 
         public static void AddPluginsMvc(
