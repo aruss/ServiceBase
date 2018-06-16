@@ -12,8 +12,13 @@
             }
         }
 
-        public ScopeAuthorizeAttribute(string scope) : base(scope)
+        public ScopeAuthorizeAttribute(
+            string scope,
+            // bearer is most of the times if you use scoped authentication
+            string schemes = "Bearer") 
+            : base(scope)
         {
+            this.AuthenticationSchemes = "Bearer"; 
         }
     }
 }
