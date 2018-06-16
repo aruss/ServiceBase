@@ -1,15 +1,16 @@
 ﻿namespace ServiceBase.Plugins
 {
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Razor;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
-    using ServiceBase.Mvc.Theming;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ApplicationParts;
+    using Microsoft.AspNetCore.Mvc.Razor;
+    using Microsoft.AspNetCore.Mvc.Razor.Compilation;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using ServiceBase.Mvc.Theming;
+    
     public static partial class IServiceCollectionExtensions
     {
         public static void AddPluginsMvc(
@@ -24,7 +25,7 @@
             this IServiceCollection services,
             IThemeInfoProvider themeInfoProvider,
             string basePath)
-        {   
+        {
             services.AddPluginsMvc(
                 new ThemeViewLocationExpander(themeInfoProvider, basePath));
         }
@@ -33,62 +34,70 @@
             this IServiceCollection services,
             IViewLocationExpander viewLocationExpander = null)
         {
-            ServiceProvider serviceProvider =
-                services.BuildServiceProvider();
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
 
             ILogger logger = serviceProvider
                 .GetService<ILoggerFactory>()
                 .CreateLogger(typeof(IServiceCollectionExtensions));
 
-            services
-                .AddRouting((options) =>
-                {
-                    options.LowercaseUrls = true;
-                });
+            // Dont use uglycase urls !
+            services.AddRouting((options) =>
+            {
+                options.LowercaseUrls = true;
+            });
 
             IMvcBuilder mvcBuilder = services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddViewLocalization()
-                .AddDataAnnotationsLocalization();
+                .AddDataAnnotationsLocalization()
+                .ConfigureApplicationPartManager(manager =>
+                {
+                    IApplicationFeatureProvider toRemove = manager
+                        .FeatureProviders
+                        .First(f => f is MetadataReferenceFeatureProvider);
 
-            IEnumerable<IAddMvcAction> actions = PluginAssembyLoader
-                .GetServices<IAddMvcAction>();
+                    manager.FeatureProviders
+                        .Remove(toRemove);
 
-            IEnumerable<Assembly> assemblies = actions
-                .Select(s => s.GetType().Assembly);
+                    manager.FeatureProviders
+                        .Add(new ReferencesMetadataReferenceFeatureProvider());
+                });
 
+            IEnumerable<Assembly> assemblies = PluginAssembyLoader.Assemblies;
             foreach (Assembly assembly in assemblies)
             {
+                logger.LogDebug(
+                    "Adding mvc application part: \"{0}\"",
+                    assembly.FullName
+                );
+
                 mvcBuilder.AddApplicationPart(assembly);
             }
 
             mvcBuilder.AddRazorOptions(razor =>
             {
-                IEnumerable<MetadataReference> refs = assemblies
-                        .Where(x => !x.IsDynamic &&
-                            !string.IsNullOrWhiteSpace(x.Location))
-                        .Select(x => MetadataReference
-                            .CreateFromFile(x.Location));
-
-                foreach (var portableExecutableReference in refs)
-                {
-                    razor.AdditionalCompilationReferences
-                        .Add(portableExecutableReference);
-                }
-
                 if (viewLocationExpander != null)
                 {
+                    logger.LogDebug(
+                        "Replacing default view location expander with: \"{0}\"",
+                        viewLocationExpander.GetType().FullName
+                    );
+
                     razor.ViewLocationExpanders.Clear();
                     razor.ViewLocationExpanders.Add(viewLocationExpander);
                 }
             });
 
+            IEnumerable<IAddMvcAction> actions = PluginAssembyLoader
+                .GetServices<IAddMvcAction>();
+
             foreach (IAddMvcAction action in actions)
             {
-                logger.LogInformation(
-                    $"Executing AddMvc action '{0}'",
-                    action.GetType().FullName);
+                logger.LogDebug(
+                    "Executing add mvc action \"{0}\"",
+                    action.GetType().FullName
+                );
 
                 action.Execute(mvcBuilder);
             }

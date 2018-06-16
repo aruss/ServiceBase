@@ -4,11 +4,15 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.Loader;
     using ServiceBase.Extensions;
 
     public static class PluginAssembyLoader
     {
+        public static List<Assembly> Assemblies { get; }
+            = new List<Assembly>();
+
         /// <summary>
         /// Get all the assemblies from white listed plugins
         /// including all subdirectories into current app domain.
@@ -47,7 +51,7 @@
             {
                 Console.WriteLine(
                     $"Loading plugin assemblies from \"{basePath}\"");
-                
+
                 foreach (string pluginPath in
                     Directory.GetDirectories(basePath))
                 {
@@ -58,7 +62,7 @@
                     }
                 }
 
-                yield break; 
+                yield break;
             }
 
             // If white list is presend then return the names of plugin folders
@@ -133,8 +137,8 @@
                     Console.WriteLine(
                         $"Try loading assembly from \"{assemblyPath}\"");
 
-                    AssemblyLoadContext.Default
-                        .LoadFromAssemblyPath(assemblyPath);
+                    Assemblies.Add(AssemblyLoadContext.Default
+                        .LoadFromAssemblyPath(assemblyPath)); 
                 }
                 catch (/*BadImageFormatException*/ Exception)
                 {
