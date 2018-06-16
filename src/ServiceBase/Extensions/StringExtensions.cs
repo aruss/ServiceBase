@@ -232,6 +232,12 @@ namespace ServiceBase.Extensions
         }*/
 
         [DebuggerStepThrough]
+        public static bool IsSecureUrl(this string url)
+        {
+            return url.StartsWith("https://"); 
+        }
+
+        [DebuggerStepThrough]
         public static string GetOrigin(this string url)
         {
             if (url != null && (url.StartsWith("http://") ||
