@@ -6,12 +6,15 @@
     using System.Linq;
     using System.Reflection;
     using System.Runtime.Loader;
+    using Microsoft.Extensions.Logging;
     using ServiceBase.Extensions;
 
     public static class PluginAssembyLoader
     {
         public static List<Assembly> Assemblies { get; }
             = new List<Assembly>();
+
+        private static ILogger _logger;
 
         /// <summary>
         /// Get all the assemblies from white listed plugins
@@ -22,21 +25,43 @@
         /// all other plugins will be ignored.</param>
         public static void LoadAssemblies(
             string basePath,
+            ILoggerFactory loggerFactory,
             IEnumerable<string> whiteList = null)
         {
+            PluginAssembyLoader._logger =
+                loggerFactory.CreateLogger(typeof(PluginAssembyLoader));
+
+            if (whiteList == null || whiteList.Count() == 0)
+            {
+                PluginAssembyLoader._logger.LogInformation(
+                    $"Loading plugin assemblies from \"{basePath}\"");
+            }
+            else
+            {
+                PluginAssembyLoader._logger.LogInformation(
+                    "Loading white listed plugin assemblies from \"{0}\"\n\t- {1}",
+                    basePath,
+                    String.Join("\n\t- ", whiteList));
+            }
+
             // Get all the pathes recursevly respecting whitelist
             string[] assemblyPathes = PluginAssembyLoader
                 .GetAssemblyPathesForAllPlugins(basePath, whiteList)
                 .ToArray();
 
-            Console.WriteLine($"Found {assemblyPathes.Count()} assemblies");
+            PluginAssembyLoader._logger
+                .LogDebug($"Found {assemblyPathes.Count()} plugin assemblies");
 
             // Load all the assemblies
             PluginAssembyLoader.LoadAssemblies(assemblyPathes);
 
+            PluginAssembyLoader._logger
+               .LogDebug($"Loading plugin assemblies completed");
+
             AssemblyLoadContext.Default.Resolving += (loadContext, name) =>
             {
-                Console.WriteLine($"Try to resolve \"{name.FullName}\"");
+                PluginAssembyLoader._logger.LogDebug(
+                    $"Try to resolve \"{name.FullName}\"");
 
                 return null;
             };
@@ -49,9 +74,6 @@
             // Return all the plugin folder names if white list is empty
             if (whiteList == null || whiteList.Count() == 0)
             {
-                Console.WriteLine(
-                    $"Loading plugin assemblies from \"{basePath}\"");
-
                 foreach (string pluginPath in
                     Directory.GetDirectories(basePath))
                 {
@@ -66,12 +88,7 @@
             }
 
             // If white list is presend then return the names of plugin folders
-            // while respecting the white list
-
-            Console.WriteLine(
-               $"Loading plugin assemblies from \"{basePath}\" with white list: \n\t- {String.Join("\n\t- ", whiteList)}");
-
-
+            // while respecting the white list         
             List<string> list = whiteList.Select(s => s).ToList();
 
             foreach (string pluginPath in Directory.GetDirectories(basePath))
@@ -134,15 +151,15 @@
             {
                 try
                 {
-                    Console.WriteLine(
-                        $"Try loading assembly from \"{assemblyPath}\"");
+                    PluginAssembyLoader._logger.LogDebug(
+                        $"Try loading assembly \"{assemblyPath}\"");
 
                     Assemblies.Add(AssemblyLoadContext.Default
-                        .LoadFromAssemblyPath(assemblyPath)); 
+                        .LoadFromAssemblyPath(assemblyPath));
                 }
                 catch (/*BadImageFormatException*/ Exception)
                 {
-                    Console.WriteLine(
+                    PluginAssembyLoader._logger.LogDebug(
                         $"Couldn't load assembly \"{assemblyPath}\"");
                 }
             }

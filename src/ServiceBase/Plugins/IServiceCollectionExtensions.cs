@@ -23,7 +23,7 @@
             foreach (IConfigureServicesAction action in actions)
             {
                 logger.LogInformation(
-                    "Executing ConfigureServices action '{0}'",
+                    "Executing ConfigureServices action \"{0}\"",
                     action.GetType().FullName);
 
                 action.Execute(serviceCollection);
