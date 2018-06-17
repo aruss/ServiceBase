@@ -93,7 +93,6 @@ namespace ServiceBase.Resources
         public static async Task<IEnumerable<string>>
             GetAllLocalizationCulturesAsync(this IResourceStore resourceStore)
         {
-
             IEnumerable<string> result = await resourceStore
                 .GetAllCulturesAsync(
                     IResourceStoreLocalizationExtensions.LocalizationGroup);
