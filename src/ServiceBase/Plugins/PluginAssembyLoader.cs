@@ -86,15 +86,22 @@
 
                 yield break;
             }
+            
+            List<PluginInfo> pluginInfos = new List<PluginInfo>(); 
 
             // If white list is presend then return the names of plugin folders
             // while respecting the white list         
             List<string> list = whiteList.Select(s => s).ToList();
-
             foreach (string pluginPath in Directory.GetDirectories(basePath))
             {
                 string dirName = Path.GetFileName(
                     pluginPath.RemoveTrailingSlash());
+
+                pluginInfos.Add(new PluginInfo
+                {
+                    Name = dirName,
+                    BasePath = pluginPath
+                }); 
 
                 string listItem = list.FirstOrDefault(s => s.Equals(
                     dirName,
@@ -111,7 +118,11 @@
                     }
                 }
             }
+
+            PluginAssembyLoader.PluginInfos = pluginInfos.ToArray(); 
         }
+
+        public static IEnumerable<PluginInfo> PluginInfos { get; private set; }
 
         /// <summary>
         /// Get all the assembly (*.dll) pathes from the plugin directory
@@ -195,7 +206,7 @@
         {
             IEnumerable<Type> types = PluginAssembyLoader.GetTypes<TService>();
 
-            types.TopologicalSort(x => x
+            types = types.TopologicalSort(x => x
                 .GetCustomAttributes(typeof(DependsOnPluginAttribute), true)
                 .Cast<DependsOnPluginAttribute>()
                 .Select(z => z.GetType())

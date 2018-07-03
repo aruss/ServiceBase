@@ -1,7 +1,8 @@
 ﻿namespace ServiceBase.Plugins
 {
-    public interface IPluginInfo
+    public class PluginInfo 
     {
-        //string Name { get; set; }
+        public string Name { get; set; }
+        public string BasePath { get; set; }
     }
 }

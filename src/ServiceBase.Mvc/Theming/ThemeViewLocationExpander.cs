@@ -5,6 +5,11 @@
     using ServiceBase.Extensions;
     using System.IO;
     using System;
+    using System.Linq;
+    using ServiceBase.Plugins;
+
+    // TODO: rename and move to plugins namespace 
+
 
     /// <summary>
     /// Specifies the contracts for a view location expander that is used by 
@@ -33,12 +38,6 @@
             {
                 throw new NotImplementedException(
                   "Support for absolute pathes is not yet implemeted");
-
-                // this._template1 = Path.GetFullPath(Path.Combine(
-                //     basePath, "{0}", "Views", "{{1}}", "{{0}}.cshtml"));
-                // 
-                // this._template2 = Path.GetFullPath(Path.Combine(
-                //     basePath, "{0}", "Views", "Shared", "{{0}}.cshtml"));
             }
             else
             {
@@ -46,11 +45,9 @@
                     .Replace("./", "~/")
                     .RemoveTrailingSlash();
 
-                this._template1 =
-                    $"{basePath}/{{0}}/Views/{{{{1}}}}/{{{{0}}}}.cshtml";
+                this._template1 = $"{basePath}/{{0}}/Views/{{{{1}}}}/{{{{0}}}}.cshtml";
+                this._template2 = $"{basePath}/{{0}}/Views/Shared/{{{{0}}}}.cshtml";
 
-                this._template2 =
-                    $"{basePath}/{{0}}/Views/Shared/{{{{0}}}}.cshtml";
             }
         }
 
@@ -58,16 +55,14 @@
             ViewLocationExpanderContext context,
             IEnumerable<string> viewLocations)
         {
-            string requestTheme = context.Values["RequestTheme"];
-            string defaultTheme = context.Values["DefaultTheme"];
+            string themeName = context.Values["ThemeName"];
 
-            yield return String.Format(this._template1, requestTheme);
-            yield return String.Format(this._template2, requestTheme);
+            FancyComparer comparer = new FancyComparer(themeName);
 
-            if (requestTheme != defaultTheme)
+            foreach (var item in PluginAssembyLoader.PluginInfos.OrderBy(x => x, comparer))
             {
-                yield return String.Format(this._template1, defaultTheme);
-                yield return String.Format(this._template2, defaultTheme);
+                yield return String.Format(this._template1, item.Name);
+                yield return String.Format(this._template2, item.Name);
             }
         }
 
@@ -77,8 +72,27 @@
                 .GetThemeInfoResultAsync()
                 .Result;
 
-            context.Values["RequestTheme"] = result.RequestTheme;
-            context.Values["DefaultTheme"] = result.DefaultTheme;
+            context.Values["ThemeName"] = result.ThemeName;
+        }
+    }
+
+    public class FancyComparer : IComparer<PluginInfo>
+    {
+        private readonly string _themeName;
+
+        public FancyComparer(string themeName)
+        {
+            this._themeName = themeName;
+        }
+
+        public int Compare(PluginInfo x, PluginInfo y)
+        {
+            if (x.Name.Equals(this._themeName))
+            {
+                return -1;
+            }
+
+            return 1;
         }
     }
 }

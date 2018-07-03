@@ -8,11 +8,6 @@
         /// <summary>
         /// Theme name for current request.
         /// </summary>
-        public string RequestTheme { get; set; }
-
-        /// <summary>
-        /// Default fallback theme name.
-        /// </summary>
-        public string DefaultTheme { get; set; }
+        public string ThemeName { get; set; }
     }
 }
