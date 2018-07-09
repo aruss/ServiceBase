@@ -2,8 +2,4 @@
 {
     using ServiceBase.Plugins;
 
-    public class ThemeAInfo : IPluginInfo
-    {
-       
-    }
 }

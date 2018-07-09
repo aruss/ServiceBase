@@ -2,8 +2,5 @@
 {
     using ServiceBase.Plugins;
 
-    public class PluginBInfo : IPluginInfo
-    {
-
-    }
+ 
 }
