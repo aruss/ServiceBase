@@ -4,6 +4,7 @@ namespace ServiceBase.Mvc
     using System.Linq;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     public static class ModelStateHelper
     {
@@ -39,6 +40,11 @@ namespace ServiceBase.Mvc
 
             foreach (ModelStateTransferValue item in errorList)
             {
+                if (item.RawValue is JArray jarray)
+                {
+                    item.RawValue = jarray.Select(t => (string)t).ToArray();
+                }
+
                 modelState.SetModelValue(
                     item.Key,
                     item.RawValue,
