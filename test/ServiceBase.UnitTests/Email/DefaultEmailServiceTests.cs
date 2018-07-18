@@ -12,6 +12,7 @@ namespace ServiceBase.UnitTests
     using Moq;
     using ServiceBase.Logging;
     using ServiceBase.Notification.Email;
+    using ServiceBase.Resources;
     using Xunit;
 
     [Collection("ServiceBase")]
@@ -23,18 +24,18 @@ namespace ServiceBase.UnitTests
             XmlSerializer serializer =
                 new XmlSerializer(typeof(EmailTemplate));
 
-            var obj = new EmailTemplate
+            EmailTemplate obj = new EmailTemplate
             {
                 Subject = "Some subject",
                 Html = "<div>Hallo Welt, Content: {Content}</div>",
                 Text = "Text: {Content}"
             };
 
-            var ms = new MemoryStream();
+            MemoryStream ms = new MemoryStream();
 
             serializer.Serialize(ms, obj);
 
-            var xml = Encoding.ASCII.GetString(ms.ToArray());
+            string xml = Encoding.ASCII.GetString(ms.ToArray());
         }
 
         [Theory]
@@ -47,10 +48,10 @@ namespace ServiceBase.UnitTests
             string expectedCulture,
             string defaultCulture)
         {
-            var email = "alice@localhost";
-            var emailSender = new Mock<IEmailSender>();
+            string email = "alice@localhost";
+            Mock<IEmailSender> emailSender = new Mock<IEmailSender>();
 
-            var model = new Dictionary<string, object>
+            Dictionary<string, object> model = new Dictionary<string, object>
             {
                 {  "Name" , "Foo" }
             };
@@ -75,20 +76,24 @@ namespace ServiceBase.UnitTests
                     return Task.FromResult(0); 
                 }));
 
-            var logger = new NullLogger<DefaultEmailService>();
+            NullLogger<DefaultEmailService> logger =
+                new NullLogger<DefaultEmailService>();
 
-            var options = new DefaultEmailServiceOptions
+            DefaultEmailServiceOptions options = new DefaultEmailServiceOptions
             {
-                DefaultCulture = defaultCulture,
-                //TemplateDirectoryPath = "../../../Email/Templates"
+                DefaultCulture = defaultCulture
             };
 
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>(); 
+            Mock<IHttpContextAccessor> httpContextAccessorMock =
+                new Mock<IHttpContextAccessor>();
 
-            var emailService = new DefaultEmailService(
+            Mock<IResourceStore> resourceStoreMock = new Mock<IResourceStore>();
+            
+
+            DefaultEmailService emailService = new DefaultEmailService(
                 options,
                 emailSender.Object,
-                null,
+                resourceStoreMock.Object,
                 logger);
 
             // Set culture 

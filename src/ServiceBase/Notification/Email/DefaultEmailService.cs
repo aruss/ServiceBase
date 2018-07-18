@@ -42,7 +42,7 @@ namespace ServiceBase.Notification.Email
             CultureInfo culture,
             string templateName)
         {
-            Resource resource = await _resourceStore
+            Resource resource = await this._resourceStore
                 .GetEmailTemplateAsync(culture.Name, templateName);
 
             using (TextReader reader = new StringReader(resource.Value))

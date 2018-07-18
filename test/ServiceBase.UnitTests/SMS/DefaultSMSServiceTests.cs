@@ -3,15 +3,11 @@ namespace ServiceBase.UnitTests
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.IO;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Xml.Serialization;
     using Microsoft.AspNetCore.Http;
     using Moq;
     using ServiceBase.Logging;
-    using ServiceBase.Notification.Email;
     using ServiceBase.Notification.Sms;
     using Xunit;
 
@@ -28,19 +24,21 @@ namespace ServiceBase.UnitTests
             string expectedCulture,
             string defaultCulture)
         {
-            var numberTo = "0123465798";
-            var numberFrom = "987654321";
+            string numberTo = "0123465798";
+            string numberFrom = "987654321";
 
-            var smsSender = new Mock<ISmsSender>();
+            Mock<ISmsSender> smsSender = new Mock<ISmsSender>();
 
-            var model = new Dictionary<string, object>
+            Dictionary<string, object> model = new Dictionary<string, object>
             {
                 {  "Name" , "Foo" }
             };
 
             smsSender
-                .Setup(c => c.SendSmsAsync(numberTo, numberFrom, It.IsAny<string>()))
-                .Returns(new Func<string, string, string, Task>((nTo, nFrom, msg) =>
+                .Setup(c => c
+                    .SendSmsAsync(numberTo, numberFrom, It.IsAny<string>()))
+                .Returns(new Func<string, string, string, Task>(
+                    (nTo, nFrom, msg) =>
                 {
                     Assert.NotNull(nTo);
                     Assert.NotNull(nFrom);
@@ -52,20 +50,22 @@ namespace ServiceBase.UnitTests
                     string subject = $"{templateName} {expectedCulture} Foo";
                     Assert.Equal(subject, msg);
 
-                    return Task.FromResult(0); 
+                    return Task.FromResult(0);
                 }));
 
-            var logger = new NullLogger<DefaultSmsService>();
+            NullLogger<DefaultSmsService> logger =
+                new NullLogger<DefaultSmsService>();
 
-            var options = new DefaultSmsServiceOptions
+            DefaultSmsServiceOptions options = new DefaultSmsServiceOptions
             {
                 DefaultCulture = defaultCulture,
                 TemplateDirectoryPath = "../../../SMS/Templates"
             };
 
-            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+            Mock<IHttpContextAccessor> httpContextAccessorMock =
+                new Mock<IHttpContextAccessor>();
 
-            var smsService = new DefaultSmsService(
+            DefaultSmsService smsService = new DefaultSmsService(
                 options,
                 logger,
                 smsSender.Object,
@@ -82,7 +82,7 @@ namespace ServiceBase.UnitTests
                 new CultureInfo(culture, false);
 
             Thread.CurrentThread.CurrentUICulture =
-                new CultureInfo(culture, false); 
+                new CultureInfo(culture, false);
 
             CultureInfo.CurrentCulture.ClearCachedData();
             CultureInfo.CurrentUICulture.ClearCachedData();
