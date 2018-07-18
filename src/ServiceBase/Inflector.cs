@@ -170,11 +170,7 @@ namespace ServiceBase
                 match => match.Captures[0].Value.ToUpper());
         }
 
-        public static string Humanize(this string lowercaseAndUnderscoredWord)
-        {
-            return Capitalize(
-                Regex.Replace(lowercaseAndUnderscoredWord, @"_", " "));
-        }
+
 
         public static string Pascalize(this string lowercaseAndUnderscoredWord)
         {
@@ -246,6 +242,31 @@ namespace ServiceBase
         public static string Dasherize(this string underscoredWord)
         {
             return underscoredWord.Replace('_', '-');
+        }
+
+        [Obsolete("Will depricate in next major release")]
+        public static string Humanize(this string input)
+        {
+            return Capitalize(HumanizeUnderscored(input));
+        }
+
+        public static string HumanizeDashed(this string input)
+        {
+            return Regex.Replace(input, @"-", " ");
+        }
+
+        public static string HumanizeUnderscored(this string input)
+        {
+            return Regex.Replace(input, @"_", " ");
+        }
+
+        public static string HumanizeCamelCased(this string input)
+        {
+            return Regex.Replace(input,
+                "((?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z]))", " $1")
+                .Trim()
+                .ToLowerInvariant(); 
+
         }
     }
 }
