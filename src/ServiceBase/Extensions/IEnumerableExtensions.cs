@@ -523,6 +523,48 @@
             }
         }
 
+        /// <summary>
+        /// Compares to lists and returns a Tuple with removed,
+        /// added and updated lists
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="listMaster"></param>
+        /// <param name="listupdated"></param>
+        /// <returns></returns>
+        public static (
+            IEnumerable<TSource> removed,
+            IEnumerable<TSource> added,
+            IEnumerable<TSource> updated
+        )
+        Diff<TSource>(
+            this IEnumerable<TSource> listMaster,
+            IEnumerable<TSource> listUpdated
+        )
+        {
+            var removed = new List<TSource>();
+            var added = new List<TSource>();
+            var updated = new List<TSource>();
+
+            removed = listMaster.Select(s => s).ToList();
+            added = listUpdated.Select(s => s).ToList();
+
+            for (int i = removed.Count - 1; i >= 0; i--)
+            {
+                var item = removed[i];
+                var itemUpdated = listUpdated
+                    .FirstOrDefault(c => c.Equals(item));
+
+                if (!itemUpdated.Equals(default(TSource)))
+                {
+                    updated.Add(itemUpdated);
+                    added.Remove(item);
+                    removed.Remove(item);
+                }
+            }
+
+            return (removed, added, updated);
+        }
+
         #endregion
     }
 }
