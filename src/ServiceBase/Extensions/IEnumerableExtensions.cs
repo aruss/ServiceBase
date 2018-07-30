@@ -544,17 +544,18 @@
             var removed = new List<TSource>();
             var added = new List<TSource>();
             var updated = new List<TSource>();
+            TSource defaultOfTSource = default(TSource);
 
             removed = listMaster.Select(s => s).ToList();
             added = listUpdated.Select(s => s).ToList();
 
             for (int i = removed.Count - 1; i >= 0; i--)
             {
-                var item = removed[i];
-                var itemUpdated = listUpdated
+                TSource item = removed[i];
+                TSource itemUpdated = listUpdated
                     .FirstOrDefault(c => c.Equals(item));
-
-                if (!itemUpdated.Equals(default(TSource)))
+                
+                if (!Comparison<TSource>.Equals(defaultOfTSource, itemUpdated))
                 {
                     updated.Add(itemUpdated);
                     added.Remove(item);
