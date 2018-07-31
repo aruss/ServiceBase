@@ -94,7 +94,8 @@ namespace ServiceBase.UnitTests
                 options,
                 emailSender.Object,
                 resourceStoreMock.Object,
-                logger);
+                logger,
+                new DefaultTokenizer());
 
             // Set culture 
             CultureInfo originalCulture =

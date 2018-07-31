@@ -69,7 +69,8 @@ namespace ServiceBase.UnitTests
                 options,
                 logger,
                 smsSender.Object,
-                httpContextAccessorMock.Object);
+                httpContextAccessorMock.Object,
+                new DefaultTokenizer());
 
             // Set culture 
             CultureInfo originalCulture =

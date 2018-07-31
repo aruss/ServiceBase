@@ -20,6 +20,7 @@ namespace ServiceBase.Notification.Sms
         internal readonly DefaultSmsServiceOptions _options;
         internal readonly ILogger<DefaultSmsService> _logger;
         internal readonly IHttpContextAccessor _httpContextAccessor;
+        internal readonly ITokenizer _tokenizer;
 
         private static ConcurrentDictionary<string, string> _templates;
 
@@ -27,12 +28,14 @@ namespace ServiceBase.Notification.Sms
             DefaultSmsServiceOptions options,
             ILogger<DefaultSmsService> logger,
             ISmsSender smsSender,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ITokenizer tokenizer)
         {
             this._logger = logger;
             this._options = options;
             this._smsSender = smsSender;
             this._httpContextAccessor = httpContextAccessor;
+            this._tokenizer = tokenizer;
 
             DefaultSmsService._templates =
                 new ConcurrentDictionary<string, string>();
@@ -75,7 +78,9 @@ namespace ServiceBase.Notification.Sms
               model?.ToDictionary();
 
             string template = await this.GetTemplate(culture, templateName);
-            string message = await this.Tokenize(template, viewData);
+
+            string message = await
+                this._tokenizer.Tokenize(template, viewData);
 
             await this._smsSender.SendSmsAsync(numberTo, numberFrom, message);
         }
@@ -141,29 +146,8 @@ namespace ServiceBase.Notification.Sms
             return DefaultSmsService._templates.GetOrAdd(path, (p) =>
             {
                 this._logger.LogInformation($"Loading SMS template: {p}");
-
                 return File.ReadAllText(p);
             });
-        }
-
-        /// <summary>
-        /// Replaces template tokens with viewData
-        /// </summary>
-        /// <param name="template">String template.</param>
-        /// <param name="viewData">Dictionary with view data.</param>
-        /// <returns>Parsed template.</returns>
-        public virtual Task<string> Tokenize(
-            string template,
-            IDictionary<string, object> viewData)
-        {
-            string result = template;
-            foreach (KeyValuePair<string, object> item in viewData)
-            {
-                result = result
-                    .Replace($"{{{item.Key}}}", item.Value.ToString());
-            }
-
-            return Task.FromResult(result);
         }
     }
 }

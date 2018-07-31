@@ -18,17 +18,20 @@ namespace ServiceBase.Notification.Email
         internal readonly IEmailSender _emailSender;
         internal readonly IResourceStore _resourceStore;
         internal readonly ILogger<DefaultEmailService> _logger;
+        internal readonly ITokenizer _tokenizer;
 
         public DefaultEmailService(
             DefaultEmailServiceOptions options,
             IEmailSender emailSender,
             IResourceStore resourceStore,
-            ILogger<DefaultEmailService> logger)
+            ILogger<DefaultEmailService> logger,
+            ITokenizer tokenizer)
         {
             this._options = options;
             this._emailSender = emailSender;
             this._resourceStore = resourceStore;
             this._logger = logger;
+            this._tokenizer = tokenizer; 
         }
 
         /// <summary>
@@ -53,27 +56,7 @@ namespace ServiceBase.Notification.Email
                 return (EmailTemplate)serializer.Deserialize(reader);
             }
         }
-
-        /// <summary>
-        /// Replaces template tokens with viewData
-        /// </summary>
-        /// <param name="template">String template.</param>
-        /// <param name="viewData">Dictionary with view data.</param>
-        /// <returns>Parsed template.</returns>
-        public virtual Task<string> Tokenize(
-            string template,
-            IDictionary<string, object> viewData)
-        {
-            string result = template;
-            foreach (var item in viewData)
-            {
-                result = result
-                    .Replace($"{{{item.Key}}}", item.Value.ToString());
-            }
-
-            return Task.FromResult(result);
-        }
-
+              
         /// <summary>
         /// Parses the templates and uses layout file.
         /// </summary>
@@ -86,8 +69,12 @@ namespace ServiceBase.Notification.Email
             string templateLayout,
             IDictionary<string, object> viewData)
         {
-            string content = await this.Tokenize(template, viewData);
-            string layout = await this.Tokenize(templateLayout, viewData);
+            string content = await this._tokenizer
+                .Tokenize(template, viewData);
+
+            string layout = await this._tokenizer
+                .Tokenize(templateLayout, viewData);
+
             string html = layout.Replace("{Content}", content);
 
             return html;
@@ -125,7 +112,7 @@ namespace ServiceBase.Notification.Email
 
             if (viewData != null)
             {
-                message.Subject = await this
+                message.Subject = await this._tokenizer
                     .Tokenize(template.Subject, viewData);
 
                 message.Html = await this
