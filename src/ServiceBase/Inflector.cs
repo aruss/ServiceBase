@@ -147,7 +147,7 @@ namespace ServiceBase
                 throw new ArgumentNullException(nameof(word));
             }
 
-            var result = word;
+            string result = word;
 
             if (!Inflector.Uncountables.Contains(word.ToLower()))
             {
@@ -169,9 +169,7 @@ namespace ServiceBase
                 Underscore(word)), @"\b([a-z])",
                 match => match.Captures[0].Value.ToUpper());
         }
-
-
-
+        
         public static string Pascalize(this string lowercaseAndUnderscoredWord)
         {
             return Regex.Replace(lowercaseAndUnderscoredWord, "(?:^|_)(.)",

@@ -60,7 +60,7 @@ namespace ServiceBase.Notification.Sms
                 dict = viewData.ToDictionary();
             }
 
-            var sb = new StringBuilder("Sending SMS\n");
+            StringBuilder sb = new StringBuilder("Sending SMS\n");
 
             sb.AppendLine(String.Format(" Template:\t{0}", templateName));
             sb.AppendLine(String.Format(" Number To:\t{0}", numberTo));

@@ -4,14 +4,10 @@
 namespace ServiceBase.Resources
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-    using System.Xml.Serialization;
-    using Newtonsoft.Json;
-    using ServiceBase.Resources;
 
     public static class IResourceStoreEmailExtensions
     {
@@ -40,8 +36,9 @@ namespace ServiceBase.Resources
             foreach (string filePath in
                 Directory.GetFiles(directoryPath, "*.xml"))
             {
-                string[] filePathChunks = Path.GetFileName(filePath)
-                                                  .Split('.');
+                string[] filePathChunks = Path
+                    .GetFileName(filePath)
+                    .Split('.');
 
                 if (filePathChunks.Length <= 2)
                 {
@@ -67,7 +64,7 @@ namespace ServiceBase.Resources
 
                 using (StreamReader file = File.OpenText(filePath))
                 {
-                    var value = await file.ReadToEndAsync();
+                    string value = await file.ReadToEndAsync();
 
                     await resourceStore.WriteAsync(
                         cultureInfo.Name,

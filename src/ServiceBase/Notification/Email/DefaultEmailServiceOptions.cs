@@ -9,11 +9,6 @@ namespace ServiceBase.Notification.Email
         /// Default UI culture name.
         /// </summary>
         public string DefaultCulture { get; set; }
-
-        /// <summary>
-        /// Absolute path to template directory.
-        /// </summary>
-        /// public string TemplateDirectoryPath { get; set; }
     }
 }
 
