@@ -217,6 +217,16 @@ namespace ServiceBase.Plugins
 
             foreach (Type type in types)
             {
+                ConstructorInfo ctorInfo =
+                    type.GetConstructor(Type.EmptyTypes);
+
+                if (ctorInfo == null)
+                {
+                    throw new ApplicationException(
+                        $"Type \"{type.FullName}\" must have a parameterless constructor."
+                    ); 
+                }
+
                 TService instance =
                     (TService)Activator.CreateInstance(type);
 
