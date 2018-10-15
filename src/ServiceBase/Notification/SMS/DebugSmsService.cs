@@ -46,7 +46,7 @@ namespace ServiceBase.Notification.Sms
         /// <param name="numberFrom">The source phone number. Format with a
         /// '+' and country code e.g., +16175551212 (E.164 format).</param>
         /// <param name="viewData">Instance of the view model.</param>
-        public async Task SendSmsAsync(
+        public Task SendSmsAsync(
             string templateName,
             string numberTo,
             string numberFrom,
@@ -60,7 +60,7 @@ namespace ServiceBase.Notification.Sms
                 dict = viewData.ToDictionary();
             }
 
-            var sb = new StringBuilder("Sending SMS\n");
+            StringBuilder sb = new StringBuilder("Sending SMS\n");
 
             sb.AppendLine(String.Format(" Template:\t{0}", templateName));
             sb.AppendLine(String.Format(" Number To:\t{0}", numberTo));
@@ -73,6 +73,8 @@ namespace ServiceBase.Notification.Sms
             }
 
             this._logger.LogInformation(sb.ToString());
+
+            return Task.CompletedTask; 
         }
     }
 }

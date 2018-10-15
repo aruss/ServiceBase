@@ -3,7 +3,7 @@
     using System;
     using System.Globalization;
 
-    public static class DateTimeExtensions
+    public static partial class DateTimeExtensions
     {
         private static readonly GregorianCalendar gc = new GregorianCalendar();
 

@@ -1,10 +1,11 @@
-﻿namespace ServiceBase.ExtensionHost
+﻿namespace ServiceBase
 {
     using System;
     using System.IO;
     using System.Threading;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
     public class WebHostWrapper
@@ -12,11 +13,34 @@
         private static CancellationTokenSource
               cancelTokenSource = new CancellationTokenSource();
 
-        public static void Start<TStartup>(string[] args)
+        public static void Start<TStartup>(
+            string[] args,
+            Action<IServiceCollection> configureServices = null)
              where TStartup : class
         {
-            WebHostWrapper.Start<TStartup>(args,
-                Directory.GetCurrentDirectory());
+            string contentRoot = Environment
+                .GetEnvironmentVariable("ASPNETCORE_CONTENTROOT");
+
+            if (!string.IsNullOrWhiteSpace(contentRoot))
+            {
+                FileAttributes attr = File.GetAttributes(contentRoot);
+
+                if ((attr & FileAttributes.Directory) !=
+                    FileAttributes.Directory)
+                {
+                    throw new ArgumentException(
+                        $"Given Content root \"{contentRoot}\"is not a valid directory");
+                }
+            }
+            else
+            {
+                contentRoot = Directory.GetCurrentDirectory();
+            }
+
+            WebHostWrapper.Start<TStartup>(
+                args,
+                contentRoot,
+                configureServices);
         }
 
         /// <summary>
@@ -27,7 +51,8 @@
         /// <param name="basePath"></param>
         public static void Start<TStartup>(
             string[] args,
-            string basePath)
+            string basePath,
+            Action<IServiceCollection> configureServices = null)
             where TStartup : class
         {
             IConfiguration config = WebHostWrapper
@@ -49,21 +74,27 @@
                 })
                 .UseStartup<TStartup>();
 
-            // if (configHost.GetValue<bool>("UseIISIntegration"))
-            // {
-            //     Console.WriteLine("Enabling IIS Integration");
-            //     hostBuilder = hostBuilder.UseIISIntegration();
-            // }
+            if (configureServices != null)
+            {
+                hostBuilder = hostBuilder
+                    .ConfigureServices(configureServices);
+            }
+
+            if (configHost.GetValue<bool>("UseIISIntegration"))
+            {
+                Console.WriteLine("Enabling IIS Integration");
+                hostBuilder = hostBuilder.UseIISIntegration();
+            }
 
             hostBuilder
                 .Build()
                 .RunAsync(WebHostWrapper.cancelTokenSource.Token)
                 .Wait();
         }
-        
+
         public static void Restart()
         {
-            WebHostWrapper.Shutdown(2); 
+            WebHostWrapper.Shutdown(2);
         }
 
         public static void Shutdown(int exitCode = 0)
@@ -72,20 +103,27 @@
             Environment.ExitCode = exitCode;
         }
 
-        private static string GetConfigFilePath(
-            string basePath,
-            bool isDevelopment)
+        private static string GetConfigFilePath(string basePath)
         {
-            string configFilePath = "./AppData/config.development.json";
+            string configRoot = Environment
+                .GetEnvironmentVariable("ASPNETCORE_CONFIGROOT");
 
-            if (File.Exists(Path.Combine(basePath, configFilePath)))
+            if (string.IsNullOrWhiteSpace(configRoot))
             {
-                return configFilePath;
+                configRoot = Path.Combine(basePath, "config"); 
             }
 
-            return "./AppData/config.json";
-        }
+            string configFilePath = Path.Combine(configRoot, "config.json");
 
+            if (!File.Exists(Path.Combine(basePath, configFilePath)))
+            {
+                throw new ApplicationException(
+                    $"Config file does not exists \"{configFilePath}\""); 
+            }
+
+            return configFilePath;
+        }
+                                                                                                           
         private static IConfigurationRoot LoadConfig<TStartup>(
             string[] args,
             string basePath)
@@ -97,16 +135,15 @@
                 .SetBasePath(basePath)
                 .AddJsonFile(
                     path: WebHostWrapper.GetConfigFilePath(
-                        basePath,
-                        isDevelopment
+                        basePath
                     ),
                     optional: false,
                     reloadOnChange: false);
 
-             if (isDevelopment)
-             {
-                 configBuilder.AddUserSecrets<TStartup>();
-             }
+            if (isDevelopment)
+            {
+                configBuilder.AddUserSecrets<TStartup>();
+            }
 
             configBuilder.AddEnvironmentVariables();
 

@@ -1,13 +1,12 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Moq;
-using ServiceBase.Events;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using ServiceBase;
+using ServiceBase.Events;
+using Xunit;
 
 namespace IdentityBase.Public.IntegrationTests
 {
@@ -25,7 +24,7 @@ namespace IdentityBase.Public.IntegrationTests
         }
 
         [Fact]
-        public async Task PrepareEventWithRemoteAddressTest()
+        public async Task PrepareEventWithRemoteAddress()
         {
             var options = new EventOptions
             {
@@ -35,28 +34,48 @@ namespace IdentityBase.Public.IntegrationTests
                 RaiseSuccessEvents = true
             };
 
-            var remoteIp = "127.0.0.1";
-            var traceId = Guid.NewGuid().ToString();
-            var procId = Process.GetCurrentProcess().Id;
-            var subjectId = "123456789";
-            var fooEvent = new FooEvent("FooEvents", "FooEvent", EventTypes.Information, 1337, "Some foo message") { Foo = "bar" };
+            string remoteIp = "127.0.0.1";
+            string traceId = Guid.NewGuid().ToString();
+            int procId = Process.GetCurrentProcess().Id;
+            string subjectId = "123456789";
+            FooEvent fooEvent = new FooEvent(
+                "FooEvents",
+                "FooEvent",
+                EventTypes.Information,
+                1337,
+                "Some foo message")
+            {
+                Foo = "bar"
+            };
 
-            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            var mockHttpContext = new Mock<HttpContext>();
-            var mockConnectionInfo = new Mock<ConnectionInfo>();
+            Mock<IHttpContextAccessor> mockHttpContextAccessor =
+                new Mock<IHttpContextAccessor>();
+
+            Mock<HttpContext> mockHttpContext = new Mock<HttpContext>();
+
+            Mock<ConnectionInfo> mockConnectionInfo =
+                new Mock<ConnectionInfo>();
+
             mockHttpContext.SetupGet(c => c.TraceIdentifier).Returns(traceId);
-            mockConnectionInfo.SetupGet(c => c.RemoteIpAddress).Returns(System.Net.IPAddress.Parse(remoteIp));
-            mockHttpContextAccessor.SetupGet(c => c.HttpContext).Returns(mockHttpContext.Object);
-            mockHttpContext.SetupGet(c => c.Connection).Returns(mockConnectionInfo.Object);
 
-            mockHttpContext.SetupGet(c => c.User).Returns(new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            mockConnectionInfo.SetupGet(c => c.RemoteIpAddress)
+                .Returns(System.Net.IPAddress.Parse(remoteIp));
+
+            mockHttpContextAccessor.SetupGet(c => c.HttpContext)
+                .Returns(mockHttpContext.Object);
+
+            mockHttpContext.SetupGet(c => c.Connection)
+                .Returns(mockConnectionInfo.Object);
+            
+            mockHttpContext.SetupGet(c => c.User)
+                .Returns(new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim("sub", subjectId)
             })));
 
-            var mockEventSink = new Mock<IEventSink>();
-      
-            var eventService = new DefaultEventService(
+            Mock<IEventSink> mockEventSink = new Mock<IEventSink>();
+
+            DefaultEventService eventService = new DefaultEventService(
                 options,
                 mockHttpContextAccessor.Object,
                 new DateTimeAccessor(),
@@ -64,7 +83,7 @@ namespace IdentityBase.Public.IntegrationTests
 
             await eventService.RaiseAsync(fooEvent);
 
-            
+
             /*eventOut.Should().Equals(eventIn);
             eventOut.Context.Should().NotBeNull();
             eventOut.Context.ProcessId.Should().Be(procId);
@@ -75,7 +94,13 @@ namespace IdentityBase.Public.IntegrationTests
 
     public class FooEvent : Event
     {
-        public FooEvent(string category, string name, EventTypes type, int id, string message = null) : base(category, name, type, id, message)
+        public FooEvent(
+            string category,
+            string name,
+            EventTypes type,
+            int id,
+            string message = null)
+            : base(category, name, type, id, message)
         {
         }
 

@@ -4,7 +4,7 @@
     using System.Linq;
     using System.Reflection;
 
-    public static class ObjectExtensions
+    public static partial class ObjectExtensions
     {
         /// <summary>
         /// Converts object to dictionary

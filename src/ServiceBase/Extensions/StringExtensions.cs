@@ -11,7 +11,7 @@ namespace ServiceBase.Extensions
     using System.Text;
     using System.Text.Encodings.Web;
 
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
         private static readonly string[] Booleans =
             new string[] { "true", "yes", "on", "1" };
@@ -176,7 +176,7 @@ namespace ServiceBase.Extensions
                 // Allows "~/" or "~/foo".
                 (url.Length > 1 && url[0] == '~' && url[1] == '/'));
         }
-        
+
         [DebuggerStepThrough]
         public static string AddQueryString(this string url, string query)
         {
@@ -232,10 +232,19 @@ namespace ServiceBase.Extensions
         }*/
 
         [DebuggerStepThrough]
+        public static bool IsSecureUrl(this string url)
+        {
+            return url.StartsWith("https://"); 
+        }
+
+        [DebuggerStepThrough]
         public static string GetOrigin(this string url)
         {
-            if (url != null && (url.StartsWith("http://") ||
-                url.StartsWith("https://")))
+            if (url != null && (
+                    url.StartsWith("http://") ||
+                    url.StartsWith("https://")
+                )
+            )
             {
                 var idx = url.IndexOf("//", StringComparison.Ordinal);
                 if (idx > 0)
