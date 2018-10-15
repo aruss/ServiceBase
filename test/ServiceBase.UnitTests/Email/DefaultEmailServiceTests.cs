@@ -15,7 +15,7 @@ namespace ServiceBase.UnitTests
     using ServiceBase.Resources;
     using Xunit;
 
-    [Collection("ServiceBase")]
+    //[Collection("ServiceBase")]
     public class DefaultEmailServiceTests
     {
         // Wirte test files
@@ -38,10 +38,10 @@ namespace ServiceBase.UnitTests
             string xml = Encoding.ASCII.GetString(ms.ToArray());
         }
 
-        [Theory]
-        [InlineData("Template1", "en-US", "en-US", "en-US")]
-        [InlineData("Template1", "de-DE", "de-DE", "de-DE")]
-        [InlineData("Template1", "ru-RU", "en-US", "en-US")]
+        //[Theory]
+        //[InlineData("Template1", "en-US", "en-US", "en-US")]
+        //[InlineData("Template1", "de-DE", "de-DE", "de-DE")]
+        //[InlineData("Template1", "ru-RU", "en-US", "en-US")]
         public async Task LoadTemplates(
             string templateName,
             string culture,
@@ -87,9 +87,25 @@ namespace ServiceBase.UnitTests
             Mock<IHttpContextAccessor> httpContextAccessorMock =
                 new Mock<IHttpContextAccessor>();
 
-            Mock<IResourceStore> resourceStoreMock = new Mock<IResourceStore>();
-            
 
+            Mock<IResourceStore> resourceStoreMock = new Mock<IResourceStore>();
+            resourceStoreMock
+                .Setup(c => c.GetEmailTemplateAsync(
+                    It.Is<string>(s => s.Equals(culture)),
+                    It.Is<string>(s => s.Equals(templateName))
+                ))
+                .Returns(new Func<string, string, Task<Resource>>((tplCulture, tplKey) =>
+                {
+                    return Task.FromResult(new Resource
+                    {
+                        Culture = tplCulture,
+                        Key = tplKey,
+                        Value = $"HTML LayoutStart {expectedCulture} Html {templateName} {expectedCulture} Foo HTML LayoutEnd {expectedCulture}"
+                    }); 
+                })); 
+
+            
+            
             DefaultEmailService emailService = new DefaultEmailService(
                 options,
                 emailSender.Object,
