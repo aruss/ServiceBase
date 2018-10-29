@@ -1,18 +1,22 @@
 ﻿namespace WebHost
 {
-    using Microsoft.AspNetCore;
-    using Microsoft.AspNetCore.Hosting;
+    using System;
+    using System.Diagnostics;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.DependencyInjection;
+    using ServiceBase;
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            Program.BuildWebHost(args).Run();
-        }
+            Console.WriteLine($"Process ID: {Process.GetCurrentProcess().Id}");
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
+            WebHostWrapper.Start<Startup>(args, (services) =>
+            {
+                services
+                    .AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            });
+        }
     }
 }
