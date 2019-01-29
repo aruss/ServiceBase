@@ -7,11 +7,11 @@ ServiceBase is my personal library with all common used bits & parts I use for b
 
 ### Platform
 
-ServiceBase is built against NET Core 2.1 using the RTM tooling that ships with Visual Studio 2017. This is the only configuration I support on the issue tracker.
+ServiceBase is built against NET Core 2.2 using the RTM tooling that ships with Visual Studio 2017. This is the only configuration I support on the issue tracker.
 
 ### How to build
 
-* [Install](https://www.microsoft.com/net/download/core#/current) .NET Core 2.1 
+* [Install](https://www.microsoft.com/net/download/core#/current) .NET Core 2.2 
 * Use Visual Studio 2017 to build it
 
 ## Documentation 
