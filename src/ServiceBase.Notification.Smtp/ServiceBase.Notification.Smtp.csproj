@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.1.3" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
+    <PackageReference Include="MailKit" Version="2.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
   </ItemGroup>
 
