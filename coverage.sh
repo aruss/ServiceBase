@@ -22,13 +22,13 @@ do
    :
 $OPENCOVER \
   -target:"c:\Program Files\dotnet\dotnet.exe" \
-  -targetargs:"test -f netcoreapp2.0 -c Release ./test/$PROJECT" \
+  -targetargs:"test -f netcoreapp2.2 -c Release ./test/$PROJECT" \
   -mergeoutput \
   -hideskipped:File \
   -output:$COVERAGE_DIR/coverage.xml \
   -oldStyle \
   -filter:"+[ServiceBase*]* -[ServiceBase.*Tests*]*" \
-  -searchdirs:./test/$PROJECT/bin/Release/netcoreapp2.0 \
+  -searchdirs:./test/$PROJECT/bin/Release/netcoreapp2.2 \
   -register:user
 done
 
