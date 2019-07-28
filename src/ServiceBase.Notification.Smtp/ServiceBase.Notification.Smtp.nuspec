@@ -12,9 +12,9 @@
     <tags>dotnet dotnet-core smtp email</tags>
     <dependencies>
       <group targetFramework=".NETCoreApp2.0">
-        <dependency id="MailKit" version="2.0.1" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Configuration.Binder" version="2.0.0" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Logging" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="MailKit" version="2.1.4" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Binder" version="2.2.4" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging" version="2.2.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>

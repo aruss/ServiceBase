@@ -1,12 +1,12 @@
 version: 1.1.{build}
 skip_tags: true
-image: Visual Studio 2017 Preview
+image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
-environment:
-  # Don't report back to the mothership
-  DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
+environment:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  
 branches:
   only:
     - master
@@ -15,10 +15,10 @@ branches:
     
 before_build:
   - appveyor-retry dotnet restore -v Minimal
-
+  
 build_script:
   - dotnet build ./ServiceBase.sln -c Release /property:Version=%APPVEYOR_BUILD_VERSION%
-
+  
 after_build:
   - nuget pack ./src/ServiceBase/ServiceBase.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
   - nuget pack ./src/ServiceBase.Mvc/ServiceBase.Mvc.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
@@ -26,8 +26,8 @@ after_build:
   - nuget pack ./src/ServiceBase.Notification.SendGrid/ServiceBase.Notification.SendGrid.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
   - nuget pack ./src/ServiceBase.Notification.Smtp/ServiceBase.Notification.Smtp.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
   - nuget pack ./src/ServiceBase.Notification.Twilio/ServiceBase.Notification.Twilio.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
-  
-test_script:
+
+  test_script:
   - bash coveralls.sh
   
 artifacts:
