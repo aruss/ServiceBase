@@ -27,7 +27,7 @@ after_build:
   - nuget pack ./src/ServiceBase.Notification.Smtp/ServiceBase.Notification.Smtp.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
   - nuget pack ./src/ServiceBase.Notification.Twilio/ServiceBase.Notification.Twilio.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
 
-  test_script:
+test_script:
   - bash coveralls.sh
   
 artifacts:
