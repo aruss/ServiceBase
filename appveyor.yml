@@ -1,4 +1,4 @@
-version: 1.1.{build}
+version: 1.2.{build}
 skip_tags: true
 image: Visual Studio 2017
 configuration: Release
@@ -27,7 +27,7 @@ after_build:
   - nuget pack ./src/ServiceBase.Notification.Smtp/ServiceBase.Notification.Smtp.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
   - nuget pack ./src/ServiceBase.Notification.Twilio/ServiceBase.Notification.Twilio.nuspec -OutputDirectory ./artifacts/packages -version %APPVEYOR_BUILD_VERSION%
 
-  test_script:
+test_script:
   - bash coveralls.sh
   
 artifacts:

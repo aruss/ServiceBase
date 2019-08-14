@@ -11,7 +11,7 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.0">
+      <group targetFramework=".NETCoreApp2.2">
         <dependency id="Microsoft.AspNetCore.Authorization" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.AspNetCore.Hosting.Abstractions" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.AspNetCore.WebUtilities" version="2.2.0" exclude="Build,Analyzers" />
@@ -28,11 +28,11 @@
         <dependency id="Microsoft.Extensions.Options" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Serilog" version="2.8.0" exclude="Build,Analyzers" />
         <dependency id="Serilog.Extensions.Logging" version="2.0.4" exclude="Build,Analyzers" />
-        <dependency id="Serilog.Settings.Configuration" version="3.0.1" exclude="Build,Analyzers" />
+        <dependency id="Serilog.Settings.Configuration" version="3.1.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.0\ServiceBase.dll" target="lib\netcoreapp2.0\ServiceBase.dll" />
+    <file src="bin\Release\netcoreapp2.2\ServiceBase.dll" target="lib\netcoreapp2.2\ServiceBase.dll" />
   </files>
 </package>
