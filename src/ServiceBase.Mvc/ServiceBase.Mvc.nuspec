@@ -12,10 +12,11 @@
     <tags>dotnet dotnet-core mvc</tags>
     <dependencies>
       <group targetFramework=".NETCoreApp2.0">
-        <dependency id="Microsoft.AspNetCore.Hosting" version="2.0.1" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.AspNetCore.Mvc" version="2.0.2" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.AspNetCore.Server.Kestrel" version="2.0.1" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.AspNetCore.StaticFiles" version="2.0.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Hosting" version="2.2.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Mvc" version="2.2.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Server.IISIntegration" version="2.2.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Server.Kestrel" version="2.2.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.StaticFiles" version="2.2.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>

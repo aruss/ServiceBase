@@ -5,6 +5,7 @@ namespace Microsoft.Extensions.Logging
 {
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyModel;
     using Microsoft.Extensions.Logging;
     using Serilog;
     using Serilog.Core;
@@ -48,13 +49,14 @@ namespace Microsoft.Extensions.Logging
             this ILoggingBuilder loggingBuilder,
             IConfiguration config)
         {
-            IConfigurationSection serilogOptions =
-                config.GetSection("Serilog");
-
             Logger logger = new LoggerConfiguration()
-                .ReadFrom.ConfigurationSection(serilogOptions)
-                .CreateLogger();
-
+                .ReadFrom.Configuration(
+                    config,
+                    "Serilog",
+                    DependencyContext.Default
+                )
+                .CreateLogger(); 
+            
             return loggingBuilder.AddSerilog(logger, true);
         }
     }

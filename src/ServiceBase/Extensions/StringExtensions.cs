@@ -153,7 +153,10 @@ namespace ServiceBase.Extensions
         [DebuggerStepThrough]
         public static string CleanUrlPath(this string url)
         {
-            if (String.IsNullOrWhiteSpace(url)) url = "/";
+            if (String.IsNullOrWhiteSpace(url))
+            {
+                url = "/";
+            }
 
             if (url != "/" && url.EndsWith("/"))
             {

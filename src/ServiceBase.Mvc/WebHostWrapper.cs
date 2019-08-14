@@ -1,4 +1,7 @@
-﻿namespace ServiceBase
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase
 {
     using System;
     using System.IO;
@@ -18,8 +21,7 @@
             Action<IServiceCollection> configureServices = null)
              where TStartup : class
         {
-            string contentRoot = Environment
-                .GetEnvironmentVariable("ASPNETCORE_CONTENTROOT");
+            string contentRoot = EnironmentUtils.GetContentRoot();
 
             if (!string.IsNullOrWhiteSpace(contentRoot))
             {
@@ -55,7 +57,7 @@
             Action<IServiceCollection> configureServices = null)
             where TStartup : class
         {
-            IConfiguration config = WebHostWrapper
+            IConfiguration config = ConfigUtils
                 .LoadConfig<TStartup>(args, basePath);
 
             // Use in case you changed the example data in ExampleData.cs file
@@ -76,8 +78,7 @@
 
             if (configureServices != null)
             {
-                hostBuilder = hostBuilder
-                    .ConfigureServices(configureServices);
+                hostBuilder = hostBuilder.ConfigureServices(configureServices);
             }
 
             if (configHost.GetValue<bool>("UseIISIntegration"))
@@ -101,66 +102,6 @@
         {
             WebHostWrapper.cancelTokenSource.Cancel();
             Environment.ExitCode = exitCode;
-        }
-
-        private static string GetConfigFilePath(string basePath)
-        {
-            string configRoot = Environment
-                .GetEnvironmentVariable("ASPNETCORE_CONFIGROOT");
-
-            if (string.IsNullOrWhiteSpace(configRoot))
-            {
-                configRoot = Path.Combine(basePath, "config"); 
-            }
-
-            string configFilePath = Path.Combine(configRoot, "config.json");
-
-            if (!File.Exists(Path.Combine(basePath, configFilePath)))
-            {
-                throw new ApplicationException(
-                    $"Config file does not exists \"{configFilePath}\""); 
-            }
-
-            return configFilePath;
-        }
-                                                                                                           
-        private static IConfigurationRoot LoadConfig<TStartup>(
-            string[] args,
-            string basePath)
-            where TStartup : class
-        {
-            bool isDevelopment = WebHostWrapper.IsDevelopment();
-
-            IConfigurationBuilder configBuilder = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .AddJsonFile(
-                    path: WebHostWrapper.GetConfigFilePath(
-                        basePath
-                    ),
-                    optional: false,
-                    reloadOnChange: false);
-
-            if (isDevelopment)
-            {
-                configBuilder.AddUserSecrets<TStartup>();
-            }
-
-            configBuilder.AddEnvironmentVariables();
-
-            if (args != null)
-            {
-                configBuilder.AddCommandLine(args);
-            }
-
-            return configBuilder.Build();
-        }
-
-        private static bool IsDevelopment()
-        {
-            return "Development".Equals(
-                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
-                StringComparison.OrdinalIgnoreCase
-            );
         }
     }
 }
