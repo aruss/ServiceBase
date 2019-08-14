@@ -11,7 +11,7 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core mvc</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.0">
+      <group targetFramework=".NETCoreApp2.2">
         <dependency id="Microsoft.AspNetCore.Hosting" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.AspNetCore.Mvc" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.AspNetCore.Server.IISIntegration" version="2.2.1" exclude="Build,Analyzers" />

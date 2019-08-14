@@ -11,7 +11,7 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core plivo sms</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.0">
+      <group targetFramework=".NETCoreApp2.2">
         <dependency id="Microsoft.Extensions.Configuration.Binder" version="2.2.4" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Logging" version="2.2.0" exclude="Build,Analyzers" />
       </group>
