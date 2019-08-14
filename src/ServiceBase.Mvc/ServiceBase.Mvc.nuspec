@@ -21,6 +21,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.0\ServiceBase.Mvc.dll" target="lib\netcoreapp2.0\ServiceBase.Mvc.dll" />
+    <file src="bin\Release\netcoreapp2.2\ServiceBase.Mvc.dll" target="lib\netcoreapp2.2\ServiceBase.Mvc.dll" />
   </files>
 </package>

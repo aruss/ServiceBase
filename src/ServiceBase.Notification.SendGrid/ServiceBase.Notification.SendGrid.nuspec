@@ -19,6 +19,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.0\ServiceBase.Notification.SendGrid.dll" target="lib\netcoreapp2.0\ServiceBase.Notification.SendGrid.dll" />
+    <file src="bin\Release\netcoreapp2.2\ServiceBase.Notification.SendGrid.dll" target="lib\netcoreapp2.2\ServiceBase.Notification.SendGrid.dll" />
   </files>
 </package>

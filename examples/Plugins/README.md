@@ -1,5 +1,5 @@
 
-# .NET CORE 2.0 - Plugin Architecture
+# .NET CORE 2.2 - Plugin Architecture
 
 This is a example application that utilizes most of bits and parts from the ServiceBase library, including the plugin architecture.
 

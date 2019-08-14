@@ -19,6 +19,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.0\ServiceBase.Notification.Smtp.dll" target="lib\netcoreapp2.0\ServiceBase.Notification.Smtp.dll" />
+    <file src="bin\Release\netcoreapp2.2\ServiceBase.Notification.Smtp.dll" target="lib\netcoreapp2.2\ServiceBase.Notification.Smtp.dll" />
   </files>
 </package>

@@ -33,6 +33,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.0\ServiceBase.dll" target="lib\netcoreapp2.0\ServiceBase.dll" />
+    <file src="bin\Release\netcoreapp2.2\ServiceBase.dll" target="lib\netcoreapp2.2\ServiceBase.dll" />
   </files>
 </package>
