@@ -90,6 +90,17 @@ namespace ServiceBase.Resources
             return resource;
         }
 
+        public static async Task<IEnumerable<Resource>> GetAllLocalizationAsync(
+            this IResourceStore resourceStore,
+            string culture)
+        {
+            IEnumerable<Resource> resources = await resourceStore.GetAllAsync(
+                culture,
+                IResourceStoreLocalizationExtensions.LocalizationGroup);
+
+            return resources;
+        }
+
         public static async Task<IEnumerable<string>>
             GetAllLocalizationCulturesAsync(this IResourceStore resourceStore)
         {
