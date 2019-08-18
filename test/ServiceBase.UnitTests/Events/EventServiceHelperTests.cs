@@ -1,15 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Moq;
-using ServiceBase;
-using ServiceBase.Events;
-using Xunit;
-
-namespace IdentityBase.Public.IntegrationTests
+﻿namespace ServiceBase.UnitTests
 {
+    using System;
+    using System.Diagnostics;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
+    using Moq;
+    using ServiceBase;
+    using ServiceBase.Events;
+    using Xunit;
+
     [Collection("ServiceBase")]
     public class EventServiceHelperTests : IDisposable
     {

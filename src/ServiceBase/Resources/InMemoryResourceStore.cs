@@ -19,12 +19,8 @@ namespace ServiceBase.Resources
             string group,
             string key)
         {
-            IEnumerable<Resource> query = InMemoryResourceStore._resources
+            IEnumerable<Resource> query = this.GetAllAsync(culture, group).Result
                 .Where(c =>
-                    culture.Equals(c.Culture,
-                        StringComparison.InvariantCultureIgnoreCase) &&
-                    group.Equals(c.Group,
-                        StringComparison.InvariantCultureIgnoreCase) &&
                     key.Equals(c.Key,
                         StringComparison.InvariantCultureIgnoreCase));
 
@@ -39,7 +35,14 @@ namespace ServiceBase.Resources
             string culture,
             string group)
         {
-            throw new NotImplementedException();
+            IEnumerable<Resource> query = InMemoryResourceStore._resources
+                .Where(c =>
+                    culture.Equals(c.Culture,
+                        StringComparison.InvariantCultureIgnoreCase) &&
+                    group.Equals(c.Group,
+                        StringComparison.InvariantCultureIgnoreCase));
+            
+            return Task.FromResult(query);
         }
 
         public Task<IEnumerable<string>> GetAllCulturesAsync(string group)
@@ -51,7 +54,8 @@ namespace ServiceBase.Resources
                         StringComparison.InvariantCultureIgnoreCase
                     )
                 )
-                .Select(s => s.Culture);
+                .Select(s => s.Culture)
+                .Distinct();
 
             return Task.FromResult(result);
         }
