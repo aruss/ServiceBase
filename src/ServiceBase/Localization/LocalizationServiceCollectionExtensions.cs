@@ -8,11 +8,12 @@ namespace ServiceBase.Localization
     using System.Globalization;
     using System.Linq;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Localization;
-    using Microsoft.AspNetCore.Localization.Routing;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Options;
+    using ServiceBase.Extensions;
     using ServiceBase.Resources;
 
     public static class LocalizationServiceCollectionExtensions
@@ -40,8 +41,13 @@ namespace ServiceBase.Localization
             LocalizationOptions localizationOptions = serviceProvider
                 .GetRequiredService<IOptions<LocalizationOptions>>().Value;
 
-            resourceStore.LoadLocalizationFromDirectoryAsync(
-                localizationOptions.ResourcesPath).Wait();
+            IHostingEnvironment hostingEnvironment = serviceProvider
+                  .GetRequiredService<IHostingEnvironment>();
+
+            string resourcePath = localizationOptions.ResourcesPath
+                .GetFullPath(hostingEnvironment.ContentRootPath);
+
+            resourceStore.LoadLocalizationFromDirectoryAsync(resourcePath).Wait();
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -55,10 +61,7 @@ namespace ServiceBase.Localization
                 options.SupportedUICultures =
                     cultures.Select(s => new CultureInfo(s)).ToList();
 
-                if (requestLocalizationOptionsSetupAction != null)
-                {
-                    requestLocalizationOptionsSetupAction(options);
-                }
+                requestLocalizationOptionsSetupAction?.Invoke(options);
             });
 
             return services;

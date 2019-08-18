@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Russlan Akiev. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-
 namespace ServiceBase.Localization
 {
     using System;
@@ -32,13 +31,7 @@ namespace ServiceBase.Localization
 
             return services.AddMvc(mvcOptions =>
             {
-                /*mvcOptions.Filters.Add(
-                    new MiddlewareFilterAttribute(typeof(LocalizationPipeline)));*/
-
-                if (setupAction != null)
-                {
-                    setupAction(mvcOptions);
-                }
+                setupAction?.Invoke(mvcOptions);
             })
                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                .AddViewLocalization()
