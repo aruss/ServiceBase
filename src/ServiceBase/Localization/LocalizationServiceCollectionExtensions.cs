@@ -9,6 +9,7 @@ namespace ServiceBase.Localization
     using System.Linq;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Localization;
+    using Microsoft.AspNetCore.Localization.Routing;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Options;
@@ -21,7 +22,10 @@ namespace ServiceBase.Localization
             Action<LocalizationOptions> localizationOptionsSetupAction,
             Action<RequestLocalizationOptions> requestLocalizationOptionsSetupAction)
         {
-            services.Configure(localizationOptionsSetupAction);
+            if (localizationOptionsSetupAction != null)
+            {
+                services.Configure(localizationOptionsSetupAction);
+            }
 
             services.AddScoped<IResourceStore, InMemoryResourceStore>();
             services.AddSingleton<IStringLocalizerFactory, StringLocalizerFactory>();
@@ -51,7 +55,10 @@ namespace ServiceBase.Localization
                 options.SupportedUICultures =
                     cultures.Select(s => new CultureInfo(s)).ToList();
 
-                requestLocalizationOptionsSetupAction(options);
+                if (requestLocalizationOptionsSetupAction != null)
+                {
+                    requestLocalizationOptionsSetupAction(options);
+                }
             });
 
             return services;

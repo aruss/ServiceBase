@@ -23,8 +23,7 @@ namespace ServiceBase.Localization
         private readonly LocalizationOptions _localizationOptions;
         private readonly IResourceStore _resourceStore;
         private readonly Dictionary<string, string> _mappedNativeNames;
-
-
+        
         public LocalizationHelper(
             IHttpContextAccessor httpContextAccessor,
             IResourceStore resourceStore,
@@ -38,6 +37,16 @@ namespace ServiceBase.Localization
             this._mappedNativeNames = this.ReadCultureMap();
         }
 
+        /// <summary>
+        /// Replaces the culture segment in the url, url must be of the
+        /// following format /{cutlure}/path/to/what/ever
+        /// </summary>
+        /// <param name="currentUrl">Url with culture to replace.</param>
+        /// <param name="culture">A predefined System.Globalization.CultureInfo
+        /// name, <see cref="System.Globalization.CultureInfo.Name"/> of an existing
+        /// <see cref="System.Globalization.CultureInfo"/>, or Windows-only culture name.
+        /// name is not case-sensitive.</param>
+        /// <returns>A new replaced URL</returns>
         public static string ReplaceCulture(string currentUrl, string culture)
         {
             string[] segments1 = currentUrl.Split('/')
@@ -51,6 +60,12 @@ namespace ServiceBase.Localization
             return '/' + string.Join('/', segments1);
         }
 
+        /// <summary>
+        /// Reads the CultureMap.json file with CultureInfo.NativeName overrides.
+        /// </summary>
+        /// <returns>
+        /// A dictionary with CultureInfo name as key and native name override as value.
+        /// </returns>
         private Dictionary<string, string> ReadCultureMap()
         {
             using (StreamReader r = new StreamReader(Path.Combine(
@@ -71,8 +86,8 @@ namespace ServiceBase.Localization
         /// native name is provided then default native name will be returned 
         /// </summary>
         /// <param name="culture">A predefined System.Globalization.CultureInfo
-        /// name, System.Globalization.CultureInfo.Name of an existing
-        /// System.Globalization.CultureInfo, or Windows-only culture name.
+        /// name, <see cref="System.Globalization.CultureInfo.Name"/> of an existing
+        /// <see cref="System.Globalization.CultureInfo"/>, or Windows-only culture name.
         /// name is not case-sensitive.</param>
         /// <returns>A mapped native culture name</returns>
         public string GetMappedNativeName(string culture)
@@ -92,10 +107,17 @@ namespace ServiceBase.Localization
         }
 
         /// <summary>
-        /// Returns a list of supported UI cultures 
+        /// Gets a list of supported cultures
         /// </summary>
-        /// <returns></returns>
-        public Task<IList<CultureInfo>> GetSupportedUICulturesAsync(bool sortByAcceptLanguageHeader = true)
+        /// <param name="sortByAcceptLanguageHeader">
+        /// If true the list will be presorted with respect of Accept-Language header.
+        /// NOT YET IMPLEMENTED
+        /// </param>
+        /// <returns>
+        /// A list of <see cref="CultureInfo"/> instances 
+        /// </returns>
+        public Task<IList<CultureInfo>> GetSupportedUICulturesAsync(
+            bool sortByAcceptLanguageHeader = true)
         {
             HttpContext context = this._httpContextAccessor.HttpContext;
 
@@ -105,16 +127,22 @@ namespace ServiceBase.Localization
 
             var requestCulture = context.Features.Get<IRequestCultureFeature>();
             var cultureItems = this._requestLocalizationOptions.SupportedUICultures;
-
+            
             return Task.FromResult(cultureItems);
         }
 
         /// <summary>
         /// Returns a dictionary with resources for specific culture 
         /// </summary>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        public async Task<Dictionary<string, string>> GetAllResourcesAsync(string culture)
+        /// <param name="culture">A predefined System.Globalization.CultureInfo
+        /// name, <see cref="System.Globalization.CultureInfo.Name"/> of an existing
+        /// <see cref="System.Globalization.CultureInfo"/>, or Windows-only culture name.
+        /// name is not case-sensitive.</param>
+        /// <returns>
+        /// A <see cref="Dictionary{string, string}"/> with all resources for specific culture.
+        /// </returns>
+        public async Task<Dictionary<string, string>> GetAllResourcesAsync(
+            string culture)
         {
             return (await this._resourceStore
                 .GetAllLocalizationAsync(culture))
