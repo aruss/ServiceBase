@@ -14,6 +14,9 @@
       <group targetFramework=".NETCoreApp2.2">
         <dependency id="Microsoft.AspNetCore.Authorization" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.AspNetCore.Hosting.Abstractions" version="2.2.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Localization" version="2.2.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Localization.Routing" version="2.2.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.AspNetCore.Routing" version="2.2.2" exclude="Build,Analyzers" />
         <dependency id="Microsoft.AspNetCore.WebUtilities" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Configuration" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Configuration.Binder" version="2.2.4" exclude="Build,Analyzers" />
@@ -23,6 +26,7 @@
         <dependency id="Microsoft.Extensions.Configuration.Json" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Configuration.UserSecrets" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.DependencyInjection" version="2.2.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Localization" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Localization.Abstractions" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Logging" version="2.2.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.Options" version="2.2.0" exclude="Build,Analyzers" />
