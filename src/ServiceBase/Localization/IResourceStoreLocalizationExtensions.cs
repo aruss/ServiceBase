@@ -9,6 +9,7 @@ namespace ServiceBase.Resources
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
 
     public static class IResourceStoreLocalizationExtensions
@@ -29,22 +30,28 @@ namespace ServiceBase.Resources
         public static async Task LoadLocalizationFromDirectoryAsync(
             this IResourceStore resourceStore,
             string directoryPath,
-            string source = null)
+            string source = null,
+            ILogger logger = null)
         {
             JsonSerializer serializer = new JsonSerializer();
 
-            CultureInfo[] cultures = CultureInfo.GetCultures(
+            IEnumerable<CultureInfo> cultures = CultureInfo.GetCultures(
                 CultureTypes.AllCultures &
                 ~CultureTypes.NeutralCultures);
+
+            logger?.LogDebug("Supported cultures {0}: {1}",
+                cultures.Count(), String.Join(", ", cultures));
 
             foreach (var filePath in
                 Directory.GetFiles(directoryPath, "*.json"))
             {
+                logger?.LogDebug("Try loading resource file {0}", filePath);
+
                 string[] filePathChunks = filePath.Split('.');
 
                 if (filePathChunks.Length <= 2)
                 {
-                    // Not valid file name
+                    logger?.LogDebug("Not valid resource file name {0}", filePath);
                     continue;
                 }
 
@@ -58,9 +65,13 @@ namespace ServiceBase.Resources
 
                 if (culture == null)
                 {
-                    // Not valid culture code
+                    logger?.LogError(
+                        "Not valid culture {0} in file name {1}", cultureCode, filePath);
+
                     continue;
                 }
+
+                logger?.LogDebug("Reading resource file {1}", filePath);
 
                 using (StreamReader file = File.OpenText(filePath))
                 {

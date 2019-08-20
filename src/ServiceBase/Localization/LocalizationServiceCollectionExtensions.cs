@@ -12,6 +12,7 @@ namespace ServiceBase.Localization
     using Microsoft.AspNetCore.Localization;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Localization;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using ServiceBase.Extensions;
     using ServiceBase.Resources;
@@ -38,6 +39,9 @@ namespace ServiceBase.Localization
             IResourceStore resourceStore = serviceProvider
                 .GetRequiredService<IResourceStore>();
 
+            ILogger logger = serviceProvider.GetRequiredService<ILoggerFactory>()
+                .CreateLogger("LocalizationServiceCollectionExtensions");
+
             LocalizationOptions localizationOptions = serviceProvider
                 .GetRequiredService<IOptions<LocalizationOptions>>().Value;
 
@@ -47,15 +51,23 @@ namespace ServiceBase.Localization
             string resourcePath = localizationOptions.ResourcesPath
                 .GetFullPath(hostingEnvironment.ContentRootPath);
 
-            resourceStore.LoadLocalizationFromDirectoryAsync(resourcePath).Wait();
+            logger.LogDebug("Loading resources from {0}", resourcePath); 
+
+            resourceStore.LoadLocalizationFromDirectoryAsync(resourcePath, null, logger).Wait();
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
+                logger.LogDebug("Setting default request culture to {0}",
+                    localizationOptions.DefaultRequestCulture);
+
                 options.DefaultRequestCulture =
                     new RequestCulture(localizationOptions.DefaultRequestCulture);
 
                 IEnumerable<string> cultures =
                     resourceStore.GetAllLocalizationCulturesAsync().Result;
+
+                logger.LogDebug("Setting supported cultures to {0}",
+                    String.Join(", ", cultures)); 
 
                 options.SupportedCultures =
                 options.SupportedUICultures =

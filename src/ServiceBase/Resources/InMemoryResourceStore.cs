@@ -8,11 +8,19 @@ namespace ServiceBase.Resources
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
 
     public class InMemoryResourceStore : IResourceStore
     {
         private static BlockingCollection<Resource> _resources
             = new BlockingCollection<Resource>();
+
+        internal ILogger<InMemoryResourceStore> _logger;
+
+        public InMemoryResourceStore(ILogger<InMemoryResourceStore> logger)
+        {
+            this._logger = logger; 
+        }
 
         public Task<Resource> GetAsync(
             string culture,
@@ -28,6 +36,9 @@ namespace ServiceBase.Resources
                 .OrderBy(c => c.CreatedAt)
                 .FirstOrDefault();
 
+            this._logger.LogDebug(
+                "Found resource in database {0}, {1} {2}", culture, key, result != null);
+
             return Task.FromResult(result);
         }
 
@@ -35,14 +46,18 @@ namespace ServiceBase.Resources
             string culture,
             string group)
         {
-            IEnumerable<Resource> query = InMemoryResourceStore._resources
+            IEnumerable<Resource> result = InMemoryResourceStore._resources
                 .Where(c =>
                     culture.Equals(c.Culture,
                         StringComparison.InvariantCultureIgnoreCase) &&
                     group.Equals(c.Group,
                         StringComparison.InvariantCultureIgnoreCase));
-            
-            return Task.FromResult(query);
+
+            // TODO: Create message only if debug log level is active
+            this._logger.LogDebug("Found {0} number of resourxes in database",
+                result.Count());
+
+            return Task.FromResult(result);
         }
 
         public Task<IEnumerable<string>> GetAllCulturesAsync(string group)
@@ -56,6 +71,10 @@ namespace ServiceBase.Resources
                 )
                 .Select(s => s.Culture)
                 .Distinct();
+
+            // TODO: Create message only if debug log level is active
+            this._logger.LogDebug("Found {0} number of cultures in database",
+                result.Count());
 
             return Task.FromResult(result);
         }
@@ -81,6 +100,9 @@ namespace ServiceBase.Resources
                     CreatedAt = now,
                     UpdatedAt = now
                 };
+
+                this._logger.LogDebug("Writing resource to database {0} {1} {2} {3} {4}",
+                    culture, group, item.Key, item.Value, source);
 
                 InMemoryResourceStore._resources.TryAdd(resource);
             }
@@ -108,6 +130,9 @@ namespace ServiceBase.Resources
                 CreatedAt = now,
                 UpdatedAt = now
             };
+
+            this._logger.LogDebug("Writing resource to database {0} {1} {2} {3} {4}",
+                    culture, group, key, value, source);
 
             InMemoryResourceStore._resources.TryAdd(resource);
 
