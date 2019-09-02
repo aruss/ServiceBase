@@ -27,12 +27,11 @@ namespace ServiceBase.Plugins
         /// <param name="whiteList">List of plugin names that should be loded,
         /// all other plugins will be ignored.</param>
         public static void LoadAssemblies(
-            string basePath,
-            ILoggerFactory loggerFactory,
-            IEnumerable<string> whiteList = null)
+        string basePath,
+        ILogger logger,
+        IEnumerable<string> whiteList = null)
         {
-            PluginAssembyLoader._logger =
-                loggerFactory.CreateLogger(typeof(PluginAssembyLoader));
+            PluginAssembyLoader._logger = logger;
 
             if (whiteList == null || whiteList.Count() == 0)
             {
@@ -89,11 +88,11 @@ namespace ServiceBase.Plugins
 
                 yield break;
             }
-            
-            List<PluginInfo> pluginInfos = new List<PluginInfo>(); 
+
+            List<PluginInfo> pluginInfos = new List<PluginInfo>();
 
             // If white list is presend then return the names of plugin folders
-            // while respecting the white list         
+            // while respecting the white list
             List<string> list = whiteList.Select(s => s).ToList();
             foreach (string pluginPath in Directory.GetDirectories(basePath))
             {
@@ -104,7 +103,7 @@ namespace ServiceBase.Plugins
                 {
                     Name = dirName,
                     BasePath = pluginPath
-                }); 
+                });
 
                 string listItem = list.FirstOrDefault(s => s.Equals(
                     dirName,
@@ -122,7 +121,7 @@ namespace ServiceBase.Plugins
                 }
             }
 
-            PluginAssembyLoader.PluginInfos = pluginInfos.ToArray(); 
+            PluginAssembyLoader.PluginInfos = pluginInfos.ToArray();
         }
 
         public static IEnumerable<PluginInfo> PluginInfos { get; private set; }
@@ -224,7 +223,7 @@ namespace ServiceBase.Plugins
                 {
                     throw new ApplicationException(
                         $"Type \"{type.FullName}\" must have a parameterless constructor."
-                    ); 
+                    );
                 }
 
                 TService instance =

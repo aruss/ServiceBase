@@ -1,56 +1,23 @@
-﻿namespace ServiceBase.Plugins
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Plugins
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ApplicationParts;
-    using Microsoft.AspNetCore.Mvc.Razor;
     using Microsoft.AspNetCore.Mvc.Razor.Compilation;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using ServiceBase.Mvc.Theming;
-    
+
     public static partial class IServiceCollectionExtensions
     {
         public static void AddPluginsMvc(
-            this IServiceCollection services,
-            string viewsBasePath)
+           this IServiceCollection services,
+           ILogger logger)
         {
-            services.AddPluginsMvc(
-                new CustomViewLocationExpander(viewsBasePath));
-        }
-
-        public static void AddPluginsMvc(
-            this IServiceCollection services,
-            IThemeInfoProvider themeInfoProvider,
-            string basePath)
-        {
-            services.AddPluginsMvc(
-                new ThemeViewLocationExpander(themeInfoProvider, basePath));
-        }
-
-        public static void AddPluginsMvc(
-            this IServiceCollection services,
-            IViewLocationExpander viewLocationExpander = null)
-        {
-            ServiceProvider serviceProvider = services.BuildServiceProvider();
-
-            ILogger logger = serviceProvider
-                .GetService<ILoggerFactory>()
-                .CreateLogger(typeof(IServiceCollectionExtensions));
-
-            // Dont use uglycase urls !
-            services.AddRouting((options) =>
-            {
-                options.LowercaseUrls = true;
-            });
-
-            IMvcBuilder mvcBuilder = services
-                .AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddViewLocalization()
-                .AddDataAnnotationsLocalization()
+            var mvcBuilder = services.AddMvc()
                 .ConfigureApplicationPartManager(manager =>
                 {
                     IApplicationFeatureProvider toRemove = manager
@@ -74,20 +41,6 @@
 
                 mvcBuilder.AddApplicationPart(assembly);
             }
-
-            mvcBuilder.AddRazorOptions(razor =>
-            {
-                if (viewLocationExpander != null)
-                {
-                    logger.LogDebug(
-                        "Replacing default view location expander with: \"{0}\"",
-                        viewLocationExpander.GetType().FullName
-                    );
-
-                    razor.ViewLocationExpanders.Clear();
-                    razor.ViewLocationExpanders.Add(viewLocationExpander);
-                }
-            });
 
             IEnumerable<IAddMvcAction> actions = PluginAssembyLoader
                 .GetServices<IAddMvcAction>();

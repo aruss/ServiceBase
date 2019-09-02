@@ -1,7 +1,9 @@
-﻿namespace ServiceBase.Plugins
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Plugins
 {
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
     /// <summary>
@@ -13,30 +15,15 @@
         /// Adds MVC to the <see cref="IApplicationBuilder"/> request
         /// execution pipeline, configured to work with plugin architecture.
         /// </summary>
-        /// <param name="app">
-        /// Instance of <see cref="IApplicationBuilder"/>.
-        /// </param>
+        /// <param name="app">Instance of <see cref="IApplicationBuilder"/>.</param>
+        /// <param name="logger">Instance of <see cref="ILogger"/>.</param>
         public static void UsePluginsMvc(
-                this IApplicationBuilder app)
+            this IApplicationBuilder app,
+            ILogger logger = null)
         {
-            ILogger logger = app.ApplicationServices
-                .GetService<ILoggerFactory>().CreateLogger("Plugins");
-
             app.UseMvc(routeBuilder =>
             {
-                foreach (IUseMvcAction action in PluginAssembyLoader
-                    .GetServices<IUseMvcAction>())
-                {
-                    logger.LogInformation(
-                        "Executing UseMvc action '{0}'",
-                        action.GetType().FullName);
-
-                    action.Execute(routeBuilder);
-                }
-
-                routeBuilder.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                routeBuilder.ConfigurePlugins(logger);
             });
         }
 
@@ -60,3 +47,4 @@
         }
     }
 }
+
