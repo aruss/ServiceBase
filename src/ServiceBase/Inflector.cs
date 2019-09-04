@@ -241,8 +241,7 @@ namespace ServiceBase
         {
             return underscoredWord.Replace('_', '-');
         }
-
-        [Obsolete("Will depricate in next major release")]
+        
         public static string Humanize(this string input)
         {
             return Capitalize(HumanizeUnderscored(input));
