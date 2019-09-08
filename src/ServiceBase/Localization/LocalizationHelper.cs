@@ -22,8 +22,8 @@ namespace ServiceBase.Localization
         private readonly RequestLocalizationOptions _requestLocalizationOptions;
         private readonly LocalizationOptions _localizationOptions;
         private readonly IResourceStore _resourceStore;
-        private readonly Dictionary<string, string> _mappedNativeNames;
-        
+        private readonly IDictionary<string, string> _mappedNativeNames;
+
         public LocalizationHelper(
             IHttpContextAccessor httpContextAccessor,
             IResourceStore resourceStore,
@@ -66,13 +66,13 @@ namespace ServiceBase.Localization
         /// <returns>
         /// A dictionary with CultureInfo name as key and native name override as value.
         /// </returns>
-        private Dictionary<string, string> ReadCultureMap()
+        private IDictionary<string, string> ReadCultureMap()
         {
             using (StreamReader r = new StreamReader(Path.Combine(
                 this._localizationOptions.ResourcesPath, "CultureMap.json")))
             {
                 string json = r.ReadToEnd();
-                Dictionary<string, string> map = JsonConvert
+                IDictionary<string, string> map = JsonConvert
                     .DeserializeObject<Dictionary<string, string>>(json);
 
                 // map to lower case keys 
@@ -127,7 +127,7 @@ namespace ServiceBase.Localization
 
             var requestCulture = context.Features.Get<IRequestCultureFeature>();
             var cultureItems = this._requestLocalizationOptions.SupportedUICultures;
-            
+
             return Task.FromResult(cultureItems);
         }
 
@@ -139,9 +139,9 @@ namespace ServiceBase.Localization
         /// <see cref="System.Globalization.CultureInfo"/>, or Windows-only culture name.
         /// name is not case-sensitive.</param>
         /// <returns>
-        /// A <see cref="Dictionary{string, string}"/> with all resources for specific culture.
+        /// A <see cref="IDictionary{string, string}"/> with all resources for specific culture.
         /// </returns>
-        public async Task<Dictionary<string, string>> GetAllResourcesAsync(
+        public async Task<IDictionary<string, string>> GetAllResourcesAsync(
             string culture)
         {
             return (await this._resourceStore
