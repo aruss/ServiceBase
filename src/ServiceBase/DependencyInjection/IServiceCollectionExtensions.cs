@@ -16,23 +16,28 @@ namespace ServiceBase.DependencyInjection
             where TFactory : class, IServiceFactory<TService>
         {
             collection.Add(
-                new ServiceDescriptor(typeof(TFactory), factoryLifetime));
+                new ServiceDescriptor(
+                    typeof(IServiceFactory<TService>),
+                    typeof(TFactory),
+                    factoryLifetime
+                )
+            );
             
             return collection.Add<TService, TFactory>(
-                p => p.GetRequiredService<TFactory>(),
+                p => p.GetRequiredService<IServiceFactory<TService>>(),
                 serviceLifetime);
         }
 
         public static IServiceCollection Add<TService, TFactory>(
             this IServiceCollection collection,
-            Func<IServiceProvider, TFactory> factoryProvider,
+            Func<IServiceProvider, IServiceFactory<TService>> factoryProvider,
             ServiceLifetime lifetime = ServiceLifetime.Scoped)
             where TService : class
             where TFactory : class, IServiceFactory<TService>
         {
             object factoryFunc(IServiceProvider provider)
             {
-                TFactory factory = factoryProvider(provider);
+                IServiceFactory<TService> factory = factoryProvider(provider);
                 return factory.Build();
             }
 
