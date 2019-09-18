@@ -34,10 +34,7 @@ namespace ServiceBase.Localization
                     name: "defaultWithCulture",
                     template: "{culture:culturecode}/{controller=Home}/{action=Index}/{id?}");
 
-                if (configureRoutes != null)
-                {
-                    configureRoutes(routes);
-                }
+                configureRoutes?.Invoke(routes);
             });
 
             RequestLocalizationOptions localizationOptions = app

@@ -1,4 +1,7 @@
-﻿namespace ServiceBase.Plugins
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Plugins
 {
     using System;
     using System.Collections.Generic;
@@ -83,7 +86,7 @@
         private string GetFullPath(string path)
         {
             List<string> chunks = path.Split("/").ToList();
-            chunks.Insert(1, "Public");
+            chunks.Insert(1, "wwwroot");
             path = Path.Combine(chunks.ToArray());
 
             if (PathUtils.PathNavigatesAboveRoot(path))

@@ -1,4 +1,7 @@
-﻿namespace ServiceBase.Mvc.Razor
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Mvc.Razor
 {
     using System.Collections.Generic;
     using System.Globalization;
@@ -41,7 +44,6 @@
             if (requestCultureFeature != null)
             {
                 CultureInfo culture = requestCultureFeature.RequestCulture.UICulture;
-
                 context.Values["UiCultureName"] = culture.Name;
             }
             else
