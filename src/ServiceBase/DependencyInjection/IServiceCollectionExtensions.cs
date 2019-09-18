@@ -10,24 +10,25 @@ namespace ServiceBase.DependencyInjection
     {  
         public static IServiceCollection AddFactory<TService, TFactory>(
             this IServiceCollection collection,
-            ServiceLifetime serviceLifetime,
-            ServiceLifetime factoryLifetime)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            ServiceLifetime factoryLifetime = ServiceLifetime.Scoped)
             where TService : class
             where TFactory : class, IServiceFactory<TService>
         {
-            collection.AddTransient<TFactory>();
-
+            collection.Add(
+                new ServiceDescriptor(typeof(TFactory), factoryLifetime));
+            
             return collection.Add<TService, TFactory>(
                 p => p.GetRequiredService<TFactory>(),
                 serviceLifetime);
         }
 
-        public static IServiceCollection Add<T, TFactory>(
+        public static IServiceCollection Add<TService, TFactory>(
             this IServiceCollection collection,
             Func<IServiceProvider, TFactory> factoryProvider,
-            ServiceLifetime lifetime)
-            where T : class
-            where TFactory : class, IServiceFactory<T>
+            ServiceLifetime lifetime = ServiceLifetime.Scoped)
+            where TService : class
+            where TFactory : class, IServiceFactory<TService>
         {
             object factoryFunc(IServiceProvider provider)
             {
@@ -36,7 +37,7 @@ namespace ServiceBase.DependencyInjection
             }
 
             collection.Add(
-                new ServiceDescriptor(typeof(T), factoryFunc, lifetime));
+                new ServiceDescriptor(typeof(TService), factoryFunc, lifetime));
 
             return collection;
         }
