@@ -58,10 +58,10 @@ namespace ServiceBase.Localization
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 logger.LogDebug("Setting default request culture to {0}",
-                    localizationOptions.DefaultRequestCulture);
+                    localizationOptions.DefaultCulture);
 
                 options.DefaultRequestCulture =
-                    new RequestCulture(localizationOptions.DefaultRequestCulture);
+                    new RequestCulture(localizationOptions.DefaultCulture);
 
                 IEnumerable<string> cultures =
                     resourceStore.GetAllLocalizationCulturesAsync().Result;

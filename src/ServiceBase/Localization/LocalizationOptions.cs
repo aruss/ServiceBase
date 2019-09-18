@@ -6,6 +6,6 @@ namespace ServiceBase.Localization
     public class LocalizationOptions
     {
         public string ResourcesPath { get; set; } = "resources";
-        public string DefaultRequestCulture { get; set; } = "en-US";
+        public string DefaultCulture { get; set; } = "en-US";
     }
 }
