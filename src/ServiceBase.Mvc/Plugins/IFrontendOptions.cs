@@ -3,8 +3,11 @@
 
 namespace ServiceBase.Plugins
 {
+    /// <summary>
+    /// Instance of fronend options 
+    /// </summary>
     public interface IFrontendOptions
     {
-        // IDictionary<string, object> ToDictionary();
+     
     }
 }
