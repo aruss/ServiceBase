@@ -54,7 +54,7 @@ namespace ServiceBase
             foreach (KeyValuePair<string, object> item in data)
             {
                 result = result
-                    .Replace($"{{{item.Key}}}", item.Value.ToString());
+                    .Replace($"{{{item.Key}}}", item.Value?.ToString());
             }
 
             return Task.FromResult(result);
