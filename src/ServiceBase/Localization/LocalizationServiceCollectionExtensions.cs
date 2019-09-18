@@ -21,8 +21,8 @@ namespace ServiceBase.Localization
     {
         public static IServiceCollection AddJsonFileBasedLocalization(
             this IServiceCollection services,
-            Action<LocalizationOptions> localizationOptionsSetupAction,
-            Action<RequestLocalizationOptions> requestLocalizationOptionsSetupAction)
+            Action<LocalizationOptions> localizationOptionsSetupAction = null,
+            Action<RequestLocalizationOptions> requestLocalizationOptionsSetupAction = null)
         {
             if (localizationOptionsSetupAction != null)
             {
