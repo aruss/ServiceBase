@@ -7,7 +7,7 @@
     {
         #region Public Properties
 
-        public object Source
+        public  object Source
         {
             get;
             set;
