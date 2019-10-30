@@ -55,7 +55,7 @@ namespace WebHost
 
             PluginAssembyLoader.LoadAssemblies(
                 this._pluginsPath,
-                loggerFactory,
+                this._logger,
                 whiteList);
 #else
             // Statically add plugin assemblies for debugging 
@@ -98,7 +98,7 @@ namespace WebHost
 
 
             services.AddPlugins();
-            services.AddPluginsMvc();
+            services.AddPluginsMvc(this._logger);
 
             this._logger.LogInformation("Services configured.");
 

@@ -5,6 +5,26 @@ namespace ServiceBase.UnitTests
     using ServiceBase.Resources;
     using Xunit;
     using System.Linq;
+    using Microsoft.Extensions.Logging;
+    using System;
+
+    public class LoggerMock<TSource> : ILogger<TSource>
+    {
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return true; 
+        }
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+            
+        }
+    }
 
     [Collection("ServiceBase")]
     public class InMemoryResourceStoreTests
@@ -17,7 +37,7 @@ namespace ServiceBase.UnitTests
         [Fact]
         public async Task GetAllCulturesAsync()
         {
-            IResourceStore store = new InMemoryResourceStore();
+            IResourceStore store = new InMemoryResourceStore(new LoggerMock<InMemoryResourceStore>());
 
             await store.WriteAsync("de-DE", "Group1", "Key1", "GermanValue1");
             await store.WriteAsync("de-DE", "Group1", "Key2", "GermanValue2");
