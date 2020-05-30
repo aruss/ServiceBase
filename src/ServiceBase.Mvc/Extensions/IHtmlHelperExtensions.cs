@@ -6,7 +6,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
     using System;
     using System.Linq.Expressions;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
     /// <summary>
     /// <see cref="IHtmlHelper"/> extension methods.
@@ -28,8 +28,12 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             this IHtmlHelper<TModel> htmlHelper,
             Expression<Func<TModel, TProperty>> expression)
         {
+            ModelExpressionProvider expressionProvider =
+                htmlHelper.ViewContext.HttpContext.RequestServices
+                .GetService(typeof(ModelExpressionProvider)) as ModelExpressionProvider;
+
             string expressionText =
-                ExpressionHelper.GetExpressionText(expression);
+                expressionProvider.GetExpressionText(expression);
 
             string fullHtmlFieldName = htmlHelper.ViewContext.ViewData
                 .TemplateInfo.GetFullHtmlFieldName(expressionText);

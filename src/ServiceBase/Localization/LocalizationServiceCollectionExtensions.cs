@@ -11,6 +11,7 @@ namespace ServiceBase.Localization
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Localization;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -45,11 +46,11 @@ namespace ServiceBase.Localization
             LocalizationOptions localizationOptions = serviceProvider
                 .GetRequiredService<IOptions<LocalizationOptions>>().Value;
 
-            IHostingEnvironment hostingEnvironment = serviceProvider
-                  .GetRequiredService<IHostingEnvironment>();
+            IHostEnvironment hostEnvironment = serviceProvider
+                  .GetRequiredService<IHostEnvironment>();
 
             string resourcePath = localizationOptions.ResourcesPath
-                .GetFullPath(hostingEnvironment.ContentRootPath);
+                .GetFullPath(hostEnvironment.ContentRootPath);
 
             logger.LogDebug("Loading resources from {0}", resourcePath); 
 

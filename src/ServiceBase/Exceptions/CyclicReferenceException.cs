@@ -1,4 +1,7 @@
-﻿namespace ServiceBase.Exceptions
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Exceptions
 {
     using System;
 
@@ -7,11 +10,13 @@
     {
         #region Public Properties
 
-        public  object Source
+#pragma warning disable CS0114
+        public object Source
         {
             get;
             set;
         }
+#pragma warning restore CS0114
 
         #endregion
 

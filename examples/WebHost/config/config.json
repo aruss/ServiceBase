@@ -1,0 +1,48 @@
+﻿{
+  "Host": {
+    "Urls": "http://*:5000",
+    "UseIISIntegration": false
+  },
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Verbose",
+      "Override": {
+        "System": "Information",
+        "Microsoft": "Information",
+        "Microsoft.AspNetCore":  "Warning"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "RollingFile",
+        "Args": {
+          "formatter": "Serilog.Formatting.Json.JsonFormatter, Serilog",
+          "pathFormat": "./logs/webhost.json",
+          "fileSizeLimitBytes": 1234567
+        }
+      }
+    ],
+    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "RemoteIpAddress" ]
+  },
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  },
+  "App": {
+
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "PluginBConnection": "Server=(localdb)\\mssqllocaldb;Database=DotNetCore_Plugins_PoC1;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+  "Plugins": [
+    "PluginA",
+    "PluginB",
+    "PluginC"
+  ]
+}

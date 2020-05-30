@@ -7,22 +7,30 @@ namespace ServiceBase.Plugins
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
+    /// <summary>
+    /// Contains <see cref="IServiceCollection"/> extenion methods.
+    /// </summary>
     public static partial class IServiceCollectionExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceCollection"></param>
+        /// <param name="logger"></param>
         public static void AddPlugins(
             this IServiceCollection serviceCollection,
-            ILogger logger = null)
+            ILogger logger)
         {
             IEnumerable<IConfigureServicesAction> actions =
                 PluginAssembyLoader.GetServices<IConfigureServicesAction>();
 
             foreach (IConfigureServicesAction action in actions)
             {
-                logger?.LogInformation(
-                    "Executing ConfigureServices action \"{0}\"",
+                logger.LogInformation(
+                    "Executing IConfigureServicesAction action \"{0}\"",
                     action.GetType().FullName);
 
-                action.Execute(serviceCollection);
+                action.Execute(serviceCollection, logger);
             }
         }
     }

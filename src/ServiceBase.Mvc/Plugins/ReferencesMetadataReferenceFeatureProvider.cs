@@ -13,6 +13,7 @@ namespace ServiceBase.Plugins
     using Microsoft.CodeAnalysis;
     using Microsoft.Extensions.DependencyModel;
 
+    /*
     // Found at https://github.com/dotnet/core-setup/issues/2981#issuecomment-322572374
     public class ReferencesMetadataReferenceFeatureProvider :
         IApplicationFeatureProvider<MetadataReferenceFeature>
@@ -91,4 +92,5 @@ namespace ServiceBase.Plugins
             }
         }
     }
+    */
 }

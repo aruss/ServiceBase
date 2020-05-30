@@ -12,6 +12,44 @@ namespace ServiceBase.Plugins
     using Microsoft.Extensions.Logging;
     using ServiceBase.Extensions;
 
+    public class PluginLoadContext : AssemblyLoadContext
+    {
+        private readonly AssemblyDependencyResolver _resolver;
+
+        public PluginLoadContext(string pluginPath)
+        {
+            this._resolver = new AssemblyDependencyResolver(pluginPath);
+        }
+
+        protected override Assembly Load(AssemblyName assemblyName)
+        {
+            string assemblyPath =
+                this._resolver.ResolveAssemblyToPath(assemblyName);
+
+            if (assemblyPath != null)
+            {
+                return LoadFromAssemblyPath(assemblyPath);
+            }
+
+            return null;
+        }
+
+        protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+        {
+            string libraryPath =
+                this._resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+
+            if (libraryPath != null)
+            {
+                return this.LoadUnmanagedDllFromPath(libraryPath);
+            }
+
+            return IntPtr.Zero;
+        }
+    }
+
+
+
     public static class PluginAssembyLoader
     {
         public static List<Assembly> Assemblies { get; }

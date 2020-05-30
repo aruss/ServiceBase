@@ -30,10 +30,9 @@ namespace ServiceBase.Localization
             });
 
             return services.AddMvc(mvcOptions =>
-            {
-                setupAction?.Invoke(mvcOptions);
-            })
-               .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                {
+                    setupAction?.Invoke(mvcOptions);
+                })
                .AddViewLocalization()
                .AddDataAnnotationsLocalization();
         }

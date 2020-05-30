@@ -1,11 +1,11 @@
-﻿namespace ServiceBase.Mvc
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Mvc
 {
     using System;
-    using System.Buffers;
-    using System.Linq;
     using Microsoft.AspNetCore.Mvc.Formatters;
-    using Newtonsoft.Json;
-    using ServiceBase.Json;
+
 
     /// <summary>
     /// <see cref="FormatterCollection{IOutputFormatter}"/> extension methods.
@@ -16,10 +16,11 @@
         /// Adds custom configured <see cref="JsonOutputFormatter"/>.
         /// </summary>
         /// <param name="outputFormatters"></param>
+        [Obsolete()]
         public static void AddDefaultJsonOutputFormatter(
             this FormatterCollection<IOutputFormatter> outputFormatters)
         {
-            IOutputFormatter outputFormatter = outputFormatters
+            /*IOutputFormatter outputFormatter = outputFormatters
                 .FirstOrDefault(c => c is JsonOutputFormatter);
 
             if (outputFormatter != null)
@@ -30,6 +31,7 @@
             outputFormatters.Add(new JsonOutputFormatter(
                 new JsonSerializerSettings().SetupDefaults(),
                 ArrayPool<Char>.Shared));
+            */
         }
     }
 }

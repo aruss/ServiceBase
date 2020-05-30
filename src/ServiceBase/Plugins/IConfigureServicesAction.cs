@@ -4,9 +4,10 @@
 namespace ServiceBase.Plugins
 {
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
 
     public interface IConfigureServicesAction
     {
-        void Execute(IServiceCollection serviceCollection);
+        void Execute(IServiceCollection serviceCollection, ILogger logger);
     }
 }

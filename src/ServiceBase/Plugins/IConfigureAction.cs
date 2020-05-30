@@ -4,9 +4,10 @@
 namespace ServiceBase.Plugins
 {
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.Extensions.Logging;
 
     public interface IConfigureAction
     {
-        void Execute(IApplicationBuilder applicationBuilder);
+        void Execute(IApplicationBuilder applicationBuilder, ILogger logger);
     }
 }

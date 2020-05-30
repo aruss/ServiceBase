@@ -46,7 +46,7 @@ namespace ServiceBase
 
             if (EnironmentUtils.IsDevelopmentEnvironment())
             {
-                configBuilder.AddUserSecrets<TStartup>();
+                //configBuilder.AddUserSecrets<TStartup>();
             }
 
             configBuilder.AddEnvironmentVariables();

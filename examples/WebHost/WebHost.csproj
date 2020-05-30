@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="logs\**" />
+    <Compile Remove="Plugins\**" />
+    <Content Remove="logs\**" />
+    <Content Remove="Plugins\**" />
+    <EmbeddedResource Remove="logs\**" />
+    <EmbeddedResource Remove="Plugins\**" />
+    <None Remove="logs\**" />
+    <None Remove="Plugins\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ServiceBase.Mvc\ServiceBase.Mvc.csproj" />
+    <ProjectReference Include="..\..\src\ServiceBase\ServiceBase.csproj" />
+  </ItemGroup>
+
+
+
+</Project>

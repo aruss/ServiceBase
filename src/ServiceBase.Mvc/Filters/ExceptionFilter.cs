@@ -1,10 +1,14 @@
-﻿namespace ServiceBase.Mvc.Filters
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Mvc.Filters
 {
-    using System;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using System;
 
     public class ExceptionFilter : IExceptionFilter, IDisposable
     {
@@ -13,13 +17,13 @@
 
         public ExceptionFilter(
             ILogger<ExceptionFilter> logger,
-            IHostingEnvironment hostingEnvironment)
+            IHostEnvironment hostEnvironment)
         {
             this._logger = logger;
 
             this._includeStackTrace =
-                hostingEnvironment.IsDevelopment() ||
-                hostingEnvironment.IsEnvironment("Test");
+                hostEnvironment.IsDevelopment() ||
+                hostEnvironment.IsEnvironment("Test");
         }
 
         public void Dispose()

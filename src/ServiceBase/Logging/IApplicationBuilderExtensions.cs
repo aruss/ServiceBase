@@ -5,6 +5,8 @@ namespace ServiceBase.Logging
 {
     using System.Net;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
 
     public static partial class IApplicationBuilderExtensions
     {

@@ -8,18 +8,17 @@ namespace ServiceBase
     using System.Threading;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyModel;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using Serilog;
 
     public class WebHostWrapper
     {
         private static CancellationTokenSource
-              cancelTokenSource = new CancellationTokenSource();
+            cancelTokenSource = new CancellationTokenSource();
 
-        public static void Start<TStartup>(
-            string[] args,
-            Action<IServiceCollection> configureServices = null)
-             where TStartup : class
+        private static string GetContentRoot()
         {
             string contentRoot = EnironmentUtils.GetContentRoot();
 
@@ -27,70 +26,67 @@ namespace ServiceBase
             {
                 FileAttributes attr = File.GetAttributes(contentRoot);
 
-                if ((attr & FileAttributes.Directory) !=
-                    FileAttributes.Directory)
+                if ((attr & FileAttributes.Directory) != FileAttributes.Directory)
                 {
                     throw new ArgumentException(
                         $"Given Content root \"{contentRoot}\"is not a valid directory");
                 }
-            }
-            else
-            {
-                contentRoot = Directory.GetCurrentDirectory();
+
+                return contentRoot;
             }
 
-            WebHostWrapper.Start<TStartup>(
-                args,
-                contentRoot,
-                configureServices);
+            return Directory.GetCurrentDirectory();
         }
 
-        /// <summary>
-        /// Use this if you start identitybase from custom project 
-        /// </summary>
-        /// <typeparam name="TStartup"></typeparam>
-        /// <param name="args"></param>
-        /// <param name="basePath"></param>
-        public static void Start<TStartup>(
-            string[] args,
-            string basePath,
-            Action<IServiceCollection> configureServices = null)
-            where TStartup : class
+        public static int Start<TStartup>(string[] args) where TStartup : class
         {
-            IConfiguration config = ConfigUtils
-                .LoadConfig<TStartup>(args, basePath);
+            string contentRoot = WebHostWrapper.GetContentRoot();
 
-            // Use in case you changed the example data in ExampleData.cs file
-            // Configuration.ExampleDataWriter.Write(config); 
+            IConfiguration config = ConfigUtils.LoadConfig<TStartup>(args, contentRoot);
 
-            IConfigurationSection configHost = config.GetSection("Host");
+            Log.Logger = new LoggerConfiguration()
+               .ReadFrom.Configuration(
+                   config,
+                   "Serilog",
+                   DependencyContext.Default
+               )
+               .Enrich.FromLogContext()
+               .CreateLogger();
 
-            IWebHostBuilder hostBuilder = new WebHostBuilder()
-                .UseKestrel()
-                .UseUrls(configHost.GetValue<string>("Urls"))
-                .UseContentRoot(basePath)
-                .UseConfiguration(config)
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging.AddSerilog(hostingContext.Configuration);
-                })
-                .UseStartup<TStartup>();
-
-            if (configureServices != null)
+            try
             {
-                hostBuilder = hostBuilder.ConfigureServices(configureServices);
-            }
+                Log.Information("Starting web host");
 
-            if (configHost.GetValue<bool>("UseIISIntegration"))
+                IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
+                    .ConfigureLogging(config =>
+                    {
+                        config.ClearProviders();
+                    })
+                    .ConfigureWebHostDefaults(webBuilder =>
+                    {
+                        webBuilder
+                            .UseStartup<TStartup>()
+                            .UseContentRoot(contentRoot)
+                            .UseConfiguration(config);
+                    })
+                    .UseSerilog();
+
+                hostBuilder
+                    .Build()
+                    .RunAsync(WebHostWrapper.cancelTokenSource.Token)
+                    .Wait();
+
+                return 0;
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine("Enabling IIS Integration");
-                hostBuilder = hostBuilder.UseIISIntegration();
+                Log.Fatal(ex, "Host terminated unexpectedly");
+                return 1;
             }
-
-            hostBuilder
-                .Build()
-                .RunAsync(WebHostWrapper.cancelTokenSource.Token)
-                .Wait();
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static void Restart()
