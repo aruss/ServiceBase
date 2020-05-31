@@ -48,8 +48,6 @@ namespace ServiceBase.Plugins
         }
     }
 
-
-
     public static class PluginAssembyLoader
     {
         public static List<Assembly> Assemblies { get; }
@@ -65,9 +63,9 @@ namespace ServiceBase.Plugins
         /// <param name="whiteList">List of plugin names that should be loded,
         /// all other plugins will be ignored.</param>
         public static void LoadAssemblies(
-        string basePath,
-        ILogger logger,
-        IEnumerable<string> whiteList = null)
+            string basePath,
+            ILogger logger,
+            IEnumerable<string> whiteList = null)
         {
             PluginAssembyLoader._logger = logger;
 

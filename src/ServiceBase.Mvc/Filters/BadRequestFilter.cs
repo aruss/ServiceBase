@@ -18,6 +18,10 @@ namespace ServiceBase.Mvc.Filters
                     Error = objResult.Value
                 };
             }
+            else if (context.Result is BadRequestResult result)
+            {
+                context.Result = new BadRequestObjectResult("");
+            }
         }
     }
 }
