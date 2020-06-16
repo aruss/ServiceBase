@@ -24,11 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sendgrid" Version="9.13.1" />
+    <PackageReference Include="Sendgrid" Version="9.16.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ServiceBase\ServiceBase.csproj" >
+    <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>

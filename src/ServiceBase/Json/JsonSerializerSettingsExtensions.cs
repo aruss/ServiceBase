@@ -28,7 +28,7 @@ namespace ServiceBase.Json
             settings.Formatting = Formatting.None;
             settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             settings.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
-
+            
             settings.Converters.Add(
                 new StringEnumConverter { CamelCaseText = true }
             );
