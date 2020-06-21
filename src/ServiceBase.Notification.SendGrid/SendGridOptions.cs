@@ -2,7 +2,8 @@
 {
     public class SendGridOptions
     {
-        public string User { get; set; }
+        public string EmailFrom { get; set; }
+        public string EmailFromName { get; set; }
         public string Key { get; set; }
     }
 }
