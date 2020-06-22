@@ -26,10 +26,12 @@ namespace ServiceBase
             {
                 FileAttributes attr = File.GetAttributes(contentRoot);
 
-                if ((attr & FileAttributes.Directory) != FileAttributes.Directory)
+                if ((attr & FileAttributes.Directory) !=
+                    FileAttributes.Directory)
                 {
                     throw new ArgumentException(
-                        $"Given Content root \"{contentRoot}\"is not a valid directory");
+                        $"Given Content root \"{contentRoot}\"is not a valid directory"
+                    );
                 }
 
                 return contentRoot;
@@ -42,7 +44,8 @@ namespace ServiceBase
         {
             string contentRoot = WebHostWrapper.GetContentRoot();
 
-            IConfiguration config = ConfigUtils.LoadConfig<TStartup>(args, contentRoot);
+            IConfiguration config =
+                ConfigUtils.LoadConfig<TStartup>(args, contentRoot);
 
             Log.Logger = new LoggerConfiguration()
                .ReadFrom.Configuration(

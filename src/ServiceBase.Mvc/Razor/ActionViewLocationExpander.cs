@@ -23,7 +23,8 @@ namespace ServiceBase.Mvc.Razor
 
             if (uiCultureName != null)
             {
-                yield return $"~/Actions/{{1}}/Views/{{0}}.{uiCultureName}.cshtml";
+                yield return
+                    $"~/Actions/{{1}}/Views/{{0}}.{uiCultureName}.cshtml";
             }
 
             yield return "~/Actions/{1}/Views/{0}.cshtml";
@@ -38,17 +39,22 @@ namespace ServiceBase.Mvc.Razor
 
         public void PopulateValues(ViewLocationExpanderContext context)
         {
-            IRequestCultureFeature requestCultureFeature =
-                context.ActionContext.HttpContext.Features.Get<IRequestCultureFeature>();
+            IRequestCultureFeature requestCultureFeature = context
+                .ActionContext
+                .HttpContext
+                .Features
+                .Get<IRequestCultureFeature>();
 
             if (requestCultureFeature != null)
             {
-                CultureInfo culture = requestCultureFeature.RequestCulture.UICulture;
+                CultureInfo culture =
+                    requestCultureFeature.RequestCulture.UICulture;
+
                 context.Values["UiCultureName"] = culture.Name;
             }
             else
             {
-                context.Values["UiCultureName"] = null; 
+                context.Values["UiCultureName"] = null;
             }
         }
     }

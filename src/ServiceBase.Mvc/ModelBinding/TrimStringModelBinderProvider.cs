@@ -18,7 +18,9 @@ namespace ServiceBase.Mvc.ModelBinding
 
         public IModelBinder GetBinder(ModelBinderProviderContext context)
         {
-            return context.Metadata.ModelType == typeof(String) ? binder : null;
+            return context.Metadata.ModelType == typeof(String) ?
+                binder :
+                null;
         }
     }
 }

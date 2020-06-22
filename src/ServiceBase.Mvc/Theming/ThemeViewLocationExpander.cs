@@ -45,8 +45,11 @@ namespace ServiceBase.Mvc.Theming
                     .Replace("./", "~/")
                     .RemoveTrailingSlash();
 
-                this._template1 = $"{basePath}/{{0}}/Views/{{{{1}}}}/{{{{0}}}}.cshtml";
-                this._template2 = $"{basePath}/{{0}}/Views/Shared/{{{{0}}}}.cshtml";
+                this._template1 =
+                    $"{basePath}/{{0}}/Views/{{{{1}}}}/{{{{0}}}}.cshtml";
+
+                this._template2 =
+                    $"{basePath}/{{0}}/Views/Shared/{{{{0}}}}.cshtml";
 
             }
         }
@@ -59,7 +62,8 @@ namespace ServiceBase.Mvc.Theming
 
             FancyComparer comparer = new FancyComparer(themeName);
 
-            foreach (var item in PluginAssembyLoader.PluginInfos.OrderBy(x => x, comparer))
+            foreach (var item in PluginAssembyLoader
+                .PluginInfos.OrderBy(x => x, comparer))
             {
                 yield return String.Format(this._template1, item.Name);
                 yield return String.Format(this._template2, item.Name);

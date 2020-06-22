@@ -17,7 +17,8 @@ namespace ServiceBase.Localization
         public static IApplicationBuilder UseMvcWithCultureRoute(
             this IApplicationBuilder app)
         {
-            return MvcApplicationBuilderExtensions.UseMvcWithCultureRoute(app, null);
+            return MvcApplicationBuilderExtensions
+                .UseMvcWithCultureRoute(app, null);
         }
 
         public static IApplicationBuilder UseMvcWithCultureRoute(
@@ -32,7 +33,8 @@ namespace ServiceBase.Localization
 
                 routes.MapRoute(
                     name: "defaultWithCulture",
-                    template: "{culture:culturecode}/{controller=Home}/{action=Index}/{id?}");
+                    template: "{culture:culturecode}/{controller=Home}/{action=Index}/{id?}"
+                );
 
                 configureRoutes?.Invoke(routes);
             });
@@ -54,7 +56,11 @@ namespace ServiceBase.Localization
                         .DefaultRequestCulture.Culture.Name.ToLower();
 
                     object path = ctx.GetRouteValue("path") ?? string.Empty;
-                    ctx.Response.Redirect($"/{defaultCulture}/{path}".RemoveTrailingSlash());
+
+                    ctx.Response
+                        .Redirect($"/{defaultCulture}/{path}"
+                        .RemoveTrailingSlash());
+
                     return Task.CompletedTask;
                 }));
             });
