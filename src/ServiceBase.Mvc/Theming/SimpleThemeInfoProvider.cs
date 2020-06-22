@@ -1,25 +1,25 @@
-﻿namespace ServiceBase.Mvc.Theming
+﻿// Copyright (c) Russlan Akiev. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace ServiceBase.Mvc.Theming
 {
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Http;
 
-    public class SimpleThemeInfoProvider : IRequestThemeInfoProvider
+    public class SimpleThemeInfoProvider : IThemeInfoProvider
     {
-        private readonly ThemeInfoResult _themeInfoResult;
+        private readonly ThemeInfoResult _themeResult;
 
         public SimpleThemeInfoProvider(string themeName)
         {
-            this._themeInfoResult = new ThemeInfoResult
+            this._themeResult = new ThemeInfoResult
             {
-                DefaultTheme = themeName,
-                RequestTheme = themeName
-            }; 
+                ThemeName = themeName
+            };
         }
 
-        public Task<ThemeInfoResult> DetermineThemeInfoResult(
-            HttpContext httpContext)
+        public Task<ThemeInfoResult> GetThemeInfoResultAsync()
         {
-            return Task.FromResult(this._themeInfoResult); 
+            return Task.FromResult(this._themeResult);
         }
     }
 }

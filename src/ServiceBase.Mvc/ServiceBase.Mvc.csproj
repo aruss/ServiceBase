@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <Compile Remove="Theming\DefaultRequestThemeInfoProvider.cs" />
-    <Compile Remove="Theming\SimpleThemeInfoProvider.cs" />
   </ItemGroup>
 
   <ItemGroup>

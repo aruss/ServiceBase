@@ -14,7 +14,14 @@ namespace WebHost
     using Serilog;
     using ServiceBase.Plugins;
     using ServiceBase.Extensions;
+    using Microsoft.AspNetCore.Mvc.Razor;
+    using ServiceBase.Mvc.Theming;
+    using Microsoft.AspNetCore.Http;
+    using ServiceBase;
+    using Microsoft.AspNetCore.Mvc.Infrastructure;
+    using System.Threading.Tasks;
 
+ 
     public class Startup
     {
         private readonly Microsoft.Extensions.Logging.ILogger _logger;
@@ -23,10 +30,13 @@ namespace WebHost
         private readonly string _pluginsPath;
         private readonly IWebHostEnvironment _environment;
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        public Startup(
+            IConfiguration configuration,
+            IWebHostEnvironment environment
+            )
         {
             this._configuration = configuration;
-            this._environment = environment;
+            this._environment = environment;      
 
             this._applicationOptions = this._configuration.GetSection("App")
                 .Get<ApplicationOptions>() ?? new ApplicationOptions();
@@ -61,7 +71,28 @@ namespace WebHost
         {
             this._logger.LogInformation("Configure services");
 
-            services.AddControllersWithViews();
+            services.AddSingleton<IDateTimeAccessor, DateTimeAccessor>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
+            services
+                .AddControllersWithViews(options =>
+                {
+                    options.EnableEndpointRouting = false;
+                    options.SuppressOutputFormatterBuffering = true;
+                })
+                .AddNewtonsoftJson()
+                .AddRazorRuntimeCompilation(); 
+
+            IThemeInfoProvider provider = new SimpleThemeInfoProvider(this._applicationOptions.ThemeName);
+            services.AddSingleton(provider);
+            services.Configure<RazorViewEngineOptions>(options =>
+            {
+                options.ViewLocationExpanders.Clear();
+                options.ViewLocationExpanders.Add(
+                     new ThemeViewLocationExpander(provider, this._applicationOptions.PluginsPath));
+            });
+
+            services.AddPluginsMvc(this._logger); 
             services.AddPlugins(this._logger);
 
             this._logger.LogInformation("Configure services completed");
@@ -102,6 +133,7 @@ namespace WebHost
             app.UsePluginsStaticFiles(this._pluginsPath);
 
             app.UseRouting();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -112,6 +144,7 @@ namespace WebHost
             });
 
             app.UsePlugins(this._logger);
+            app.UsePluginsMvc(this._logger);
 
             this._logger.LogInformation("Configure application completed");
         }

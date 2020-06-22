@@ -34,7 +34,7 @@
     }
   },
   "App": {
-
+    "ThemeName": "PluginC"
   },
   "AllowedHosts": "*",
   "ConnectionStrings": {

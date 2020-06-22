@@ -5,6 +5,7 @@ namespace WebHost
 {
     public class ApplicationOptions
     {
-        public string PluginsPath { get; set; } = "./Plugins"; 
+        public string PluginsPath { get; set; } = "./Plugins";
+        public string ThemeName { get; set; } = "PluginC"; 
     }
 }
