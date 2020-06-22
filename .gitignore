@@ -201,3 +201,4 @@ FakesAssemblies/
 .DS_STORE
 .build/
 coverage/
+logs/
