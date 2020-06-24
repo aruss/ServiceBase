@@ -12,6 +12,7 @@ namespace ServiceBase
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Serilog;
+    using ServiceBase.Extensions;
 
     public class WebHostWrapper
     {
@@ -67,10 +68,13 @@ namespace ServiceBase
                     })
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
+                        string urls = config["Host:Urls"];
+
                         webBuilder
                             .UseStartup<TStartup>()
                             .UseContentRoot(contentRoot)
-                            .UseConfiguration(config);
+                            .UseConfiguration(config)
+                            .UseUrls(urls.IsPresent() ? urls : "http://*:8080");
                     })
                     .UseSerilog();
 
