@@ -5,12 +5,14 @@ namespace ServiceBase.Extensions
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
     using System.Text.Encodings.Web;
+    using Microsoft.AspNetCore.WebUtilities;
 
     public static partial class StringExtensions
     {
@@ -215,8 +217,9 @@ namespace ServiceBase.Extensions
             return url + query;
         }
 
-        /*[DebuggerStepThrough]
-        public static NameValueCollection ReadQueryStringAsNameValueCollection(this string url)
+        [DebuggerStepThrough]
+        public static NameValueCollection
+            ReadQueryStringAsNameValueCollection(this string url)
         {
             if (url != null)
             {
@@ -233,7 +236,7 @@ namespace ServiceBase.Extensions
             }
 
             return new NameValueCollection();
-        }*/
+        }
 
         [DebuggerStepThrough]
         public static bool IsSecureUrl(this string url)
