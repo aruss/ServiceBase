@@ -15,7 +15,7 @@ namespace ServiceBase.Mvc.Filters
         {
             if (!context.ModelState.IsValid)
             {
-                context.Result =
+                context.Result =    
                     new BadRequestObjectResult(context.ModelState);
             }
         }
