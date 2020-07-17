@@ -54,7 +54,7 @@ namespace ServiceBase.Resources
                         StringComparison.InvariantCultureIgnoreCase));
 
             // TODO: Create message only if debug log level is active
-            this._logger.LogDebug("Found {0} number of resourxes in database",
+            this._logger.LogDebug("Found {0} number of resources in database",
                 result.Count());
 
             return Task.FromResult(result);
