@@ -37,17 +37,10 @@ namespace ServiceBase.Extensions
         {
             if (list == null)
             {
-                return "";
+                return String.Empty; 
             }
 
-            StringBuilder sb = new StringBuilder(100);
-
-            foreach (var element in list)
-            {
-                sb.Append(element + " ");
-            }
-
-            return sb.ToString().Trim();
+            return String.Join(' ', list).Trim(); 
         }
 
         [DebuggerStepThrough]

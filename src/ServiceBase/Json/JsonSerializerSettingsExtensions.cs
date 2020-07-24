@@ -30,7 +30,7 @@ namespace ServiceBase.Json
             settings.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
             
             settings.Converters.Add(
-                new StringEnumConverter { CamelCaseText = true }
+                new StringEnumConverter(new CamelCaseNamingStrategy())
             );
 
             return settings;

@@ -113,8 +113,7 @@ namespace ServiceBase.Extensions
         public static T NextEnum<T>(this Random rnd)
         {
             string[] items = Enum.GetNames(typeof(T));
-            Random r = new Random((int)DateTime.Now.Ticks);
-            string e = items[r.Next(0, items.Length - 1)];
+            string e = items[rnd.Next(0, items.Length - 1)];
 
             return (T)Enum.Parse(typeof(T), e, true);
         }
