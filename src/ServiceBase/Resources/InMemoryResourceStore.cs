@@ -85,7 +85,7 @@ namespace ServiceBase.Resources
             IDictionary<string, string> dictionary,
             string source = null)
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
 
             foreach (KeyValuePair<string, string> item in dictionary)
             {
@@ -117,7 +117,7 @@ namespace ServiceBase.Resources
             string value,
             string source = null)
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
 
             Resource resource = new Resource
             {
