@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Description>SMTP email sender for ServiceBase.Notification.Email</Description>
     <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.8.0" />
+    <PackageReference Include="MailKit" Version="2.9.0" />
   </ItemGroup>
   
   <ItemGroup>

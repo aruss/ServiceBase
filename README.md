@@ -10,7 +10,7 @@ ServiceBase is built against NET Core 3.1 using the RTM tooling that ships with 
 
 ### How to build
 
-* Install [.NET Core 3.1](https://www.microsoft.com/net/download/core#/current)
+* Install [.NET 5](https://www.microsoft.com/net/download/core#/current)
 * Use [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) to build it
 
 ## Documentation

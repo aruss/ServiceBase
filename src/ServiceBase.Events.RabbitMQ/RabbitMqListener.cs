@@ -93,7 +93,7 @@ namespace ServiceBase.Events.RabbitMQ
                 try
                 {
                     TMessage obj = this.serializer
-                        .Deserialize<TMessage>(ea.Body);
+                        .Deserialize<TMessage>(ea.Body.ToArray());
 
                     action.Invoke(obj);
                 }
