@@ -54,9 +54,16 @@ namespace ServiceBase.MagicBytes
                     0,
                     "image/tiff",
                     "tiff",
-                    "Tagged Image File Format")
+                    "Tagged Image File Format"),
 
-                // FIXME: add like 5 million more.
+                new Pattern(
+                    new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2d },
+                    0,
+                    "application/pdf",
+                    "pdf",
+                    "Adobe Portable Document Format"),
+
+                // FIXME: add like 5 million more. https://en.wikipedia.org/wiki/List_of_file_signatures
             }.OrderByDescending(x => x.Signature.Length).ToList();
         }
 
