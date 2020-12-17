@@ -53,6 +53,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginB", "examples\WebHost
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginC", "examples\WebHost\Plugins\PluginC\PluginC.csproj", "{B6EBADC9-C65A-4259-BCA3-D7ECF349BD00}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBase.PayPal", "src\ServiceBase.PayPal\ServiceBase.PayPal.csproj", "{B1DA1784-B874-494F-A8AA-C880290CC9BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{B6EBADC9-C65A-4259-BCA3-D7ECF349BD00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6EBADC9-C65A-4259-BCA3-D7ECF349BD00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6EBADC9-C65A-4259-BCA3-D7ECF349BD00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1DA1784-B874-494F-A8AA-C880290CC9BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1DA1784-B874-494F-A8AA-C880290CC9BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1DA1784-B874-494F-A8AA-C880290CC9BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1DA1784-B874-494F-A8AA-C880290CC9BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +133,7 @@ Global
 		{517C1332-0FB1-47CC-8A15-ABD107242362} = {B8043402-E5E8-41BE-99C5-E8205ADFC291}
 		{6D9A257C-119E-492B-B639-798C5B88AF11} = {B8043402-E5E8-41BE-99C5-E8205ADFC291}
 		{B6EBADC9-C65A-4259-BCA3-D7ECF349BD00} = {B8043402-E5E8-41BE-99C5-E8205ADFC291}
+		{B1DA1784-B874-494F-A8AA-C880290CC9BF} = {7DCFFD6C-8F72-409F-85B2-982726F3F2F3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BED3036E-2E6B-44E8-A5C6-7C4305BF6456}
