@@ -4,6 +4,7 @@
 namespace ServiceBase.Notification.Smtp
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using MailKit.Net.Smtp;
     using Microsoft.Extensions.Logging;
@@ -33,7 +34,21 @@ namespace ServiceBase.Notification.Smtp
                  this.options.EmailFrom :
                  message.EmailFrom));
 
-            mimeMsg.To.Add(new MailboxAddress(message.EmailTo));
+            if (message.EmailTos != null && message.EmailTos.Count() > 0)
+            {
+                mimeMsg.To.AddRange(message.EmailTos.Select(s => new MailboxAddress(s)));
+            }
+
+            if (message.EmailCcs != null && message.EmailCcs.Count() > 0)
+            {
+                mimeMsg.To.AddRange(message.EmailCcs.Select(s => new MailboxAddress(s)));
+            }
+
+            if (message.EmailBccs != null && message.EmailBccs.Count() > 0)
+            {
+                mimeMsg.To.AddRange(message.EmailBccs.Select(s => new MailboxAddress(s)));
+            }
+
             mimeMsg.Subject = message.Subject;
 
             if (!String.IsNullOrWhiteSpace(message.Html))

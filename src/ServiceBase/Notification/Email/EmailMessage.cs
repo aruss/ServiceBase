@@ -3,9 +3,13 @@
 
 namespace ServiceBase.Notification.Email
 {
+    using System.Collections.Generic;
+
     public class EmailMessage
     {
-        public string EmailTo { get; set; }
+        public IEnumerable<string> EmailTos { get; set; }
+        public IEnumerable<string> EmailCcs { get; set; }
+        public IEnumerable<string> EmailBccs { get; set; }
         public string EmailFrom { get; set; }
         public string Subject { get; set; }
         public string Html { get; set; }

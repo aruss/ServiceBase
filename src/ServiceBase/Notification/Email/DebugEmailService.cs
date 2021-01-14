@@ -28,39 +28,47 @@ namespace ServiceBase.Notification.Email
             this._logger = logger;
         }
 
-        /// <summary>
-        /// Sends email
-        /// </summary>
-        /// <param name="templateName">
-        /// Name of template will be used to parse the view data in it.
-        /// </param>
-        /// <param name="email">
-        /// Email address of recipient.
-        /// </param>
-        /// <param name="viewData">
-        /// The model.
-        /// </param>
-        /// <param name="sendHtml">
-        /// If true email will be send as HTML.
-        /// </param>
+        public Task SendEmailAsync(string templateName, string email, object viewData)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SendEmailAsync(
             string templateName,
-            string email,
-            object viewData,
-            bool sendHtml)
+            object model,
+            IEnumerable<string> emailTos = null,
+            IEnumerable<string> emailCcs = null,
+            IEnumerable<string> emailBccs = null)
         {
             IDictionary<string, object> dict =
-                viewData as Dictionary<string, object>;
+               model as Dictionary<string, object>;
 
             if (dict == null)
             {
-                dict = viewData.ToDictionary();
+                dict = model.ToDictionary();
             }
 
             StringBuilder sb = new StringBuilder("Sending E-Mail\n");
 
             sb.AppendLine(String.Format(" Template:\t{0}", templateName));
-            sb.AppendLine(String.Format(" To:\t{0}", email));
+
+            if (emailTos != null && emailTos.Count() > 0)
+            {
+                sb.AppendLine(
+                    String.Format(" Tos:\t{0}", string.Join(", ", emailTos)));
+            }
+
+            if (emailCcs != null && emailCcs.Count() > 0)
+            {
+                sb.AppendLine(
+                    String.Format(" Ccs:\t{0}", string.Join(", ", emailCcs)));
+            }
+      
+            if (emailBccs != null && emailBccs.Count() > 0)
+            {
+                sb.AppendLine(
+                    String.Format(" Bccs:\t{0}", string.Join(", ", emailBccs)));
+            }
 
             foreach (KeyValuePair<string, object> item in dict)
             {
