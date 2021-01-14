@@ -79,7 +79,7 @@
                 options,
                 mockHttpContextAccessor.Object,
                 new DateTimeAccessor(),
-                mockEventSink.Object);
+                new IEventSink[] { mockEventSink.Object });
 
             await eventService.RaiseAsync(fooEvent);
 

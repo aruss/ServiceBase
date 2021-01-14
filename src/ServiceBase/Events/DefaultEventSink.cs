@@ -26,7 +26,7 @@ namespace ServiceBase.Events
         /// <param name="logger">The logger.</param>
         public DefaultEventSink(ILogger<DefaultEventService> logger)
         {
-            _logger = logger;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -36,10 +36,13 @@ namespace ServiceBase.Events
         /// <exception cref="System.ArgumentNullException">evt</exception>
         public virtual Task PersistAsync(Event evt)
         {
-            if (evt == null) throw new ArgumentNullException(nameof(evt));
+            if (evt == null)
+            {
+                throw new ArgumentNullException(nameof(evt));
+            }
 
-            var json = LogSerializer.Serialize(evt);
-            _logger.LogInformation(json);
+            string json = LogSerializer.Serialize(evt);
+            this._logger.LogInformation(json);
 
             return Task.FromResult(0);
         }
