@@ -3,6 +3,7 @@
 
 namespace ServiceBase.Mvc.Filters
 {
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -18,6 +19,11 @@ namespace ServiceBase.Mvc.Filters
                 context.Result =    
                     new BadRequestObjectResult(context.ModelState);
             }
+        }
+
+        public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        {
+            return base.OnActionExecutionAsync(context, next);
         }
     }
 }
