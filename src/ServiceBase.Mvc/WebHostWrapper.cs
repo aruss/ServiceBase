@@ -41,7 +41,10 @@ namespace ServiceBase
             return Directory.GetCurrentDirectory();
         }
 
-        public static int Start<TStartup>(string[] args) where TStartup : class
+        public static int Start<TStartup>(string[] args,
+            Action<IHostBuilder, IConfiguration> configureHostBuilder = null,
+            Action<IWebHostBuilder, IConfiguration> configureWebHostBuilder = null)
+            where TStartup : class
         {
             string contentRoot = WebHostWrapper.GetContentRoot();
 
@@ -62,6 +65,7 @@ namespace ServiceBase
                 Log.Information("Starting web host");
 
                 IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
+                    
                     .ConfigureLogging(config =>
                     {
                         config.ClearProviders();
@@ -75,8 +79,12 @@ namespace ServiceBase
                             .UseContentRoot(contentRoot)
                             .UseConfiguration(config)
                             .UseUrls(urls.IsPresent() ? urls : "http://*:8080");
+
+                        configureWebHostBuilder?.Invoke(webBuilder, config); 
                     })
                     .UseSerilog();
+
+                configureHostBuilder?.Invoke(hostBuilder, config);
 
                 hostBuilder
                     .Build()
