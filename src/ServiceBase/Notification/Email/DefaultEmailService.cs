@@ -3,6 +3,7 @@
 
 namespace ServiceBase.Notification.Email
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
@@ -47,6 +48,13 @@ namespace ServiceBase.Notification.Email
         {
             Resource resource = await this._resourceStore
                 .GetEmailTemplateAsync(culture.Name, templateName);
+
+            if (resource == null)
+            {
+                string msg = $"No resource found for \"{templateName}\"";
+                this._logger.LogError(msg);
+                throw new NullReferenceException(msg); 
+            }
 
             using (TextReader reader = new StringReader(resource.Value))
             {
