@@ -8,11 +8,13 @@ namespace ServiceBase
     using System.Threading;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyModel;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Serilog;
     using ServiceBase.Extensions;
+
 
     public class WebHostWrapper
     {
@@ -41,7 +43,9 @@ namespace ServiceBase
             return Directory.GetCurrentDirectory();
         }
 
-        public static int Start<TStartup>(string[] args) where TStartup : class
+        public static int Start<TStartup>(
+            string[] args,
+            Action<IServiceCollection> configureServices = null) where TStartup : class
         {
             string contentRoot = WebHostWrapper.GetContentRoot();
 
@@ -77,6 +81,11 @@ namespace ServiceBase
                             .UseUrls(urls.IsPresent() ? urls : "http://*:8080");
                     })
                     .UseSerilog();
+
+                if (configureServices != null)
+                {
+                    hostBuilder = hostBuilder.ConfigureServices(configureServices);
+                }
 
                 hostBuilder
                     .Build()
