@@ -9,6 +9,7 @@ namespace ServiceBase.PayPal
     using Microsoft.Extensions.Caching.Memory;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
+    using ServiceBase.Extensions;
     using ServiceBase.PayPal.V2;
 
     public class PayPalService
@@ -68,7 +69,7 @@ namespace ServiceBase.PayPal
         {
             HttpRequestMessage request = this.CreateRequestMessage(
                 HttpMethod.Post,
-                $"{options.BaseUrl}/v1/oauth2/token"
+                $"{options.BaseUrl.RemoveTrailingSlash()}/v1/oauth2/token"
             );
 
             request.AddBasicAuthorizationHeader(
@@ -140,7 +141,7 @@ namespace ServiceBase.PayPal
 
             HttpRequestMessage request = this.CreateRequestMessage(
                 HttpMethod.Post,
-                $"{options.BaseUrl}/v2/checkout/orders"
+                $"{options.BaseUrl.RemoveTrailingSlash()}/v2/checkout/orders"
             );
 
             await this.AddAccessTokenAsync(request, options);
@@ -191,7 +192,7 @@ namespace ServiceBase.PayPal
 
             HttpRequestMessage request = this.CreateRequestMessage(
                 HttpMethod.Post,
-                $"{options.BaseUrl}/v2/checkout/orders/{orderId}/capture"
+                $"{options.BaseUrl.RemoveTrailingSlash()}/v2/checkout/orders/{orderId}/capture"
             );
 
             // Dummy crap, so the content type is set.
