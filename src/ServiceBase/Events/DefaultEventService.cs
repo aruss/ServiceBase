@@ -143,7 +143,7 @@ namespace ServiceBase.Events
 
             evt.ActivityId = httpContext.TraceIdentifier;
             evt.TimeStamp = this._dateTimeAccessor.UtcNow;
-            evt.ProcessId = Environment.ProcessId;
+            evt.ProcessId = Process.GetCurrentProcess().Id;
 
             if (httpContext.Connection.LocalIpAddress != null)
             {
