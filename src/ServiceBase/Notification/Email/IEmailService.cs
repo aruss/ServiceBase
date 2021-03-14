@@ -3,6 +3,7 @@
 
 namespace ServiceBase.Notification.Email
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     public interface IEmailService
@@ -19,13 +20,16 @@ namespace ServiceBase.Notification.Email
         /// <param name="viewData">
         /// The model.
         /// </param>
-        /// <param name="sendHtml">
-        /// If true email will be send as HTML.
-        /// </param>
         Task SendEmailAsync(
             string templateName,
             string email,
-            object viewData,
-            bool sendHtml);
+            object viewData);
+
+        Task SendEmailAsync(
+            string templateName,
+            object model,
+            IEnumerable<string> emailTos = null,
+            IEnumerable<string> emailCcs = null,
+            IEnumerable<string> emailBccs = null);
     }
 }

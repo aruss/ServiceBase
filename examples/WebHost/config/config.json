@@ -13,15 +13,7 @@
       }
     },
     "WriteTo": [
-      { "Name": "Console" },
-      {
-        "Name": "RollingFile",
-        "Args": {
-          "formatter": "Serilog.Formatting.Json.JsonFormatter, Serilog",
-          "pathFormat": "./logs/webhost.json",
-          "fileSizeLimitBytes": 1234567
-        }
-      }
+      { "Name": "Console" }      
     ],
     "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "RemoteIpAddress" ]
   },

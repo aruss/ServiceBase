@@ -10,6 +10,7 @@ namespace ServiceBase.Notification.SendGrid
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using ServiceBase.Notification.Email;
+    using System.Linq;
 
     public class SendGridEmailSender : IEmailSender
     {
@@ -42,11 +43,30 @@ namespace ServiceBase.Notification.SendGrid
                 HtmlContent = message.Html
             };
 
-            sgMessage.AddTo(new EmailAddress(message.EmailTo));
+            if (message.EmailTos != null && message.EmailTos.Count() > 0)
+            {
+                sgMessage.AddTos(message.EmailTos.Select(s => new EmailAddress(s)).ToList());
+            }
+
+            if (message.EmailCcs != null && message.EmailCcs.Count() > 0)
+            {
+                sgMessage.AddCcs(message.EmailCcs.Select(s => new EmailAddress(s)).ToList());
+            }
+
+            if (message.EmailBccs != null && message.EmailBccs.Count() > 0)
+            {
+                sgMessage.AddBccs(message.EmailBccs.Select(s => new EmailAddress(s)).ToList());
+            }
 
             this._logger.LogDebug(sgMessage);
-            Response result = await client.SendEmailAsync(sgMessage);
-            this._logger.LogDebug(result);
+            Response response = await client.SendEmailAsync(sgMessage);
+            this._logger.LogDebug(response);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                string body = await response.Body.ReadAsStringAsync();
+                this._logger.LogError("SendGrid responed with {body}", body);
+            }
         }
     }
 }

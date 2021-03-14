@@ -60,7 +60,7 @@ namespace Microsoft.Extensions.Logging
         [DebuggerStepThrough]
         public static void LogDebug(this ILogger logger, Func<object> func)
         {
-            if (logger.IsEnabled(LogLevel.Critical))
+            if (logger.IsEnabled(LogLevel.Debug))
             {
                 logger.LogCritical(func());
             }
@@ -69,7 +69,7 @@ namespace Microsoft.Extensions.Logging
         [DebuggerStepThrough]
         public static void LogError(this ILogger logger, Func<object> func)
         {
-            if (logger.IsEnabled(LogLevel.Critical))
+            if (logger.IsEnabled(LogLevel.Error))
             {
                 logger.LogCritical(func());
             }

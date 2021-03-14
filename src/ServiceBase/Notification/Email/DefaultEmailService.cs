@@ -32,7 +32,7 @@ namespace ServiceBase.Notification.Email
             this._emailSender = emailSender;
             this._resourceStore = resourceStore;
             this._logger = logger;
-            this._tokenizer = tokenizer; 
+            this._tokenizer = tokenizer;
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace ServiceBase.Notification.Email
             {
                 string msg = $"No resource found for \"{templateName}\"";
                 this._logger.LogError(msg);
-                throw new NullReferenceException(msg); 
+                throw new NullReferenceException(msg);
             }
 
             using (TextReader reader = new StringReader(resource.Value))
@@ -64,7 +64,7 @@ namespace ServiceBase.Notification.Email
                 return (EmailTemplate)serializer.Deserialize(reader);
             }
         }
-              
+
         /// <summary>
         /// Parses the templates and uses layout file.
         /// </summary>
@@ -88,24 +88,32 @@ namespace ServiceBase.Notification.Email
             return html;
         }
 
-        /// <summary>
-        /// Creates and sends <see cref="EmailMessage"/>.
-        /// </summary>
-        /// <param name="templateName">Template name.</param>
-        /// <param name="email">Destination email address.</param>
-        /// <param name="viewData">View Model.</param>
-        /// <param name="sendHtml">Send as HTML.</param>
         public async Task SendEmailAsync(
             string templateName,
             string email,
+            object viewData)
+        {
+            await this.SendEmailAsync(
+                templateName,
+                viewData,
+                new string[] { email }
+            );
+        }
+
+        public async Task SendEmailAsync(
+            string templateName,
             object model,
-            bool sendHtml)
+            IEnumerable<string> emailTos = null,
+            IEnumerable<string> emailCcs = null,
+            IEnumerable<string> emailBccs = null)
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
 
             EmailMessage message = new EmailMessage
             {
-                EmailTo = email
+                EmailTos = emailTos,
+                EmailCcs = emailCcs,
+                EmailBccs = emailBccs
             };
 
             IDictionary<string, object> viewData =
@@ -123,11 +131,17 @@ namespace ServiceBase.Notification.Email
                 message.Subject = await this._tokenizer
                     .Tokenize(template.Subject, viewData);
 
-                message.Html = await this
-                    .Tokenize(template.Html, templateLayout.Html, viewData);
+                if (!String.IsNullOrWhiteSpace(templateLayout.Html))
+                {
+                    message.Html = await this
+                        .Tokenize(template.Html, templateLayout.Html, viewData);
+                }
 
-                message.Text = await this
-                    .Tokenize(template.Text, templateLayout.Text, viewData);
+                if (!String.IsNullOrWhiteSpace(templateLayout.Text))
+                {
+                    message.Text = await this
+                        .Tokenize(template.Text, templateLayout.Text, viewData);
+                }
             }
 
             await this._emailSender.SendEmailAsync(message);

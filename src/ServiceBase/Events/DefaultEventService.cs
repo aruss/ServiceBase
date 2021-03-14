@@ -4,9 +4,11 @@
 namespace ServiceBase.Events
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
+    using System.Linq;
 
     /// <summary>
     /// Default implementation of the event service.
@@ -17,22 +19,22 @@ namespace ServiceBase.Events
         /// <summary>
         /// The options
         /// </summary>
-        private readonly EventOptions eventOptions;
+        private readonly EventOptions _eventOptions;
 
         /// <summary>
         /// The <see cref="IHttpContextAccessor"/>
         /// </summary>
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         /// <summary>
         /// The <see cref="IDateTimeAccessor"/>
         /// </summary>
-        private readonly IDateTimeAccessor dateTimeAccessor;
+        private readonly IDateTimeAccessor _dateTimeAccessor;
 
         /// <summary>
         /// The sink
         /// </summary>
-        private readonly IEventSink eventSink;
+        private readonly IEnumerable<IEventSink> _eventSinks;
 
         /// <summary>
         /// Initializes a new instance of the
@@ -45,12 +47,24 @@ namespace ServiceBase.Events
             EventOptions eventOptions,
             IHttpContextAccessor httpContextAccessor,
             IDateTimeAccessor dateTimeAccessor,
-            IEventSink eventSink)
+            IEnumerable<IEventSink> eventSinks)
         {
-            this.eventOptions = eventOptions;
-            this.httpContextAccessor = httpContextAccessor;
-            this.dateTimeAccessor = dateTimeAccessor;
-            this.eventSink = eventSink;
+            this._eventOptions = eventOptions ??
+                throw new ArgumentNullException(nameof(eventOptions));
+
+            this._httpContextAccessor = httpContextAccessor ??
+                throw new ArgumentNullException(nameof(httpContextAccessor));
+
+            this._dateTimeAccessor = dateTimeAccessor ??
+                throw new ArgumentNullException(nameof(dateTimeAccessor));
+
+            this._eventSinks = eventSinks ??
+                throw new ArgumentNullException(nameof(eventSinks)); 
+
+            if (!this._eventSinks.Any())
+            {
+                throw new ApplicationException("Requres at least one event sink");
+            }
         }
 
         /// <summary>
@@ -61,12 +75,20 @@ namespace ServiceBase.Events
         /// <exception cref="System.ArgumentNullException">evt</exception>
         public async Task RaiseAsync(Event evt)
         {
-            if (evt == null) throw new ArgumentNullException("evt");
+            if (evt == null)
+            {
+                throw new ArgumentNullException(nameof(evt));
+            }
 
             if (this.CanRaiseEvent(evt))
             {
                 await this.PrepareEventAsync(evt);
-                await this.eventSink.PersistAsync(evt);
+
+                // TODO: run it parallel 
+                foreach (var sink in this._eventSinks)
+                {
+                    await sink.PersistAsync(evt);
+                }
             }
         }
 
@@ -81,16 +103,16 @@ namespace ServiceBase.Events
             switch (evtType)
             {
                 case EventTypes.Failure:
-                    return this.eventOptions.RaiseFailureEvents;
+                    return this._eventOptions.RaiseFailureEvents;
 
                 case EventTypes.Information:
-                    return this.eventOptions.RaiseInformationEvents;
+                    return this._eventOptions.RaiseInformationEvents;
 
                 case EventTypes.Success:
-                    return this.eventOptions.RaiseSuccessEvents;
+                    return this._eventOptions.RaiseSuccessEvents;
 
                 case EventTypes.Error:
-                    return this.eventOptions.RaiseErrorEvents;
+                    return this._eventOptions.RaiseErrorEvents;
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -117,11 +139,11 @@ namespace ServiceBase.Events
         /// <returns></returns>
         protected virtual async Task PrepareEventAsync(Event evt)
         {
-            HttpContext httpContext = this.httpContextAccessor.HttpContext;
+            HttpContext httpContext = this._httpContextAccessor.HttpContext;
 
             evt.ActivityId = httpContext.TraceIdentifier;
-            evt.TimeStamp = this.dateTimeAccessor.UtcNow;
-            evt.ProcessId = Process.GetCurrentProcess().Id;
+            evt.TimeStamp = this._dateTimeAccessor.UtcNow;
+            evt.ProcessId = Environment.ProcessId;
 
             if (httpContext.Connection.LocalIpAddress != null)
             {

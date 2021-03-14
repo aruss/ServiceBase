@@ -37,10 +37,10 @@ namespace ServiceBase.Extensions
         {
             if (list == null)
             {
-                return String.Empty; 
+                return String.Empty;
             }
 
-            return String.Join(' ', list).Trim(); 
+            return String.Join(' ', list).Trim();
         }
 
         [DebuggerStepThrough]
@@ -192,6 +192,26 @@ namespace ServiceBase.Extensions
         }
 
         [DebuggerStepThrough]
+        public static string AddQueryString(this string url, object args)
+        {
+            var dict = args
+                .ToDictionary()
+                .Where(c => c.Value != null);
+
+            if (dict != null && dict.Count() > 0)
+            {
+                string queryString = dict
+                    .ToDictionary(pair => pair.Key, pair => pair.Value.ToString())
+                    .ToNameValueCollection()
+                    .ToQueryString();
+
+                return url.AddQueryString(queryString);
+            }
+
+            return url;
+        }
+
+        [DebuggerStepThrough]
         public static string AddQueryString(
             this string url, string name, string value)
         {
@@ -234,7 +254,7 @@ namespace ServiceBase.Extensions
         [DebuggerStepThrough]
         public static bool IsSecureUrl(this string url)
         {
-            return url.StartsWith("https://"); 
+            return url.StartsWith("https://");
         }
 
         [DebuggerStepThrough]

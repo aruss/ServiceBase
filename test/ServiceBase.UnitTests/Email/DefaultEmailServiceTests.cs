@@ -14,6 +14,7 @@ namespace ServiceBase.UnitTests
     using ServiceBase.Notification.Email;
     using ServiceBase.Resources;
     using Xunit;
+    using System.Linq;
 
     //[Collection("ServiceBase")]
     public class DefaultEmailServiceTests
@@ -62,7 +63,7 @@ namespace ServiceBase.UnitTests
                 {
                     Assert.NotNull(emailMessage);
 
-                    Assert.Equal(email, emailMessage.EmailTo);
+                    Assert.Equal(email, emailMessage.EmailTos.ElementAt(0));
 
                     string subject = $"Subject {templateName} {expectedCulture} Foo";
                     Assert.Equal(subject, emailMessage.Subject);
@@ -73,7 +74,7 @@ namespace ServiceBase.UnitTests
                     string text = $"Text LayoutStart {expectedCulture} Text {templateName} {expectedCulture} Foo Text LayoutEnd {expectedCulture}";
                     Assert.Equal(text, emailMessage.Text);
 
-                    return Task.FromResult(0); 
+                    return Task.FromResult(0);
                 }));
 
             NullLogger<DefaultEmailService> logger =
@@ -101,11 +102,11 @@ namespace ServiceBase.UnitTests
                         Culture = tplCulture,
                         Key = tplKey,
                         Value = $"HTML LayoutStart {expectedCulture} Html {templateName} {expectedCulture} Foo HTML LayoutEnd {expectedCulture}"
-                    }); 
-                })); 
+                    });
+                }));
 
-            
-            
+
+
             DefaultEmailService emailService = new DefaultEmailService(
                 options,
                 emailSender.Object,
@@ -124,7 +125,7 @@ namespace ServiceBase.UnitTests
                 new CultureInfo(culture, false);
 
             Thread.CurrentThread.CurrentUICulture =
-                new CultureInfo(culture, false); 
+                new CultureInfo(culture, false);
 
             CultureInfo.CurrentCulture.ClearCachedData();
             CultureInfo.CurrentUICulture.ClearCachedData();
@@ -132,9 +133,9 @@ namespace ServiceBase.UnitTests
             // Send email 
             await emailService.SendEmailAsync(
                 templateName,
-                email,
                 model,
-                true);
+                new string[] { email }
+            );
 
             // Reset UI Culture
             Thread.CurrentThread.CurrentCulture = originalCulture;
