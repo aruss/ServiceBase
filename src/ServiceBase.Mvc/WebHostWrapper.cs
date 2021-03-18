@@ -18,8 +18,9 @@ namespace ServiceBase
 
         public static void Start<TStartup>(
             string[] args,
-            Action<IServiceCollection> configureServices = null)
-             where TStartup : class
+            Action<IServiceCollection> configureServices = null,
+            Action<IWebHostBuilder> configureBuilder = null)
+            where TStartup : class
         {
             string contentRoot = EnironmentUtils.GetContentRoot();
 
@@ -42,7 +43,8 @@ namespace ServiceBase
             WebHostWrapper.Start<TStartup>(
                 args,
                 contentRoot,
-                configureServices);
+                configureServices,
+                configureBuilder);
         }
 
         /// <summary>
@@ -54,7 +56,8 @@ namespace ServiceBase
         public static void Start<TStartup>(
             string[] args,
             string basePath,
-            Action<IServiceCollection> configureServices = null)
+            Action<IServiceCollection> configureServices = null,
+            Action<IWebHostBuilder> configureBuilder = null)
             where TStartup : class
         {
             IConfiguration config = ConfigUtils
@@ -79,6 +82,11 @@ namespace ServiceBase
             if (configureServices != null)
             {
                 hostBuilder = hostBuilder.ConfigureServices(configureServices);
+            }
+
+            if (configureBuilder != null)
+            {
+                configureBuilder(hostBuilder); 
             }
 
             if (configHost.GetValue<bool>("UseIISIntegration"))
