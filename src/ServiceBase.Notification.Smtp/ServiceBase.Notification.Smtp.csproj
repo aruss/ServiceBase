@@ -24,10 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.11.1" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
