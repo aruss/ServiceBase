@@ -33,11 +33,12 @@ namespace ServiceBase.Notification.Smtp
         {
             var hasText = !string.IsNullOrWhiteSpace(message.Text);
             var hasHtml = !string.IsNullOrWhiteSpace(message.Html);
+            var from = message.EmailFrom ?? this._options.EmailFrom;
 
             // validate message
             if ((!hasText && !hasHtml) ||
                 string.IsNullOrWhiteSpace(message.Subject) ||
-                string.IsNullOrWhiteSpace(message.EmailFrom) ||
+                string.IsNullOrWhiteSpace(from) ||
                 string.IsNullOrWhiteSpace(message.EmailTo))
             {
                 this._logger.LogError("Invalid EmailMessage");
@@ -58,7 +59,7 @@ namespace ServiceBase.Notification.Smtp
             {
                 using (var mail = new MailMessage())
                 {
-                    mail.From = new MailAddress(message.EmailFrom);
+                    mail.From = new MailAddress(from);
                     mail.Subject = message.Subject;
                     mail.BodyEncoding = Encoding.UTF8;
                     mail.SubjectEncoding = Encoding.UTF8;
