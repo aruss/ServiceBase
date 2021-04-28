@@ -12,7 +12,6 @@
     <tags>dotnet dotnet-core smtp email</tags>
     <dependencies>
       <group targetFramework=".NETCoreApp2.2">
-        <dependency id="MailKit" version="2.11.1" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
