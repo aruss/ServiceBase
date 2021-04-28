@@ -3,103 +3,115 @@
 
 namespace ServiceBase.Notification.Smtp
 {
-    using System;
-    using System.Linq;
+    using System.Net;
+    using System.Net.Mail;
+    using System.Net.Mime;
+    using System.Text;
     using System.Threading.Tasks;
-    using MailKit.Net.Smtp;
     using Microsoft.Extensions.Logging;
-    using MimeKit;
-    using MimeKit.Text;
     using ServiceBase.Notification.Email;
+    using System.Linq;
 
     public class SmtpEmailSender : IEmailSender
     {
-        private readonly SmtpOptions options;
-        private readonly ILogger<SmtpEmailSender> logger;
+        private readonly SmtpOptions _options;
+        private readonly ILogger<SmtpEmailSender> _logger;
 
         public SmtpEmailSender(
             SmtpOptions options,
             ILogger<SmtpEmailSender> logger)
         {
-            this.logger = logger;
-            this.options = options;
+            this._logger = logger;
+            this._options = options;
         }
 
+        /// <summary>
+        /// Sends email via <see cref="SmtpClient"/>
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task SendEmailAsync(EmailMessage message)
         {
-            MimeMessage mimeMsg = new MimeMessage();
+            var hasText = !string.IsNullOrWhiteSpace(message.Text);
+            var hasHtml = !string.IsNullOrWhiteSpace(message.Html);
 
-            mimeMsg.From.Add(new MailboxAddress(
-                 String.IsNullOrWhiteSpace(message.EmailFrom) ?
-                 this.options.EmailFrom :
-                 message.EmailFrom));
-
-            if (message.EmailTos != null && message.EmailTos.Count() > 0)
+            // validate message
+            if ((!hasText && !hasHtml) ||
+                string.IsNullOrWhiteSpace(message.Subject) ||
+                string.IsNullOrWhiteSpace(message.EmailFrom) ||
+                !message.EmailTos.Any())
             {
-                mimeMsg.To.AddRange(message.EmailTos.Select(s => new MailboxAddress(s)));
+                this._logger.LogError("Invalid EmailMessage");
+                return;
             }
 
-            if (message.EmailCcs != null && message.EmailCcs.Count() > 0)
+            using (var client = new SmtpClient()
             {
-                mimeMsg.To.AddRange(message.EmailCcs.Select(s => new MailboxAddress(s)));
-            }
-
-            if (message.EmailBccs != null && message.EmailBccs.Count() > 0)
+                Host = this._options.Host,
+                Port = this._options.Port,
+                UseDefaultCredentials = false,
+                EnableSsl = this._options.UseSsl,
+                Credentials = new NetworkCredential(
+                this._options.UserName,
+                this._options.Password
+            )
+            })
             {
-                mimeMsg.To.AddRange(message.EmailBccs.Select(s => new MailboxAddress(s)));
-            }
-
-            mimeMsg.Subject = message.Subject;
-
-            if (!String.IsNullOrWhiteSpace(message.Html))
-            {
-                mimeMsg.Body = new TextPart(TextFormat.Html)
+                using (var mail = new MailMessage())
                 {
-                    Text = message.Html
-                };
-            }
-            else if (!String.IsNullOrWhiteSpace(message.Text))
-            {
-                mimeMsg.Body = new TextPart(TextFormat.Text)
-                {
-                    Text = message.Text
-                };
-            }
+                    mail.From = new MailAddress(message.EmailFrom);
+                    mail.Subject = message.Subject;
+                    mail.BodyEncoding = Encoding.UTF8;
+                    mail.SubjectEncoding = Encoding.UTF8;
 
-            using (var client = new SmtpClient())
-            {
-#if DEBUG
-                // For demo-purposes, accept all SSL certificates (in case
-                // the server supports STARTTLS)
-                client.ServerCertificateValidationCallback =
-                    (s, c, h, e) => true;
-#endif
+                    foreach (var item in message.EmailTos)
+                    {
+                        mail.To.Add(new MailAddress(item));
+                    }
 
-                client.Connect(
-                    this.options.Host,
-                    this.options.Port,
-                    this.options.UseSsl
-                );
+                    foreach (var item in message.EmailCcs)
+                    {
+                        mail.CC.Add(new MailAddress(item));
+                    }
 
-                // Note: since we don't have an OAuth2 token, disable
-                // the XOAUTH2 authentication mechanism.
-                client.AuthenticationMechanisms.Remove("XOAUTH2");
+                    foreach (var item in message.EmailBccs)
+                    {
+                        mail.Bcc.Add(new MailAddress(item));
+                    }
 
-                // Note: only needed if the SMTP server requires authentication
-                if (!String.IsNullOrWhiteSpace(this.options.UserName) &&
-                    !String.IsNullOrWhiteSpace(this.options.Password))
-                {
-                    client.Authenticate(
-                        this.options.UserName,
-                        this.options.Password
-                    );
+                    // has only text 
+                    if (hasText && !hasHtml)
+                    {
+                        mail.Body = message.Text;
+                    }
+                    // has only html
+                    else if (hasHtml && !hasText)
+                    {
+                        mail.Body = message.Html;
+                        mail.IsBodyHtml = true;
+                    }
+                    // has both
+                    else
+                    {
+                        mail.Body = message.Text;
+
+                        AlternateView htmlView = AlternateView
+                          .CreateAlternateViewFromString(message.Html);
+
+                        htmlView.ContentType = new ContentType("text/html");
+                        mail.AlternateViews.Add(htmlView);
+                    }
+
+                    try
+                    {
+                        client.Send(mail);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        this._logger.LogError(ex);
+                    }
                 }
-
-                client.Send(mimeMsg);
-                client.Disconnect(true);
             }
-
-            await Task.CompletedTask; 
         }
     }
 }
