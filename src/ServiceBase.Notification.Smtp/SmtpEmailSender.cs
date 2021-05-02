@@ -90,11 +90,12 @@ namespace ServiceBase.Notification.Smtp
 
                     try
                     {
+                        this._logger.LogDebug("Sending email via SMTP sender");
                         client.Send(mail);
                     }
                     catch (System.Exception ex)
                     {
-                        this._logger.LogError(ex);
+                        this._logger.LogError(ex, "Error while sending mail message via SMTP sender");
                     }
                 }
             }
