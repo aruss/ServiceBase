@@ -3,6 +3,7 @@
 
 namespace ServiceBase.Notification.Smtp
 {
+    using System.Linq;
     using System.Net;
     using System.Net.Mail;
     using System.Net.Mime;
@@ -10,7 +11,6 @@ namespace ServiceBase.Notification.Smtp
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
     using ServiceBase.Notification.Email;
-    using System.Linq;
 
     public class SmtpEmailSender : IEmailSender
     {
@@ -32,9 +32,9 @@ namespace ServiceBase.Notification.Smtp
         /// <returns></returns>
         public async Task SendEmailAsync(EmailMessage message)
         {
-            var hasText = !string.IsNullOrWhiteSpace(message.Text);
-            var hasHtml = !string.IsNullOrWhiteSpace(message.Html);
-            var from = message.EmailFrom ?? this._options.EmailFrom;
+            bool hasText = !string.IsNullOrWhiteSpace(message.Text);
+            bool hasHtml = !string.IsNullOrWhiteSpace(message.Html);
+            string from = message.EmailFrom ?? this._options.EmailFrom;
 
             // validate message
             if ((!hasText && !hasHtml) ||
@@ -46,7 +46,7 @@ namespace ServiceBase.Notification.Smtp
                 return;
             }
 
-            using (var client = new SmtpClient()
+            using var client = new SmtpClient()
             {
                 Host = this._options.Host,
                 Port = this._options.Port,
@@ -56,68 +56,68 @@ namespace ServiceBase.Notification.Smtp
                 this._options.UserName,
                 this._options.Password
             )
-            })
+            };
+
+            using var mail = new MailMessage();
+
+            mail.From = new MailAddress(from);
+            mail.Subject = message.Subject;
+            mail.BodyEncoding = Encoding.UTF8;
+            mail.SubjectEncoding = Encoding.UTF8;
+
+            foreach (var item in message.EmailTos)
             {
-                using (var mail = new MailMessage())
+                mail.To.Add(new MailAddress(item));
+            }
+
+            if (message.EmailCcs != null)
+            {
+                foreach (var item in message.EmailCcs)
                 {
-                    mail.From = new MailAddress(from);
-                    mail.Subject = message.Subject;
-                    mail.BodyEncoding = Encoding.UTF8;
-                    mail.SubjectEncoding = Encoding.UTF8;
-
-                    foreach (var item in message.EmailTos)
-                    {
-                        mail.To.Add(new MailAddress(item));
-                    }
-
-                    if (message.EmailCcs != null)
-                    {
-                        foreach (var item in message.EmailCcs)
-                        {
-                            mail.CC.Add(new MailAddress(item));
-                        }
-                    }
-
-                    if (message.EmailBccs != null)
-                    {
-                        foreach (var item in message.EmailBccs)
-                        {
-                            mail.Bcc.Add(new MailAddress(item));
-                        }
-                    }
-
-                    // has only text 
-                    if (hasText && !hasHtml)
-                    {
-                        mail.Body = message.Text;
-                    }
-                    // has only html
-                    else if (hasHtml && !hasText)
-                    {
-                        mail.Body = message.Html;
-                        mail.IsBodyHtml = true;
-                    }
-                    // has both
-                    else
-                    {
-                        mail.Body = message.Text;
-
-                        AlternateView htmlView = AlternateView
-                          .CreateAlternateViewFromString(message.Html);
-
-                        htmlView.ContentType = new ContentType("text/html");
-                        mail.AlternateViews.Add(htmlView);
-                    }
-
-                    try
-                    {
-                        client.Send(mail);
-                    }
-                    catch (System.Exception ex)
-                    {
-                        this._logger.LogError(ex);
-                    }
+                    mail.CC.Add(new MailAddress(item));
                 }
+            }
+
+            if (message.EmailBccs != null)
+            {
+                foreach (var item in message.EmailBccs)
+                {
+                    mail.Bcc.Add(new MailAddress(item));
+                }
+            }
+
+            // has only text 
+            if (hasText && !hasHtml)
+            {
+                mail.Body = message.Text;
+            }
+            // has only html
+            else if (hasHtml && !hasText)
+            {
+                mail.Body = message.Html;
+                mail.IsBodyHtml = true;
+            }
+            // has both
+            else
+            {
+                mail.Body = message.Text;
+
+                AlternateView htmlView = AlternateView
+                  .CreateAlternateViewFromString(message.Html);
+
+                htmlView.ContentType = new ContentType("text/html");
+                mail.AlternateViews.Add(htmlView);
+            }
+
+            try
+            {
+                this._logger.LogDebug("Sending email via SMTP sender");
+                client.Send(mail);
+            }
+            catch (System.Exception ex)
+            {
+                this._logger.LogError(ex,
+                    "Error while sending mail message via SMTP sender");
             }
         }
     }
