@@ -28,7 +28,8 @@ namespace ServiceBase.Json
             settings.Formatting = Formatting.None;
             settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             settings.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
-            
+            settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+
             settings.Converters.Add(
                 new StringEnumConverter(new CamelCaseNamingStrategy())
             );
