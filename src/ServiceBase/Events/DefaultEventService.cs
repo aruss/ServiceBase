@@ -5,10 +5,9 @@ namespace ServiceBase.Events
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
-    using System.Linq;
 
     /// <summary>
     /// Default implementation of the event service.
@@ -59,7 +58,7 @@ namespace ServiceBase.Events
                 throw new ArgumentNullException(nameof(dateTimeAccessor));
 
             this._eventSinks = eventSinks ??
-                throw new ArgumentNullException(nameof(eventSinks)); 
+                throw new ArgumentNullException(nameof(eventSinks));
 
             if (!this._eventSinks.Any())
             {
@@ -139,27 +138,35 @@ namespace ServiceBase.Events
         /// <returns></returns>
         protected virtual async Task PrepareEventAsync(Event evt)
         {
-            HttpContext httpContext = this._httpContextAccessor.HttpContext;
-
-            evt.ActivityId = httpContext.TraceIdentifier;
             evt.TimeStamp = this._dateTimeAccessor.UtcNow;
             evt.ProcessId = Environment.ProcessId;
 
-            if (httpContext.Connection.LocalIpAddress != null)
-            {
-                evt.LocalIpAddress = httpContext.Connection
-                    .LocalIpAddress.ToString() + ":" +
-                    httpContext.Connection.LocalPort;
-            }
-            else
-            {
-                evt.LocalIpAddress = "unknown";
-            }
+            HttpContext httpContext = this._httpContextAccessor.HttpContext;
 
-            if (httpContext.Connection.RemoteIpAddress != null)
+            if (httpContext != null)
             {
-                evt.RemoteIpAddress = httpContext.Connection
-                    .RemoteIpAddress.ToString();
+                evt.ActivityId = httpContext.TraceIdentifier;
+
+                if (httpContext.Connection.LocalIpAddress != null)
+                {
+                    evt.LocalIpAddress = httpContext.Connection
+                        .LocalIpAddress.ToString() + ":" +
+                        httpContext.Connection.LocalPort;
+                }
+                else
+                {
+                    evt.LocalIpAddress = "unknown";
+                }
+
+                if (httpContext.Connection.RemoteIpAddress != null)
+                {
+                    evt.RemoteIpAddress = httpContext.Connection
+                        .RemoteIpAddress.ToString();
+                }
+                else
+                {
+                    evt.RemoteIpAddress = "unknown";
+                }
             }
             else
             {
