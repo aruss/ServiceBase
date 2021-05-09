@@ -3,9 +3,17 @@
 
 namespace ServiceBase.Collections
 {
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
+    using System.Runtime.Serialization;
+
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum SortDirection
     {
+        [EnumMember(Value = "descending")]
         Descending,
+
+        [EnumMember(Value = "ascending")]
         Ascending
     }
 }
