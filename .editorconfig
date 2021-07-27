@@ -1,8 +1,31 @@
-root=true
+# see https://docs.microsoft.com/de-de/visualstudio/ide/editorconfig-code-style-settings-reference?view=vs-2019
 
-[*]
-trim_trailing_whitespace = true
-indent_style = space
+# Remove the line below if you want to inherit .editorconfig settings from higher directories
+root = true
 
+# C# files
 [*.cs]
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Indentation and spacing
 indent_size = 4
+indent_style = space
+tab_width = 4
+
+
+#### .NET Coding Conventions ####
+
+# Organize usings
+dotnet_separate_import_directive_groups = false
+dotnet_sort_system_directives_first = true
+
+# this. and Me. preferences
+dotnet_style_qualification_for_event = true:silent
+dotnet_style_qualification_for_field = true:silent
+dotnet_style_qualification_for_method = true:silent
+dotnet_style_qualification_for_property = true:silent
