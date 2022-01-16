@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -19,13 +18,16 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
-    - name: Set env
-      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
-    - name: Test
+    - name: Set version number
       run: |
-        echo $RELEASE_VERSION
-        echo ${{ env.RELEASE_VERSION }}
+        $version = "3.2."+(4000+$($Env:GITHUB_RUN_NUMBER))+".0"
+        echo $version
+        echo "VERSION_NUMBER=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+
+    - name: Output Run Number
+      run: echo ${{ github.run_number }}
+
+
 
 
     #- name: Restore dependencies
