@@ -12,11 +12,11 @@
     <tags>dotnet dotnet-core</tags>
     <dependencies>
       <group targetFramework=".NETCoreApp2.2">
-        <dependency id="Newtonsoft.Json" version="12.0.3" exclude="Build,Analyzers" />
+        <dependency id="Newtonsoft.Json" version="13.0.1" exclude="Build,Analyzers" />
         <dependency id="Serilog" version="2.10.0" exclude="Build,Analyzers" />
         <dependency id="Serilog.AspNetCore" version="4.1.0" exclude="Build,Analyzers" />
-        <dependency id="Serilog.Extensions.Logging" version="3.0.1" exclude="Build,Analyzers" />
-        <dependency id="Serilog.Settings.Configuration" version="3.1.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog.Extensions.Logging" version="3.1.0" exclude="Build,Analyzers" />
+        <dependency id="Serilog.Settings.Configuration" version="3.3.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>

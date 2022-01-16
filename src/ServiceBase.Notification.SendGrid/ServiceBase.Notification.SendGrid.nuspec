@@ -12,7 +12,7 @@
     <tags>dotnet dotnet-core sendgrid email</tags>
     <dependencies>
       <group targetFramework=".NETCoreApp2.2">
-        <dependency id="Sendgrid" version="9.22.0" exclude="Build,Analyzers" />
+        <dependency id="Sendgrid" version="9.25.2" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>

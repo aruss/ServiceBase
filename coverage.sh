@@ -3,11 +3,11 @@
 set -e
 
 # https://github.com/OpenCover/opencover/pull/613
-nuget install -Verbosity quiet -OutputDirectory packages -Version 4.6.589 OpenCover -Source $PWD/tools
-nuget install -Verbosity quiet -OutputDirectory packages -Version 2.4.5.0 ReportGenerator
+nuget install -Verbosity quiet -OutputDirectory packages -Version 4.7.1221 OpenCover -Source $PWD/tools
+nuget install -Verbosity quiet -OutputDirectory packages -Version 5.0.2 ReportGenerator
 
-OPENCOVER=$PWD/packages/OpenCover.4.6.589/tools/OpenCover.Console.exe
-REPORTGENERATOR=$PWD/packages/ReportGenerator.2.4.5.0/tools/ReportGenerator.exe
+OPENCOVER=$PWD/packages/OpenCover.4.7.1221/tools/OpenCover.Console.exe
+REPORTGENERATOR=$PWD/packages/ReportGenerator.5.0.2/tools/ReportGenerator.exe
 COVERAGE_DIR=./coverage/report
 COVERAGE_HISTORY_DIR=./coverage/history
 

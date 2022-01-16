@@ -1,12 +1,12 @@
 # ServiceBase
 
-ServiceBase is my personal library with all common used bits & parts I use for building web services with .NET Core
+ServiceBase is my personal library with all common used bits & parts I use for building web services with .NET 5
 
 [![Build status](https://ci.appveyor.com/api/projects/status/wacmh1819dmc70b6/branch/master?svg=true)](https://ci.appveyor.com/project/aruss81994/servicebase/branch/master)
 
 ### Platform
 
-ServiceBase is built against NET Core 3.1 using the RTM tooling that ships with Visual Studio 2019. This is the only configuration I support on the issue tracker.
+ServiceBase is built against NET 5 using the RTM tooling that ships with Visual Studio 2019. This is the only configuration I support on the issue tracker.
 
 ### How to build
 

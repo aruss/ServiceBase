@@ -6,7 +6,6 @@ namespace ServiceBase.PayPal
     using System.Net.Http.Headers;
     using System.Text;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Caching.Memory;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using ServiceBase.Extensions;
@@ -15,15 +14,11 @@ namespace ServiceBase.PayPal
     public class PayPalService
     {
         private readonly HttpClient _httpClient;
-        private readonly IMemoryCache _cache;
         private readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public PayPalService(
-            IHttpClientFactory httpClientFactory,
-            IMemoryCache cache)
+        public PayPalService(IHttpClientFactory httpClientFactory)
         {
             this._httpClient = httpClientFactory.CreateClient();
-            this._cache = cache;
 
             this._jsonSerializerSettings = new JsonSerializerSettings();
 
@@ -210,7 +205,7 @@ namespace ServiceBase.PayPal
             HttpResponseMessage response =
                 await this._httpClient.SendAsync(request);
 
-            logHttp?.Invoke(request, response); 
+            logHttp?.Invoke(request, response);
 
             #region Parse response message
 
