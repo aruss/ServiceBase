@@ -2,16 +2,16 @@ name: .NET
 
 on:
   push:
-    branches: [ net5 ]
+    branches: [ develop ]
   pull_request:
-    branches: [ net5 ]
+    branches: [ develop ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     env:
-      DAY_OF_WEEK: Mon
+      VERSION: 5.0.0+${{ github.run_number }}
 
     steps:
     - uses: actions/checkout@v2
@@ -22,12 +22,7 @@ jobs:
         dotnet-version: 5.0.x
 
     - name: Custom version number
-      run: echo 5.0.0+${{ github.run_number }}
-
-    - name: Output Run Number
-      run: echo ${{ github.run_number }}
-
-
+      run: echo ${{ env.VERSION }}
 
 
     #- name: Restore dependencies
