@@ -19,11 +19,13 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
-    - name: Output Run ID
-      run: echo ${{ github.run_id }}
+    - name: Set env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
-    - name: Output Run Number
-      run: echo ${{ github.run_number }}
+    - name: Test
+      run: |
+        echo $RELEASE_VERSION
+        echo ${{ env.RELEASE_VERSION }}
 
 
     #- name: Restore dependencies
