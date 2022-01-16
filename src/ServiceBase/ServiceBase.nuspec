@@ -11,7 +11,7 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.2">
+      <group targetFramework="net5.0">
         <dependency id="Newtonsoft.Json" version="13.0.1" exclude="Build,Analyzers" />
         <dependency id="Serilog" version="2.10.0" exclude="Build,Analyzers" />
         <dependency id="Serilog.AspNetCore" version="4.1.0" exclude="Build,Analyzers" />
@@ -21,6 +21,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.2\ServiceBase.dll" target="lib\netcoreapp2.2\ServiceBase.dll" />
+    <file src="bin\Release\net5.0\ServiceBase.dll" target="lib\net5.0\ServiceBase.dll" />
   </files>
 </package>

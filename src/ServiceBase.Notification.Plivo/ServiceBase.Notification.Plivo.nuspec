@@ -11,11 +11,11 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core plivo sms</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.2">
+      <group targetFramework=".net5.0">
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.2\ServiceBase.Notification.Plivo.dll" target="lib\netcoreapp2.2\ServiceBase.Notification.Plivo.dll" />
+    <file src="bin\Release\net5.0\ServiceBase.Notification.Plivo.dll" target="lib\net5.0\ServiceBase.Notification.Plivo.dll" />
   </files>
 </package>

@@ -11,13 +11,13 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core rabbitmq</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.2">
+      <group targetFramework=".net5.0">
         <dependency id="Newtonsoft.Json.Bson" version="1.0.2" exclude="Build,Analyzers" />
         <dependency id="RabbitMQ.Client" version="6.2.2" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.2\ServiceBase.Events.RabbitMQ.dll" target="lib\netcoreapp2.2\ServiceBase.Events.RabbitMQ.dll" />
+    <file src="bin\Release\net5.0\ServiceBase.Events.RabbitMQ.dll" target="lib\net5.0\ServiceBase.Events.RabbitMQ.dll" />
   </files>
 </package>

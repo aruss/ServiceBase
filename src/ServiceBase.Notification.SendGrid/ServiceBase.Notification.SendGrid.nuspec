@@ -11,12 +11,12 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core sendgrid email</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.2">
+      <group targetFramework=".net5.0">
         <dependency id="Sendgrid" version="9.25.2" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.2\ServiceBase.Notification.SendGrid.dll" target="lib\netcoreapp2.2\ServiceBase.Notification.SendGrid.dll" />
+    <file src="bin\Release\net5.0\ServiceBase.Notification.SendGrid.dll" target="lib\net5.0\ServiceBase.Notification.SendGrid.dll" />
   </files>
 </package>

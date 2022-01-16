@@ -11,11 +11,11 @@
     <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
     <tags>dotnet dotnet-core twilio sms</tags>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.2">
+      <group targetFramework=".net5.0">
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\netcoreapp2.2\ServiceBase.Notification.Twilio.dll" target="lib\netcoreapp2.2\ServiceBase.Notification.Twilio.dll" />
+    <file src="bin\Release\net5.0\ServiceBase.Notification.Twilio.dll" target="lib\net5.0\ServiceBase.Notification.Twilio.dll" />
   </files>
 </package>
