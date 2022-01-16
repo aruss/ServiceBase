@@ -10,6 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      DAY_OF_WEEK: Mon
+
     steps:
     - uses: actions/checkout@v2
 
@@ -18,11 +21,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
-    - name: Set version number
-      run: |
-        $version = "3.2."+(4000+$($Env:GITHUB_RUN_NUMBER))+".0"
-        echo $version
-        echo "VERSION_NUMBER=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+    - name: Custom version number
+      run: echo 5.0.0+${{ github.run_number }}
 
     - name: Output Run Number
       run: echo ${{ github.run_number }}
