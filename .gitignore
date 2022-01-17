@@ -22,7 +22,6 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
-*.lock.json
 project.lock.json
 
 # Visual Studo 2015 cache/options directory
@@ -202,3 +201,4 @@ FakesAssemblies/
 .build/
 coverage/
 logs/
+.env

@@ -1,53 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <PackageId>ServiceBase</PackageId>
-    <PackageVersion>$(VersionSuffix)</PackageVersion>
-    <Authors>Russlan Akiev</Authors>
-    <Description>Common bits and parts for building web services</Description>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
-    <PackageTags>dotnet dotnet-core</PackageTags>
-    <RepositoryUrl></RepositoryUrl>
-    <RepositoryType></RepositoryType>
-    <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
-    <PackageLicenseUrl></PackageLicenseUrl>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Company />
-    <Product>ServiceBase</Product>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <PackageId>ServiceBase</PackageId>
+        <Product>ServiceBase</Product>
+        <PackageVersion>$(VersionSuffix)</PackageVersion>
+        <Description>Common bits and parts for building web services</Description>
+        <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
+        <Authors>Russlan Akiev</Authors>
+        <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Remove="Multitenancy\**" />
-    <EmbeddedResource Remove="Multitenancy\**" />
-    <None Remove="Multitenancy\**" />
-  </ItemGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Localization\ILocalizationStore.cs" />
-    <Compile Remove="Localization\ILocalizationStoreExtensions.cs" />
-    <Compile Remove="Localization\InMemoryLocalizationStore.cs" />
-    <Compile Remove="Logging\IApplicationBuilderExtensions.cs" />
-    <Compile Remove="Logging\IServiceCollectionLoggingExtensions.cs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Multitenancy\**" />
+        <EmbeddedResource Remove="Multitenancy\**" />
+        <None Remove="Multitenancy\**" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="ServiceBase.nuspec" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Localization\ILocalizationStore.cs" />
+        <Compile Remove="Localization\ILocalizationStoreExtensions.cs" />
+        <Compile Remove="Localization\InMemoryLocalizationStore.cs" />
+        <Compile Remove="Logging\IApplicationBuilderExtensions.cs" />
+        <Compile Remove="Logging\IServiceCollectionLoggingExtensions.cs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <!--<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.4" />-->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <!--<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.4" />-->
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Serilog" Version="2.10.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
+    </ItemGroup>
 
 </Project>

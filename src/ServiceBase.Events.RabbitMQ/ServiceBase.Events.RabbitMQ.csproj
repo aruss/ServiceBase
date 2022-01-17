@@ -1,32 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Authors>Russlan Akiev</Authors>
-    <Company />
-    <Product>ServiceBase.Events.RabbitMQ</Product>
-    <Description>RabbitMQ event sink and listener for ServiceBase.Events</Description>
-    <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
-    <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
-    <PackageTags>dotnet dotnet-core rabbitmq</PackageTags>
-    <Version>1.1.0</Version>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <PackageId>ServiceBase.Events.RabbitMQ</PackageId>
+        <Product>ServiceBase.Events.RabbitMQ</Product>
+        <PackageVersion>$(VersionSuffix)</PackageVersion>
+        <Description>RabbitMQ event sink and listener for ServiceBase.Events</Description>
+        <PackageTags>servicebase events rabbitmq</PackageTags>
+        <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
+        <Authors>Russlan Akiev</Authors>
+        <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="ServiceBase.Events.RabbitMQ.nuspec" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
+        <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
-    <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
-      <Private>false</Private>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </ProjectReference>
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
+            <Private>false</Private>
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </ProjectReference>
+    </ItemGroup>
 
 </Project>

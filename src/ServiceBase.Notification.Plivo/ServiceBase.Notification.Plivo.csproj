@@ -1,36 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <Authors>Russlan Akiev</Authors>
-    <Company />
-    <Description>Plivo SMS sender for ServiceBase.Notification.Sms</Description>
-    <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
-    <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
-    <PackageTags>dotnet dotnet-core plivo sms</PackageTags>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <ApplicationIcon />
-    <OutputType>Library</OutputType>
-    <StartupObject />
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <PackageId>ServiceBase.Notification.Plivo</PackageId>
+        <Product>ServiceBase.Notification.Plivo</Product>
+        <PackageVersion>$(VersionSuffix)</PackageVersion>
+        <Description>SendGrid email sender for ServiceBase.Notification.Sms</Description>
+        <PackageTags>servicebase plivo sms</PackageTags>
+        <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
+        <Authors>Russlan Akiev</Authors>
+        <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>RELEASE</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DefineConstants>RELEASE</DefineConstants>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DefineConstants>TRACE;DEBUG</DefineConstants>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="ServiceBase.Notification.Plivo.nuspec" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ServiceBase\ServiceBase.csproj" >
-      <Private>false</Private>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </ProjectReference>
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ServiceBase\ServiceBase.csproj" >
+            <Private>false</Private>
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </ProjectReference>
+    </ItemGroup>
 
 </Project>

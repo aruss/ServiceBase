@@ -1,45 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <PackageId>ServiceBase.Mvc</PackageId>
+        <Product>ServiceBase.Mvc</Product>
+        <PackageVersion>$(VersionSuffix)</PackageVersion>
+        <Description>Common bits and parts for building web services</Description>
+        <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
+        <Authors>Russlan Akiev</Authors>
+        <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>RELEASE</DefineConstants>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DefineConstants>RELEASE</DefineConstants>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Remove="_Plugins\**" />
-    <EmbeddedResource Remove="_Plugins\**" />
-    <None Remove="_Plugins\**" />
-  </ItemGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DefineConstants>TRACE;DEBUG</DefineConstants>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Theming\DefaultRequestThemeInfoProvider.cs" />
-  </ItemGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="ServiceBase.Mvc.nuspec" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="_Plugins\**" />
+        <EmbeddedResource Remove="_Plugins\**" />
+        <None Remove="_Plugins\**" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <!--<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.4" />-->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Theming\DefaultRequestThemeInfoProvider.cs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
-      <Private>false</Private>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </ProjectReference>
-  </ItemGroup>
+    <ItemGroup>
+        <!--<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.4" />-->
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
+            <Private>false</Private>
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </ProjectReference>
+    </ItemGroup>
 
 </Project>
