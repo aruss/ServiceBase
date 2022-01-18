@@ -3,7 +3,7 @@
 set -o allexport; source .env; set +o allexport
 
 # Set version
-VERSION=5.0.0
+VERSION=5.0.1
 
 # Remove previous builds and artifacts
 find . -iname "bin" -o -iname "obj" -o -iname "artifacts" | xargs rm -rf
@@ -17,7 +17,7 @@ dotnet build ./ServiceBase.sln --no-restore --configuration Release /property:Ve
 # Pack all the nugets
 for PROJECT in "${PROJECTS[@]}"
 do
-mono /usr/local/bin/nuget.exe pack ./src/$PROJECT/$PROJECT.csproj -OutputDirectory ./artifacts/packages -Properties Configuration=Release -version $VERSION
+mono /usr/local/bin/nuget.exe pack ./src/$PROJECT/$PROJECT.nuspec -OutputDirectory ./artifacts/packages -Properties Configuration=Release -version $VERSION -IncludeReferencedProjects
 done
 
 # Push all the nugets
