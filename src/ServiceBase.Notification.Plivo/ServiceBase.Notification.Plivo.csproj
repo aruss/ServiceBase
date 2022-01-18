@@ -5,7 +5,7 @@
         <PackageId>ServiceBase.Notification.Plivo</PackageId>
         <Product>ServiceBase.Notification.Plivo</Product>
         <PackageVersion>$(VersionSuffix)</PackageVersion>
-        <Description>SendGrid email sender for ServiceBase.Notification.Sms</Description>
+        <Description>Plivo SMS sender for ServiceBase.Notification.Sms</Description>
         <PackageTags>servicebase plivo sms</PackageTags>
         <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
         <Authors>Russlan Akiev</Authors>
@@ -24,7 +24,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ServiceBase\ServiceBase.csproj" >
+      <None Remove="ServiceBase.Notification.Plivo.nuspec" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
             <Private>false</Private>
             <ExcludeAssets>runtime</ExcludeAssets>
         </ProjectReference>

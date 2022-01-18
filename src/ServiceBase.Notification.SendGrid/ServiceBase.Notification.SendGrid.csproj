@@ -23,6 +23,10 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="ServiceBase.Notification.SendGrid.nuspec" />
+  </ItemGroup>
+
     <ItemGroup>
     <PackageReference Include="Sendgrid" Version="9.25.2" />
   </ItemGroup>

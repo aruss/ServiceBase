@@ -25,7 +25,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ServiceBase\ServiceBase.csproj" >
+      <None Remove="ServiceBase.Notification.Twilio.nuspec" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
             <Private>false</Private>
             <ExcludeAssets>runtime</ExcludeAssets>
         </ProjectReference>

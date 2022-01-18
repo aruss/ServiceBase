@@ -24,6 +24,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="ServiceBase.Notification.Smtp.nuspec" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
             <Private>false</Private>
             <ExcludeAssets>runtime</ExcludeAssets>
