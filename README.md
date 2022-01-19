@@ -2,7 +2,7 @@
 
 ServiceBase is my personal library with all common used bits & parts I use for building web services with .NET 5
 
-[![Build status](https://ci.appveyor.com/api/projects/status/wacmh1819dmc70b6/branch/master?svg=true)](https://ci.appveyor.com/project/aruss81994/servicebase/branch/master)
+[![CI develop](https://github.com/aruss/ServiceBase/actions/workflows/develop.yml/badge.svg)](https://github.com/aruss/ServiceBase/actions/workflows/develop.yml)
 
 ### Platform
 
@@ -10,9 +10,7 @@ ServiceBase is built against NET 5 using the RTM tooling that ships with Visual 
 
 ### How to build
 
-* Install [.NET 5](https://www.microsoft.com/net/download/core#/current)
-* Use [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) to build it
+-   Install [.NET 5](https://www.microsoft.com/net/download/core#/current)
+-   Use [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) to build it
 
-## Documentation
-
-There is a [example](./examples/Plugins) project that utilizes most of features you can dig in.
+The scripts `coverage.sh` and `deploy.sh` run on WSL

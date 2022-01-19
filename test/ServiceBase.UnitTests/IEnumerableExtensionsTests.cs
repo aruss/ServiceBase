@@ -2,8 +2,6 @@ namespace ServiceBase.UnitTests
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
-    using FluentAssertions;
     using ServiceBase.Extensions;
     using Xunit;
 

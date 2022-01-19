@@ -17,12 +17,17 @@ namespace ServiceBase.UnitTests
 
         public bool IsEnabled(LogLevel logLevel)
         {
-            return true; 
+            return true;
         }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
+            Exception exception,
+            Func<TState, Exception, string> formatter)
         {
-            
+
         }
     }
 
@@ -37,7 +42,8 @@ namespace ServiceBase.UnitTests
         [Fact]
         public async Task GetAllCulturesAsync()
         {
-            IResourceStore store = new InMemoryResourceStore(new LoggerMock<InMemoryResourceStore>());
+            IResourceStore store = new InMemoryResourceStore(
+                new LoggerMock<InMemoryResourceStore>());
 
             await store.WriteAsync("de-DE", "Group1", "Key1", "GermanValue1");
             await store.WriteAsync("de-DE", "Group1", "Key2", "GermanValue2");

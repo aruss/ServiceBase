@@ -2,17 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <PackageId>ServiceBase.PayPal</PackageId>
-        <Product>ServiceBase.PayPal</Product>
-        <PackageVersion>$(VersionSuffix)</PackageVersion>
-        <Description>PayPal API Client</Description>
-        <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
-        <Authors>Russlan Akiev</Authors>
-        <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
-        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-        <OutputType>Library</OutputType>
+        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

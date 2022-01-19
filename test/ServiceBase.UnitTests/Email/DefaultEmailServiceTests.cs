@@ -4,6 +4,7 @@ namespace ServiceBase.UnitTests
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -14,7 +15,6 @@ namespace ServiceBase.UnitTests
     using ServiceBase.Notification.Email;
     using ServiceBase.Resources;
     using Xunit;
-    using System.Linq;
 
     //[Collection("ServiceBase")]
     public class DefaultEmailServiceTests

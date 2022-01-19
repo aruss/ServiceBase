@@ -1,11 +1,9 @@
 ﻿
 namespace ServiceBase.UnitTests.Localization
 {
-    using System;
-    using Xunit;
     using FluentAssertions;
-    using Xunit;
     using ServiceBase.Localization;
+    using Xunit;
 
     public class LocalizationHelperTests
     {

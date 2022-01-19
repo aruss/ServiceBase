@@ -2,25 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <PackageId>ServiceBase.Notification.Plivo</PackageId>
-        <Product>ServiceBase.Notification.Plivo</Product>
-        <PackageVersion>$(VersionSuffix)</PackageVersion>
-        <Description>Plivo SMS sender for ServiceBase.Notification.Sms</Description>
-        <PackageTags>servicebase plivo sms</PackageTags>
-        <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
-        <Authors>Russlan Akiev</Authors>
-        <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
-        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-        <OutputType>Library</OutputType>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <DefineConstants>RELEASE</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DefineConstants>TRACE;DEBUG</DefineConstants>
+        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     </PropertyGroup>
 
     <ItemGroup>

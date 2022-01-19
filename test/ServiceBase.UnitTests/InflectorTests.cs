@@ -4,7 +4,6 @@ namespace ServiceBase.UnitTests
     using FluentAssertions;
     using Xunit;
 
-    [Collection("ServiceBase")]
     public class InflectorTests
     {
         [Fact]
@@ -12,7 +11,7 @@ namespace ServiceBase.UnitTests
         {
             "foo_bar_baz".Dasherize().Should().Be("foo-bar-baz");
 
-            return Task.FromResult(0); 
+            return Task.FromResult(0);
         }
 
         [Fact]

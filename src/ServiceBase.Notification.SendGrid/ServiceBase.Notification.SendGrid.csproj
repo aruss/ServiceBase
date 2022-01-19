@@ -1,41 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-      <TargetFramework>net5.0</TargetFramework>
-      <PackageId>ServiceBase.Notification.Smtp</PackageId>
-      <Product>ServiceBase.Notification.Smtp</Product>
-      <PackageVersion>$(VersionSuffix)</PackageVersion>
-      <Description>SendGrid email sender for ServiceBase.Notification.Email</Description>
-      <PackageTags>servicebase sendgrid email</PackageTags>
-      <PackageProjectUrl>https://github.com/aruss/ServiceBase</PackageProjectUrl>
-      <Authors>Russlan Akiev</Authors>
-      <Copyright>Copyright (c) Russlan Akiev. All rights reserved.</Copyright>
-      <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-      <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-      <OutputType>Library</OutputType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>RELEASE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="ServiceBase.Notification.SendGrid.nuspec" />
-  </ItemGroup>
+    
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    </PropertyGroup>
 
     <ItemGroup>
-    <PackageReference Include="Sendgrid" Version="9.25.2" />
-  </ItemGroup>
+        <None Remove="ServiceBase.Notification.SendGrid.nuspec" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
-      <Private>false</Private>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </ProjectReference>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Sendgrid" Version="9.25.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ServiceBase\ServiceBase.csproj">
+            <Private>false</Private>
+            <ExcludeAssets>runtime</ExcludeAssets>
+        </ProjectReference>
+    </ItemGroup>
 
 </Project>
