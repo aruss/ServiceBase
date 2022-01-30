@@ -19,7 +19,7 @@ namespace ServiceBase.Resources
 
         public InMemoryResourceStore(ILogger<InMemoryResourceStore> logger)
         {
-            this._logger = logger; 
+            this._logger = logger;
         }
 
         public Task<Resource> GetAsync(
@@ -85,26 +85,9 @@ namespace ServiceBase.Resources
             IDictionary<string, string> dictionary,
             string source = null)
         {
-            DateTime now = DateTime.UtcNow;
-
             foreach (KeyValuePair<string, string> item in dictionary)
             {
-                Resource resource = new Resource
-                {
-                    Id = Guid.NewGuid(),
-                    Culture = culture,
-                    Group = group,
-                    Key = item.Key,
-                    Value = item.Value,
-                    Source = source,
-                    CreatedAt = now,
-                    UpdatedAt = now
-                };
-
-                this._logger.LogDebug("Writing resource to database {0} {1} {2} {3} {4}",
-                    culture, group, item.Key, item.Value, source);
-
-                InMemoryResourceStore._resources.TryAdd(resource);
+                this.WriteAsync(culture, group, item.Key, item.Value, source);
             }
 
             return Task.CompletedTask;
@@ -131,8 +114,14 @@ namespace ServiceBase.Resources
                 UpdatedAt = now
             };
 
-            this._logger.LogDebug("Writing resource to database {0} {1} {2} {3} {4}",
-                    culture, group, key, value, source);
+            this._logger.LogDebug(() =>
+            {
+                return String.Format("Writing resource to database \n {0}",
+                    Newtonsoft.Json.JsonConvert.SerializeObject(
+                        resource,
+                        Newtonsoft.Json.Formatting.Indented)
+                );
+            });
 
             InMemoryResourceStore._resources.TryAdd(resource);
 

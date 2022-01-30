@@ -20,13 +20,13 @@ namespace ServiceBase.Resources
         /// Loads localization data into global dictioanry from directory
         /// of json files.
         /// </summary>
-        /// <param name="resourceStore">
-        /// Instance of <see cref="IResourceStore"/>.
-        /// </param>
-        /// <param name="localePath">
-        /// Path to directory containing localization files.
-        /// File pattern should match following example "foo.de-DE.json".
-        /// </param>
+        /// <param name="resourceStore">Instance of <see cref="IResourceStore"/>.</param>
+        /// <param name="directoryPath">Path to directory containing localization files.
+        /// File pattern should match following example "foo.de-DE.json".</param>
+        /// <param name="source">Source name, is used to group resources together,
+        /// helps for removing resources.</param>
+        /// <param name="logger"></param>
+        /// <returns></returns>
         public static async Task LoadLocalizationFromDirectoryAsync(
             this IResourceStore resourceStore,
             string directoryPath,
