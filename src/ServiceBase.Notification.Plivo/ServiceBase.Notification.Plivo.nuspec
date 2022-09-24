@@ -11,12 +11,12 @@
         <copyright>Copyright (c) Russlan Akiev. All rights reserved.</copyright>
         <tags>servicebase plivo sms</tags>
         <dependencies>
-            <group targetFramework="net5.0">
+            <group targetFramework="net6.0">
                 <dependency id="ServiceBase" version="5.0.1" exclude="Build,Analyzers" />
             </group>
         </dependencies>
     </metadata>
     <files>
-        <file src="bin\Release\net5.0\ServiceBase.Notification.Plivo.dll" target="lib\net5.0\ServiceBase.Notification.Plivo.dll" />
+        <file src="bin\Release\net6.0\ServiceBase.Notification.Plivo.dll" target="lib\net6.0\ServiceBase.Notification.Plivo.dll" />
     </files>
 </package>

@@ -6,11 +6,11 @@ ServiceBase is my personal library with all common used bits & parts I use for b
 
 ### Platform
 
-ServiceBase is built against NET 5 using the RTM tooling that ships with Visual Studio 2019. This is the only configuration I support on the issue tracker.
+ServiceBase is built against NET 6 using the RTM tooling that ships with Visual Studio 2022. This is the only configuration I support on the issue tracker.
 
 ### How to build
 
--   Install [.NET 5](https://www.microsoft.com/net/download/core#/current)
--   Use [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) to build it
+-   Install [.NET 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+-   Use [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) to build it
 
 The scripts `coverage.sh` and `deploy.sh` run on WSL

@@ -53,9 +53,9 @@ namespace ServiceBase.Notification.Smtp
                 UseDefaultCredentials = false,
                 EnableSsl = this._options.UseSsl,
                 Credentials = new NetworkCredential(
-                this._options.UserName,
-                this._options.Password
-            )
+                    this._options.UserName,
+                    this._options.Password
+                )
             };
 
             using var mail = new MailMessage();

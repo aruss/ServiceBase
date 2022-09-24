@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    
+
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     </PropertyGroup>
@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Sendgrid" Version="9.25.2" />
+        <PackageReference Include="Sendgrid" Version="9.28.1" />
     </ItemGroup>
 
     <ItemGroup>

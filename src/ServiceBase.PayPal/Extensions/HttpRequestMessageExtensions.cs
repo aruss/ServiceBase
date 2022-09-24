@@ -87,16 +87,7 @@ namespace ServiceBase.PayPal
         {
             if (message.StatusCode == statusCode)
             {
-                try
-                {
-                    return await message.Content.ReadAsAsync<TResult>();
-                }
-                catch (Exception ex)
-                {
-                    // TODO: make terror here 
-                    throw ex;
-                }
-
+                return await message.Content.ReadAsAsync<TResult>();
             }
 
             return default(TResult);
