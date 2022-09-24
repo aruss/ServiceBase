@@ -409,6 +409,23 @@ namespace ServiceBase.Extensions
             return default(T);
         }
 
+        /// <summary>
+        /// Determine whether a type is simple (String, Decimal, DateTime, etc) 
+        /// or complex (i.e. custom class with public properties and methods).
+        /// </summary>
+        public static bool IsSimpleType(this Type type)
+        {
+            return
+                type.IsValueType ||
+                type.IsPrimitive ||
+                type.IsNumber() ||
+                type == typeof(String) ||
+                type == typeof(DateTime) ||
+                type == typeof(DateTimeOffset) ||
+                type == typeof(TimeSpan) ||
+                type == typeof(Guid);
+        }
+
         #endregion
 
         #region Private Methods
