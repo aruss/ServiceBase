@@ -41,8 +41,9 @@ namespace ServiceBase
             return Directory.GetCurrentDirectory();
         }
 
-        public static int Start<TStartup>(string[] args,
-            Action<IHostBuilder, IConfiguration> configureHostBuilder = null,
+        public static int Start<TStartup>(
+            string[] args,
+            Func<IHostBuilder, IConfiguration, IHostBuilder> configureHostBuilder = null,
             Action<IWebHostBuilder, IConfiguration> configureWebHostBuilder = null)
             where TStartup : class
         {
@@ -62,34 +63,12 @@ namespace ServiceBase
 
             try
             {
-                Log.Information("Starting web host");
-
-                IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
-                    
-                    .ConfigureLogging(config =>
-                    {
-                        config.ClearProviders();
-                    })
-                    .ConfigureWebHostDefaults(webBuilder =>
-                    {
-                        string urls = config["Host:Urls"];
-
-                        webBuilder
-                            .UseStartup<TStartup>()
-                            .UseContentRoot(contentRoot)
-                            .UseConfiguration(config)
-                            .UseUrls(urls.IsPresent() ? urls : "http://*:8080");
-
-                        configureWebHostBuilder?.Invoke(webBuilder, config); 
-                    })
-                    .UseSerilog();
-
-                configureHostBuilder?.Invoke(hostBuilder, config);
-
-                hostBuilder
-                    .Build()
-                    .RunAsync(WebHostWrapper.cancelTokenSource.Token)
-                    .Wait();
+                WebHostWrapper.Start<TStartup>(
+                    contentRoot,
+                    config,
+                    args,
+                    configureHostBuilder,
+                    configureWebHostBuilder);
 
                 return 0;
             }
@@ -102,6 +81,46 @@ namespace ServiceBase
             {
                 Log.CloseAndFlush();
             }
+        }
+
+        private static void Start<TStartup>(
+            string contentRoot,
+            IConfiguration config,
+            string[] args,
+            Func<IHostBuilder, IConfiguration, IHostBuilder> configureHostBuilder = null,
+            Action<IWebHostBuilder, IConfiguration> configureWebHostBuilder = null)
+            where TStartup : class
+        {
+            Log.Information("Starting web host");
+
+            IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(config =>
+                {
+                    config.ClearProviders();
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    string urls = config["Host:Urls"];
+
+                    webBuilder
+                        .UseStartup<TStartup>()
+                        .UseContentRoot(contentRoot)
+                        .UseConfiguration(config)
+                        .UseUrls(urls.IsPresent() ? urls : "http://*:8080");
+
+                    configureWebHostBuilder?.Invoke(webBuilder, config);
+                })
+                .UseSerilog();
+
+            if (configureWebHostBuilder != null)
+            {
+                hostBuilder = configureHostBuilder.Invoke(hostBuilder, config);
+            }
+
+            hostBuilder
+                .Build()
+                .RunAsync(WebHostWrapper.cancelTokenSource.Token)
+                .Wait();
         }
 
         public static void Restart()
