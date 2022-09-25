@@ -1,6 +1,6 @@
 # ServiceBase
 
-ServiceBase is my personal library with all common used bits & parts I use for building web services with .NET 5
+ServiceBase is my personal library with all common used bits & parts I use for building web services with .NET 6
 
 [![CI develop](https://github.com/aruss/ServiceBase/actions/workflows/develop.yml/badge.svg)](https://github.com/aruss/ServiceBase/actions/workflows/develop.yml)
 
