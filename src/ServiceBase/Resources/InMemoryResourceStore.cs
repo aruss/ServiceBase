@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Russlan Akiev. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project
+// root for license information.
 
 namespace ServiceBase.Resources
 {
@@ -27,17 +28,19 @@ namespace ServiceBase.Resources
             string group,
             string key)
         {
-            IEnumerable<Resource> query = this.GetAllAsync(culture, group).Result
-                .Where(c =>
-                    key.Equals(c.Key,
-                        StringComparison.InvariantCultureIgnoreCase));
+            IEnumerable<Resource> query =
+                this.GetAllAsync(culture, group).Result
+                    .Where(c =>
+                        key.Equals(c.Key,
+                            StringComparison.InvariantCultureIgnoreCase));
 
             Resource result = query
                 .OrderBy(c => c.CreatedAt)
                 .FirstOrDefault();
 
             this._logger.LogDebug(
-                "Found resource in database {0}, {1} {2}", culture, key, result != null);
+                "Found resource in database {0}, {1} {2}",
+                culture, key, result != null);
 
             return Task.FromResult(result);
         }
@@ -53,9 +56,13 @@ namespace ServiceBase.Resources
                     group.Equals(c.Group,
                         StringComparison.InvariantCultureIgnoreCase));
 
-            // TODO: Create message only if debug log level is active
-            this._logger.LogDebug("Found {0} number of resources in database",
-                result.Count());
+            this._logger.LogDebug(() =>
+            {
+                return String.Format(
+                    "Found {0} resources in resource store",
+                    result.Count()
+                );
+            });
 
             return Task.FromResult(result);
         }
@@ -72,9 +79,13 @@ namespace ServiceBase.Resources
                 .Select(s => s.Culture)
                 .Distinct();
 
-            // TODO: Create message only if debug log level is active
-            this._logger.LogDebug("Found {0} number of cultures in database",
-                result.Count());
+            this._logger.LogDebug(() =>
+            {
+                return String.Format(
+                    "Found {0} cultures in resource store",
+                    result.Count()
+                );
+            });
 
             return Task.FromResult(result);
         }
@@ -116,14 +127,23 @@ namespace ServiceBase.Resources
 
             this._logger.LogDebug(() =>
             {
-                return String.Format("Writing resource to database \n {0}",
+                return String.Format("Adding resource to resource store: {0}",
                     Newtonsoft.Json.JsonConvert.SerializeObject(
                         resource,
-                        Newtonsoft.Json.Formatting.Indented)
+                        Newtonsoft.Json.Formatting.None)
                 );
             });
 
-            InMemoryResourceStore._resources.TryAdd(resource);
+            try
+            {
+                InMemoryResourceStore._resources.TryAdd(resource);
+            }
+            catch (InvalidOperationException ex)
+            {
+                // In case dupplicate key is added just log it instead of
+                // exiting the app 
+                this._logger.LogError(ex.Message);
+            }
 
             return Task.CompletedTask;
         }

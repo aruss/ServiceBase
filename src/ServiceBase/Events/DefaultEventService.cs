@@ -62,7 +62,8 @@ namespace ServiceBase.Events
 
             if (!this._eventSinks.Any())
             {
-                throw new ApplicationException("Requres at least one event sink");
+                throw new ApplicationException(
+                    "Requres at least one event sink");
             }
         }
 

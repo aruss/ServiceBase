@@ -16,12 +16,14 @@ namespace ServiceBase.Mvc.Filters
         {
             if (!context.ModelState.IsValid)
             {
-                context.Result =    
+                context.Result =
                     new BadRequestObjectResult(context.ModelState);
             }
         }
 
-        public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        public override Task OnActionExecutionAsync(
+            ActionExecutingContext context,
+            ActionExecutionDelegate next)
         {
             return base.OnActionExecutionAsync(context, next);
         }
