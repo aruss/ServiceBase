@@ -41,7 +41,7 @@ namespace ServiceBase
                 .SetBasePath(basePath)
                 .AddJsonFile(
                     path: ConfigUtils.GetConfigFilePath(basePath),
-                    optional: false,
+                    optional: true,
                     reloadOnChange: false);
 
             if (EnironmentUtils.IsDevelopmentEnvironment())

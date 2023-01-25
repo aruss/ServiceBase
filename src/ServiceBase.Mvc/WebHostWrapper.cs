@@ -103,6 +103,14 @@ namespace ServiceBase
                     string urls = config["Host:Urls"];
 
                     webBuilder
+                        .ConfigureAppConfiguration((context, config) =>
+                        {
+                            foreach (var s in config.Sources)
+                            {
+                                if (s is FileConfigurationSource)
+                                    ((FileConfigurationSource)s).ReloadOnChange = false;
+                            }
+                        })
                         .UseStartup<TStartup>()
                         .UseContentRoot(contentRoot)
                         .UseConfiguration(config)
@@ -112,7 +120,7 @@ namespace ServiceBase
                 })
                 .UseSerilog();
 
-            if (configureWebHostBuilder != null)
+            if (configureHostBuilder != null)
             {
                 hostBuilder = configureHostBuilder.Invoke(hostBuilder, config);
             }
