@@ -6,7 +6,7 @@ then
 fi
 
 # Set version
-VERSION=6.0.0
+VERSION=6.0.1
 
 # Remove previous builds and artifacts
 #find . -iname "bin" -o -iname "obj" -o -iname "artifacts" | xargs rm -rf
@@ -19,7 +19,7 @@ dotnet build ./ServiceBase.sln --no-restore --configuration Release /property:Ve
 
 # Pack all the nugets
 for PROJECT in "${PROJECTS[@]}"; do
-updeps ./src/$PROJECT/$PROJECT.csproj ./src/$PROJECT/$PROJECT.nuspec
+# updeps ./src/$PROJECT/$PROJECT.csproj ./src/$PROJECT/$PROJECT.nuspec
 nuget pack ./src/$PROJECT/$PROJECT.nuspec -OutputDirectory ./artifacts/packages -Properties Configuration=Release -version $VERSION -IncludeReferencedProjects
 done
 

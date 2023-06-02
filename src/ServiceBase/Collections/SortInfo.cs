@@ -6,16 +6,16 @@ namespace ServiceBase.Collections
     public class SortInfo
     {
         public string Field { get; set; }
-        public SortDirection Direction { get; set; }
+        public bool IsAsc { get; set; }
 
         public SortInfo()
         {
         }
 
-        public SortInfo(string field, SortDirection direction)
+        public SortInfo(string field, bool isAsc)
         {
             this.Field = field;
-            this.Direction = direction;
+            this.IsAsc = isAsc;
         }
     }
 }
