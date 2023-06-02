@@ -13,7 +13,7 @@
     <tags>servicebase paypal payment</tags>
     <dependencies>
       <group targetFramework="net6.0">
-        <dependency id="Microsoft.Extensions.Http" version="6.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Http" version="7.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>

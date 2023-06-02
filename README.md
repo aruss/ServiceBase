@@ -13,4 +13,3 @@ ServiceBase is built against NET 6 using the RTM tooling that ships with Visual 
 -   Install [.NET 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 -   Use [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) to build it
 
-The scripts `coverage.sh` and `deploy.sh` run on WSL

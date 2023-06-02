@@ -14,7 +14,7 @@
     <dependencies>
       <group targetFramework="net6.0">
         <dependency id="Newtonsoft.Json.Bson" version="1.0.2" exclude="Build,Analyzers" />
-        <dependency id="RabbitMQ.Client" version="6.4.0" exclude="Build,Analyzers" />
+        <dependency id="RabbitMQ.Client" version="6.5.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>
